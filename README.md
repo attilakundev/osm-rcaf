@@ -1,8 +1,5 @@
-# osm-rcaf
-OpenStreetMap Relation Continuity Analyzer and Fixer
-
-# OSMRCA
-OpenStreetMap Relation Continuity Analyzer (and fixer) is an application that can recognize the gaps in relations(routes, and any kind of multipolygons)
+# OpenStreetMap Relation Continuity Analyzer and Fixer 
+This is a web application that can recognize the gaps in relations(routes, and any kind of multipolygons) in OpenStreetMap.
 
 ## How to use it?
 You upload an existing relation, or you load it from a .osm/.xml file, and then when it detects problems, it will display you all of them if you turned on debug mode.
