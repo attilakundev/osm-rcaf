@@ -12,6 +12,6 @@ If it corrected the relation well, hurray, you can upload it into OSM.
 ## Dependencies:
 * Python 3.10
 * FastAPI framework `pip install fastapi`
-* uvicorn ```pip install uvicorn["standard"]`
+* uvicorn `pip install uvicorn["standard"]`
 * [osm-login-python](https://github.com/kshitijrajsharma/osm-login-python) 
 * pytest `pip install -U pytest`
