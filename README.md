@@ -13,5 +13,7 @@ If it corrected the relation well, hurray, you can upload it into OSM.
 * Python 3.10
 * FastAPI framework `pip install fastapi`
 * uvicorn `pip install uvicorn["standard"]`
-* [osm-login-python](https://github.com/kshitijrajsharma/osm-login-python) 
+* jinja2 `pip install jinja2`
 * pytest `pip install -U pytest`
+* python-multipart `pip install python-multipart`
+
