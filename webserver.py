@@ -24,20 +24,25 @@ app.mount(
     StaticFiles(directory=f"{project_path}/static"),
     name="static",
 )
-app.add_middleware(SessionMiddleware,secret_key="someSecretKey")
+app.add_middleware(SessionMiddleware, secret_key="someSecretKey")
 
 
-@app.get("/", response_class=RedirectResponse)
-async def home_page(request: Request):
-    # redirecting the user - since this only just creates the variables that is used during the session
-    request.session["language"] = "EN"
-    request.session["debug_mode"] = "OFF"
-    return "/analyzer"
+def check_language(request):
+    if request.session.get("language") is None:
+        request.session["language"] = "EN"
+        request.session["title"] = "OpenStreetMap Relation Continuity Analyzer and Fixer"
 
 
-@app.get("/analyzer", response_class=HTMLResponse)
+def check_debug(request):
+    if request.session.get("debug_mode") is None:
+        request.session["debug_mode"] = "OFF"
+
+
+@app.get("/", response_class=HTMLResponse)
 async def analyzer_page(request: Request):
-    context = {"request": request, "title": "OSMRCA", "language": request.session["language"],
+    check_language(request)
+    check_debug(request)
+    context = {"request": request, "title": request.session["title"], "language": request.session["language"],
                "css_path": "style.css", "debug_mode": request.session["debug_mode"]}
     return templates.TemplateResponse("main.html", context=context)
 
@@ -45,13 +50,17 @@ async def analyzer_page(request: Request):
 @app.get("/language", response_class=RedirectResponse)
 async def change_language(request: Request):
     request.session["language"] = "EN" if request.session["language"] == "HU" else "HU"
-    return "/analyzer"
+    if request.session["language"] == "EN":
+        request.session["title"] = "OpenStreetMap Relation Continuity Analyzer and Fixer"
+    else:
+        request.session["title"] = "OpenStreetMap Kapcsolat Folytonosság Elemző és Javító"
+    return "/"
 
 
 @app.get("/debug_mode", response_class=RedirectResponse)
 async def debug_mode_switch(request: Request):
     request.session["debug_mode"] = "OFF" if request.session["debug_mode"] == "ON" else "ON"
-    return "/analyzer"
+    return "/"
 
 
 if __name__ == "__main__":
