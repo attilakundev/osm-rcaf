@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
-project_path = Path(__file__).parent.absolute()
+project_path = Path(__file__).resolve().parent
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/templates")
