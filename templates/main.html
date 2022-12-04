@@ -8,13 +8,13 @@
     {% else %}
     <p>Ha szeretnél egy OSM-ben szereplő kapcsolatot megkapni:</p>
     {% endif %}
-    <form method="post">
+    <form method="post" action="/analyze">
         {% if language == "EN" %}
-        <input type="number" name="relationID" placeholder="Please enter the ID.">
-        <input type="submit" name="relOnOSM" value="Analyze" formaction="/analyze">
+        <input type="number" name="relation_id" placeholder="Please enter the ID.">
+        <input type="submit" value="Analyze">
         {% else %}
-        <input type="number" name="relationID" placeholder="Írd ide az azonosítót.">
-        <input type="submit" name="relOnOSM" value="Elemzés" formaction="/analyze">
+        <input type="number" name="relation_id" placeholder="Írd ide az azonosítót.">
+        <input type="submit" value="Elemzés">
         {% endif %}
     </form>
   </div>
