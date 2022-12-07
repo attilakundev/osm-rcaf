@@ -22,7 +22,7 @@ class OSMDataParser:
 
     # create unit test
     # pull way and relation info to seperate arrays (so they can be copied back)
-    def gather_way_and_relation_info(self, data, request):
+    def gather_way_and_relation_info(self, data):
         relation_info = {"ways": [], "ways_to_search": []}
         for osmkey, osmvalue in data["osm"].items():
             if osmkey == "way":
@@ -40,8 +40,8 @@ class OSMDataParser:
     def __gather_way_and_relation_info__(self, relation, relation_info):
         for key, value in relation:
             if key == "member":
-                for attributes in value:
-                    relation_info["ways_to_search"].append(attributes)
+                for member in value:
+                    relation_info["ways_to_search"].append(member)
             elif key == "tag":
                 for key_value_pair in value:
                     if key_value_pair["@k"] == "route":
@@ -52,15 +52,14 @@ class OSMDataParser:
                             "US" in key_value_pair["@v"] or "CA" in key_value_pair["@v"] or \
                             "AU" in key_value_pair["@v"] or "NZ" in key_value_pair["@v"]
                     if key_value_pair["@k"] == "type":
-                        relation_info["network"] = key_value_pair["@v"]
+                        relation_info["type"] = key_value_pair["@v"]
                     if key_value_pair["@k"] == "ref":
-                        relation_info["network"] = key_value_pair["@v"]
+                        relation_info["ref"] = key_value_pair["@v"]
         # copy the ways to a seperate array so the final result can be copied back there.
         return relation_info
 
     #create unit test
     def append_ways_to_search_with_useful_info(self, relation_info):
-        print(len(relation_info["ways"]))
         for i in range(0, len(relation_info["ways_to_search"])):
             for j in range(0, len(relation_info["ways"])):
                 if relation_info["ways"][j]["@id"] == relation_info["ways_to_search"][i]["@ref"]:
@@ -68,7 +67,7 @@ class OSMDataParser:
                         relation_info["ways"][i])
                     relation_info["ways_to_search"][j]["nd"] = relation_info["ways"][i]["nd"]
                     relation_info["ways_to_search"][j]["tag"] = relation_info["ways"][i]["tag"]
-
+        return relation_info
     def __copy_attributes__(self, attributes):
         attributes = {key: value for key, value in attributes.items() if "@" in key}
         return attributes
