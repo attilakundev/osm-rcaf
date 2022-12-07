@@ -4,6 +4,7 @@ class Analyzer:
     type = ""  # eg. boundary
     ways = []
     ways_to_search = []
-
     def __init__(self):
+        pass
+    def relation_checking(self):
         pass
