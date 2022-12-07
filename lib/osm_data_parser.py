@@ -15,6 +15,8 @@ class OSMDataParser:
         dictionary = xmltodict.parse(relation_file)
         return dictionary
 
+    def parse_XML(self, relation_file):
+        return xmltodict.parse(relation_file)
     # technically this is unnecessary - will decide to get rid of it
     def parse_dict_back_to_API(self, dictionary):
         xml = xmltodict.unparse(dictionary)

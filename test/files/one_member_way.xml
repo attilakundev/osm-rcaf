@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-101768' action='modify' visible='true' lat='38.9227584215' lon='-81.21145252705' />
+  <node id='-101769' action='modify' visible='true' lat='38.92212404922' lon='-81.1961746645' />
+  <way id='-101789' action='modify' visible='true'>
+    <nd ref='-101768' />
+    <nd ref='-101769' />
+  </way>
+  <relation id='-99775' action='modify' visible='true'>
+    <member type='way' ref='-101789' role='outer' />
+    <tag k='asd' v='dfgfdg' />
+  </relation>
+</osm>

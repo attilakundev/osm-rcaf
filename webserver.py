@@ -5,7 +5,7 @@ import uvicorn
 import logging
 import starlette.status as status
 
-from fastapi import FastAPI, Request, Form, File
+from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -60,22 +60,19 @@ async def analyzer_page(request: Request):
     return templates.TemplateResponse("main.html", context=context)
 
 
-@app.post("/analyze", response_class=RedirectResponse)
+@app.post("/analyze")
 async def analyze_url(request: Request, relation_id: str = Form(...)):
-    # here comes the method which analyzes things
-    request.session["loaded_relation"] = OSMDataParser.retrieve_XML_from_API(relation_id)
-    request.session["errors"], relation_length = analyzer.analyze(request.session["loaded_relation"])
-    print("működik")
+    #request.session["loaded_relation"] = OSMXMLParser.retrieve_XML_from_API(relation_id)
+    #request.session["errors"], relation_length = analyzer.relation_checking(request.session["loaded_relation"])
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 
-@app.post("/analyze_file", response_class=RedirectResponse)
-async def analyze_file(request: Request, relation):
-    # here comes the method which analyzes things
-    # request.session["loaded_relation"] = osm_xml_parser.parse_xml_from_file(file)
+@app.post("/analyze_file")
+async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
+    xml_content = await relation_file.read()
+    #request.session["loaded_relation"] = OSMXMLParser.parse_XML(xml_content)
     # request.session["errors"] = analyzer.analyze(request.session["loaded_relation"])
-    print("működik")
-    return "/"
+    return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 
 @app.get("/language", response_class=RedirectResponse)
