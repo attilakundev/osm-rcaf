@@ -92,4 +92,4 @@ async def debug_mode_switch(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=80, log_level="info")
+    uvicorn.run(app, port=5000, log_level="info")

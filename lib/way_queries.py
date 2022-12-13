@@ -81,8 +81,21 @@ def get_ref_of_the_route(array):
     return array["ref"]
 
 
+# CREATE UNIT TEST
+def get_relation_type(array):
+    return array["type"]
+
+
+def get_way_ref(array):
+    return array["@ref"]
+
+
 def get_id_of_the_relation_members(array):
     return [member["@ref"] for member in array]
+
+
+def get_the_refs_of_ways_in_the_relation(array):
+    return [member["@ref"] for member in array if member["@type"] == "way"]
 
 
 # input: nodes of the roundabout and the node sought that we want to search its connection.
@@ -98,3 +111,7 @@ def check_connectivity(first_node_way1, last_node_way1, first_node_way2, last_no
     return (first_node_way1 == last_node_way2 or first_node_way2 == last_node_way1 or
             first_node_way1 == first_node_way2 or last_node_way1 == last_node_way2 or
             first_node_way1 == last_node_way1 or first_node_way2 == last_node_way2)
+
+
+def check_if_directional(way_role):
+    return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"

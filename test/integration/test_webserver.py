@@ -1,10 +1,8 @@
 import sys
 from pathlib import Path
-
 import pytest
-from fastapi import UploadFile
 
-project_path = Path(__file__).parent.parent.absolute()
+project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 
@@ -37,7 +35,3 @@ def test_analyze_file():
         files = {"relation_file": file}
         response = client.post("/analyze_file", files=files)
         assert response.status_code == 200  # because we redirect the user so it should be correct
-
-
-if __name__ == '__main__':
-    pytest.main([f"{project_path}/test/test_integration.py"])

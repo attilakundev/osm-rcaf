@@ -16,4 +16,5 @@ If it corrected the relation well, hurray, you can upload it into OSM.
 * jinja2 `pip install jinja2`
 * pytest `pip install -U pytest`
 * python-multipart `pip install python-multipart`
+* xmltodict `pip install xmltodict`
 

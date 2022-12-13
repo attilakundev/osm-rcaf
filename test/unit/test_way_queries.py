@@ -1,11 +1,13 @@
+#!/usr/bin/python3
 import pytest
 import sys
-import src.lib.way_queries as way_queries
+
 from pathlib import Path
 
-project_path = Path(__file__).parent.parent.absolute()
+project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
+import way_queries as way_queries
 
 relation = {
     "ways": [
@@ -88,9 +90,25 @@ relation = {
                     "@v": "roundabout"
                 },
             ]
+        },
+        {
+            "@ref": "3",
+            "@role": "",
+            "@type": "node",
+            "attributes": {
+                "@id": "3"
+            },
+            "tag": [
+                {
+                    "@k": "highway",
+                    "@v": "primary"
+                }
+            ]
         }
     ],
-    "ref": 710
+    "ref": 710,
+    "type": "route",
+    "route": "road"
 }
 
 
@@ -116,6 +134,10 @@ def test_end_node():
     last_node = way_queries.get_end_node(relation["ways"][0])
     # Assert
     assert last_node == 3
+
+
+def tests_get_way_ref():
+    assert way_queries.get_way_ref(relation["ways"][2]) == "3"
 
 
 def test_is_roundabout():
@@ -170,7 +192,7 @@ def test_get_id_of_the_relation_members():
     # Act
     refs = way_queries.get_id_of_the_relation_members(relation["ways"])
     # Assert
-    assert refs == ['1', '2']
+    assert refs == ['1', '2', '3']
 
 
 def test_put_ref_from_relation_to_highway_way():
@@ -189,18 +211,26 @@ def test_put_ref_from_relation_to_highway_way():
 
 
 def test_roundabout_checker():
+    # Arrange
     nodes_of_previous_way = way_queries.get_nodes(relation["ways"][0])
     nodes_of_roundabout = way_queries.get_nodes(relation["ways"][1])
+    # Act & Assert
     assert way_queries.roundabout_checker(nodes_of_roundabout, nodes_of_previous_way)
 
 
 def test_check_connectivity():
+    # Arrange
     first_way_previous = way_queries.get_start_node(relation["ways"][0])
     last_way_previous = way_queries.get_end_node(relation["ways"][0])
     first_way_current = way_queries.get_start_node(relation["ways"][1])
     last_way_current = way_queries.get_end_node(relation["ways"][1])
+    # Act & Assert
     assert way_queries.check_connectivity(first_way_previous, last_way_previous, first_way_current, last_way_current)
 
 
-if __name__ == '__main__':
-    pytest.main([f"f{project_path}/test/test_way.py"])
+def test_get_relation_type():
+    assert way_queries.get_relation_type(relation) == "route"
+
+
+def test_get_the_refs_of_ways_in_the_relation():
+    assert way_queries.get_the_refs_of_ways_in_the_relation(relation["ways"]) == ['1', '2']
