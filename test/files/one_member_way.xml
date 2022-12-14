@@ -8,6 +8,6 @@
   </way>
   <relation id='-99775' action='modify' visible='true'>
     <member type='way' ref='-101789' role='outer' />
-    <tag k='asd' v='dfgfdg' />
+    <tag k='ref' v='999' />
   </relation>
 </osm>
