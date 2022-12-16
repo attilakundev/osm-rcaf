@@ -15,6 +15,7 @@ class OSMDataParser:
 
     # pull way and relation info to separate arrays (so they can be copied back)
     def gather_way_and_relation_info(self, data):
+        #ways_to_search is they way the ways are ordered in the relation.
         relation_info: dict = {"nodes": [], "ways": [], "ways_to_search": []}
         for osmkey, osmvalue in data["osm"].items():
             if osmkey == "node":
