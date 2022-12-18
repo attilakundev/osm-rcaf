@@ -30,10 +30,10 @@ def test_check_rails_if_the_ways_are_connected():
     first_node_current = way_queries.get_start_node(ways_to_search[1])
     last_node_current = way_queries.get_end_node(ways_to_search[1])
     is_error = analyzer.check_rails_if_the_ways_are_not_connected(first_node_previous=first_node_previous,
-                                                                             last_node_previous=last_node_previous,
-                                                                             first_node_current=first_node_current,
-                                                                             last_node_current=last_node_current)
-    assert is_error == False
+                                                                  last_node_previous=last_node_previous,
+                                                                  first_node_current=first_node_current,
+                                                                  last_node_current=last_node_current)
+    assert is_error is False
 
 
 def test_check_rails_if_the_ways_are_not_connected():
@@ -44,16 +44,17 @@ def test_check_rails_if_the_ways_are_not_connected():
     first_node_current = way_queries.get_start_node(ways_to_search[2])
     last_node_current = way_queries.get_end_node(ways_to_search[2])
     is_error = analyzer.check_rails_if_the_ways_are_not_connected(first_node_previous=first_node_previous,
-                                                                         last_node_previous=last_node_previous,
-                                                                         first_node_current=first_node_current,
-                                                                         last_node_current=last_node_current)
-    assert is_error == True
+                                                                  last_node_previous=last_node_previous,
+                                                                  first_node_current=first_node_current,
+                                                                  last_node_current=last_node_current)
+    assert is_error is True
 
 
 def test_railway_checking():
     # Arrange - it's the relation_info_appended relation_info_result_appended
+    error_information = []
     error_information, correct_ways_count = analyzer.railway_checking(
-        analyzer_dicts.relation_info_railway_result_appended)
+        analyzer_dicts.relation_info_railway_result_appended, error_information)
     assert len(error_information) == 1
     assert correct_ways_count == 2
 

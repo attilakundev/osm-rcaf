@@ -13,12 +13,13 @@ from error_hwy import ErrorHighway, ErrorMultipolygon
 def test_previous_curr_hwy():
     prev_curr_hwy = PreviousCurrentHighway(
         currently_checked_ref="33",
-        previous_role="forward")
+        previous_role="forward", previous_roundabout=True)
     error_hwy = ErrorHighway(prev_curr=prev_curr_hwy, error_type="asdf")
 
     assert error_hwy.prev_curr.currently_checked_ref == "33"
     assert error_hwy.prev_curr.previous_role == "forward"
     assert error_hwy.prev_curr.first_node_previous == ""
+    assert error_hwy.prev_curr.previous_roundabout == True
     assert error_hwy.error_type == "asdf"
 
 

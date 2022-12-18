@@ -12,13 +12,16 @@ class PreviousCurrentHighway:
     last_node_current: str = ""
 
     previous_role: str = ""
-    previous_roundabout: str = ""
-    previous_oneway: str = ""
+    previous_roundabout: bool = ""
+    previous_oneway: bool = ""
     previous_ref: str = ""
+    previous_highway: str = ""
+
     current_role: str = ""
-    current_roundabout: str = ""
-    current_oneway: str = ""
+    current_roundabout: bool = ""
+    current_oneway: bool = ""
     current_ref: str = ""
+    current_highway: str = ""
 
 
 @dataclass

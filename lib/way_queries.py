@@ -11,15 +11,15 @@ def get_end_node(array):
 
 
 def is_roundabout(array):
-    for value in array["tag"]:
-        if value["@k"] == "junction" and value["@v"] == "roundabout":
+    for tag in array["tag"]:
+        if tag["@k"] == "junction" and tag["@v"] == "roundabout":
             return True
     return False
 
 
 def is_oneway(array):
-    for value in array["tag"]:
-        if value["@k"] == "oneway" and value["@v"] == "yes":
+    for tag in array["tag"]:
+        if tag["@k"] == "oneway" and tag["@v"] == "yes":
             return True
     return False
 
