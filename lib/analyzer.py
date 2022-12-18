@@ -11,12 +11,12 @@ class Analyzer:
         relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
         # so it'll take whatever relation it is
         if way_queries.get_relation_type(relation_info) != "public_transport":
-            self.role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
+            role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
             if "route" in relation_info and (
                     relation_info["route"] == "railway" or relation_info.get["route"] == "train"):
                 return self.railway_checking(relation_info, error_information)
             elif "route" in relation_info:
-                return self.highway_checking(relation_info, error_information)
+                return self.highway_checking(relation_info, error_information, role_of_first_way)
             else:
                 return self.multipolygon_checking(relation_info)
         return "OutOfScope"
@@ -44,7 +44,8 @@ class Analyzer:
             last_node_previous = way_queries.get_end_node(elem_val)
             previous_ref = way_queries.get_way_ref(elem_val)
             correct_ways_count = len(relation_info["ways_to_search"]) - len(error_information)
-        return error_information, correct_ways_count  # the number of errors could be calculated from len(error_information)
+        return error_information, correct_ways_count  # the number of errors could be calculated
+        # from len(error_information)
 
     def check_rails_if_the_ways_are_not_connected(self, first_node_previous, last_node_previous,
                                                   first_node_current, last_node_current):
@@ -54,7 +55,7 @@ class Analyzer:
         return False
 
     # good for highway=* tags (primary, secondary, etc. and even trails and cycle routes)
-    def highway_checking(self, relation_info, error_information):
+    def highway_checking(self, relation_info, error_information, role_of_first_way):
         """Highway checking. This is where the gaps for a highway is checked. For unit tests, this should be only
         used if a complete relation is about to be tested."""
         currently_checked_ref = way_queries.get_ref_of_the_route(relation_info)
@@ -62,7 +63,7 @@ class Analyzer:
         index_of_current_way = count_of_forward_ways_in_the_same_series = 0
         motorway_split_way = previous_oneway = previous_roundabout = has_directional_roles = is_mutcd_country = False
         last_forward_way_before_backward_direction = current_nodes = []
-        first_role_previous = last_node_previous = previous_role = previous_ref = previous_highway = role_of_first_way \
+        first_role_previous = last_node_previous = previous_role = previous_ref = previous_highway \
             = first_node_of_first_forward_way = last_node_of_first_forward_way = ""
         # (separated highway) connecting to a point
         for elem_val in relation_info["ways_to_search"]:
@@ -130,7 +131,7 @@ class Analyzer:
                 index_of_current_way, first_role_previous,
                 last_node_previous, first_node_current, last_node_current, previous_role, current_role, previous_oneway,
                 previous_roundabout, current_oneway, is_mutcd_country, role_of_first_way, has_directional_roles,
-                error_information,previous_current)
+                error_information, previous_current)
 
             index_of_current_way += 1
         pass
@@ -234,8 +235,8 @@ class Analyzer:
     def check_if_mutcd_country_and_directional(self, has_directional_roles, is_mutcd_country, role_of_first_way,
                                                previous_role, error_information):
         if is_mutcd_country and (
-                way_queries.check_if_directional(role_of_first_way) or way_queries.check_if_directional(
-            previous_role)):
+                way_queries.check_if_directional(role_of_first_way)
+                or way_queries.check_if_directional(previous_role)):
             # we'll notify the user at the end that this relation can be reorganized by splitting it into
             # # two halves. eg: west-east, north-south (this is how they go in the US) - we don't know where
             # the relation starts
@@ -304,12 +305,12 @@ class Analyzer:
         F = Forward O = Oneway N = Not oneway
         """
         if index_of_current_way > 2 and (
-                previous_role == "forward" or (is_mutcd_country and way_queries.check_if_directional(previous_role)
-        ) and not previous_oneway and ways_to_search[index_of_current_way - 2][
-                    "@role"] == "" and not way_queries.is_oneway(
-            ways_to_search[index_of_current_way - 2]) and way_queries.get_role(
-            ways_to_search[index_of_current_way - 3]) == "" and not way_queries.is_oneway(
-            ways_to_search[index_of_current_way - 3])):
+                previous_role == "forward" or (is_mutcd_country and way_queries.check_if_directional(previous_role))
+                and not previous_oneway and ways_to_search[index_of_current_way - 2]["@role"] == ""
+                and not way_queries.is_oneway(
+                ways_to_search[index_of_current_way - 2]) and way_queries.get_role(
+                ways_to_search[index_of_current_way - 3]) == "" and not way_queries.is_oneway(
+                ways_to_search[index_of_current_way - 3])):
             return self.check_if_mutcd_country_and_directional(has_directional_roles,
                                                                is_mutcd_country, role_of_first_way, previous_role,
                                                                error_information)
