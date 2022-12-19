@@ -40,7 +40,9 @@ def modify_role(array, role):
 
 
 def get_role(array):
-    return array["@role"]
+    if "@role" in array:
+        return array["@role"]
+    return ""
 
 
 # in case we are dealing with route=road (or cycling etc.)
@@ -78,16 +80,20 @@ def put_ref_from_relation_to_highway_way(array):  # this requires enumerate when
 
 
 def get_ref_of_the_route(array):
-    return array["ref"]
+    if "ref" in array:
+        return array["ref"]
+    return ""
 
-
-# CREATE UNIT TEST
 def get_relation_type(array):
-    return array["type"]
+    if "type" in array:
+        return array["type"]
+    return ""
 
 
 def get_way_ref(array):
-    return array["@ref"]
+    if "@ref" in array:
+        return array["@ref"]
+    return ""
 
 
 def get_id_of_the_relation_members(array):
@@ -115,3 +121,7 @@ def check_connectivity(first_node_way1, last_node_way1, first_node_way2, last_no
 
 def check_if_directional(way_role):
     return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"
+def get_network(array):
+    if "network" in array:
+        return array["network"]
+    return ""

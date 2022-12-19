@@ -106,6 +106,7 @@ relation = {
             ]
         }
     ],
+    "network":"HU:national",
     "ref": 710,
     "type": "route",
     "route": "road"
@@ -234,3 +235,6 @@ def test_get_relation_type():
 
 def test_get_the_refs_of_ways_in_the_relation():
     assert way_queries.get_the_refs_of_ways_in_the_relation(relation["ways"]) == ['1', '2']
+
+def test_get_network():
+    assert way_queries.get_network(relation) == "HU:national"
