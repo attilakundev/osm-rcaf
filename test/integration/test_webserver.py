@@ -5,7 +5,7 @@ import pytest
 project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
-
+sys.path.append(f"{project_path}/lib/model")
 from fastapi.testclient import TestClient
 from webserver import app
 

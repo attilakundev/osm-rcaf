@@ -65,10 +65,10 @@ result_dict_multi_ways_rail = {
                 '@k': 'type',
                 '@v': 'route'
             },
-            {
-                '@k': 'route',
-                '@v': 'railway'
-            }
+                {
+                    '@k': 'route',
+                    '@v': 'railway'
+                }
             ]
         }
     }
@@ -94,12 +94,12 @@ relation_info_railway_result_appended = {
     ],
     'ways': [
         {
-        '@id': '-1',
-        'nd': [
-            {'@ref': '-1'},
-            {'@ref': '-2'}
-        ]
-    },
+            '@id': '-1',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ]
+        },
         {
             '@id': '-2',
             'nd': [
@@ -156,4 +156,79 @@ relation_info_railway_result_appended = {
     'ref': '999',
     'type': 'route',
     'route': 'railway'
+}
+
+relation_info_highway_to_test_backward_role = {
+    'ways_to_search': [
+        {
+            '@role': 'backward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ]
+        },
+    ],
+}
+
+relation_info_highway_to_test_if_roundabout = {
+    'ways_to_search': [
+        {
+            '@role': '',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+            'tag': [
+                {"@k": "junction",
+                 "@v": "roundabout"}
+            ]
+        },
+        {
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ]
+        }
+    ],
+}
+
+relation_info_highway_forward = {
+    'ways_to_search': [
+        {
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ]
+        },
+        {
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ]
+        },
+        {
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-4'},
+                {'@ref': '-5'}
+            ]
+        },
+        {
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-5'},
+                {'@ref': '-6'}
+            ]
+        },
+    ],
 }

@@ -7,7 +7,7 @@ import xml
 
 import xmltodict
 
-project_path = Path(__file__).parents[2].absolute()
+project_path = Path(__file__).parents[3].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/model")
@@ -20,8 +20,6 @@ import previous_current
 
 analyzer = Analyzer()
 
-
-# TESTS FOR RAILWAY CHECKING
 def test_check_rails_if_the_ways_are_connected():
     # Arrange
     ways_to_search = analyzer_dicts.relation_info_railway_result_appended["ways_to_search"]
@@ -63,7 +61,3 @@ def test_system_test_for_railways():
     error_information, correct_ways_count = analyzer.relation_checking(analyzer_dicts.result_dict_multi_ways_rail)
     assert len(error_information) == 1
     assert correct_ways_count == 2
-
-# TESTS FOR HIGHWAY CHECKING
-
-# TESTS FOR MULTIPOLYGON CHECKING

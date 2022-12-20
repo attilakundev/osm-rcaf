@@ -11,16 +11,18 @@ def get_end_node(array):
 
 
 def is_roundabout(array):
-    for tag in array["tag"]:
-        if tag["@k"] == "junction" and tag["@v"] == "roundabout":
-            return True
+    if "tag" in array:
+        for tag in array["tag"]:
+            if tag["@k"] == "junction" and tag["@v"] == "roundabout":
+                return True
     return False
 
 
 def is_oneway(array):
-    for tag in array["tag"]:
-        if tag["@k"] == "oneway" and tag["@v"] == "yes":
-            return True
+    if "tag" in array:
+        for tag in array["tag"]:
+            if tag["@k"] == "oneway" and tag["@v"] == "yes":
+                return True
     return False
 
 
@@ -47,36 +49,40 @@ def get_role(array):
 
 # in case we are dealing with route=road (or cycling etc.)
 def get_highway(array):
-    for key_value_pair in array["tag"]:
-        if key_value_pair["@k"] == "highway":
-            return key_value_pair["@v"]
+    if "tag" in array:
+        for key_value_pair in array["tag"]:
+            if key_value_pair["@k"] == "highway":
+                return key_value_pair["@v"]
     return ""
 
 
 # in case we are dealing with route=railway
 def get_railway(array):
-    for key_value_pair in array["tag"]:
-        if key_value_pair["@k"] == "railway":
-            return key_value_pair["@v"]
+    if "tag" in array:
+        for key_value_pair in array["tag"]:
+            if key_value_pair["@k"] == "railway":
+                return key_value_pair["@v"]
     return ""
 
 
 def get_highway_ref(array):
-    for key_value_pair in array["tag"]:
-        if key_value_pair["@k"] == "ref":
-            return key_value_pair["@v"]
+    if "tag" in array:
+        for key_value_pair in array["tag"]:
+            if key_value_pair["@k"] == "ref":
+                return key_value_pair["@v"]
     return ""  # if empty, it means that the ref is not set, which is a problem. We need to put that from the way of the relation
 
 
 def put_ref_from_relation_to_highway_way(array):  # this requires enumerate when for looping
     ref = get_ref_of_the_route(array)
-    for index, way in enumerate(array["ways"]):
-        for key_value_pair in way["tag"]:
-            if key_value_pair["@k"] == "highway":
-                array["ways"][index]["tag"].append({
-                    "@k": "ref",
-                    "@v": ref
-                })
+    for index, element in enumerate(array["ways"]):
+        if element["@type"] == "way":
+            for key_value_pair in element["tag"]:
+                if key_value_pair["@k"] == "highway":
+                    array["ways"][index]["tag"].append({
+                        "@k": "ref",
+                        "@v": ref
+                    })
 
 
 def get_ref_of_the_route(array):

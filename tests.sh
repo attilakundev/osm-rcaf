@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-pytest test/unit/ test/unit/model/ test/integration/
+export FILES=`find test/ -type f -name "*.py" | grep -v "init"`
+pytest $files

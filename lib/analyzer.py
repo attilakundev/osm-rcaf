@@ -61,7 +61,7 @@ class Analyzer:
         currently_checked_ref = way_queries.get_ref_of_the_route(relation_info)
         network = way_queries.get_network(relation_info)
         pieces_of_roundabout = 1  # this will mark how many pieces does the roundabout consist of
-        index_of_current_way = count_of_forward_ways_in_the_same_series = 0
+        index_of_current_way = count_of_forward_roled_way_series = 0
         motorway_split_way = previous_oneway = previous_roundabout = has_directional_roles = is_mutcd_country = False
         last_forward_way_before_backward_direction = current_nodes = previous_nodes = []
         # last_forward_way_before_backward_direction:  when we have relation beginning with forward ways
@@ -96,17 +96,17 @@ class Analyzer:
             first_node_current, last_node_current = self.is_role_backward(first_node_current, last_node_current,
                                                                           current_role)
 
-            last_roundabout_nodes = self.is_way_roundabout(current_roundabout, current_role, elem_val)
+            last_roundabout_nodes = self.is_way_roundabout(current_roundabout, current_role, current_nodes)
 
-            first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_ways_in_the_same_series = \
+            first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
                 self.is_the_way_in_forward_way_series(
-                    index_of_current_way, previous_role, current_role, count_of_forward_ways_in_the_same_series,
-                    role_of_first_way, first_node_current, last_node_current,
+                    index_of_current_way, previous_role, current_role, count_of_forward_roled_way_series,
+                    first_node_current, last_node_current,
                     first_node_of_first_forward_way_in_the_series,
                     last_node_of_first_forward_way_in_the_series)
             # Checking for the gaps.
             has_directional_roles, error_information = self.check_if_there_is_gap_at_the_beginning(index_of_current_way,
-                                                                                                   count_of_forward_ways_in_the_same_series,
+                                                                                                   count_of_forward_roled_way_series,
                                                                                                    role_of_first_way,
                                                                                                    is_mutcd_country,
                                                                                                    previous_role,
@@ -125,7 +125,7 @@ class Analyzer:
                                                                                  current_roundabout, previous_current,
                                                                                  error_information,
                                                                                  pieces_of_roundabout,
-                                                                                 count_of_forward_ways_in_the_same_series,
+                                                                                 count_of_forward_roled_way_series,
                                                                                  last_node_previous,
                                                                                  last_node_current)
 
@@ -136,7 +136,7 @@ class Analyzer:
                 previous_oneway, previous_roundabout, current_roundabout, current_oneway, is_mutcd_country,
                 role_of_first_way, has_directional_roles, error_information, previous_current,
                 first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
-                motorway_split_way, count_of_forward_ways_in_the_same_series, current_highway, current_highway,
+                motorway_split_way, count_of_forward_roled_way_series, current_highway, current_highway,
                 currently_checked_ref, network, previous_ref, last_roundabout_nodes)
             first_role_previous = first_node_current
             last_node_previous = last_node_current
@@ -163,36 +163,37 @@ class Analyzer:
             return last_node_current, first_node_current
         return first_node_current, last_node_current
 
-    def is_way_roundabout(self, current_roundabout: bool, current_role: str, nodes: list):
+    def is_way_roundabout(self, current_roundabout: bool, current_role: str, current_nodes: list,
+                          last_roundabout_nodes: list):
         """Is the current way a roundabout? if yes, collect all its nodes' reference number
 
         **Returns**: last_roundabout_nodes
         """
         if current_role == "" and current_roundabout is True:
-            return way_queries.get_nodes(nodes)
+            return current_nodes
+        return last_roundabout_nodes  # we don't change its value.
 
     def is_the_way_in_forward_way_series(self, index_of_current_way: int, previous_role: str, current_role: str,
-                                         count_of_forward_ways_in_the_same_series: int,
-                                         role_of_first_way: str, first_node_current: str, last_node_current: str,
-                                         first_node_of_first_forward_way: str, last_node_of_first_forward_way: str):
+                                         count_of_forward_roled_way_series: int, first_node_current: str, last_node_current: str,
+                                         first_node_of_first_forward_way_in_the_series: str,
+                                         last_node_of_first_forward_way_in_the_series: str):
         """Is the current way going into a series of forward ways or
         does it start with a forward way?
 
-        If yes, mark its first node
-        and increase the number of the forward ways in the same series
+        If yes, save its first and last node
+        and increase the count of the forward ways
 
-        **Returns**: first_node_of_first_forward_way, last_node_of_first_forward_way, count_of_forward_ways_in_the_same_series
+        **Returns**: first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series
         """
-        if index_of_current_way > 0 and previous_role == "" and current_role == "forward" or \
-                (count_of_forward_ways_in_the_same_series == 0 and role_of_first_way == "forward"):
-            count_of_forward_ways_in_the_same_series += 1
-            return first_node_current, last_node_current, count_of_forward_ways_in_the_same_series
-        elif previous_role == "forward" and current_role == "forward":
-            count_of_forward_ways_in_the_same_series += 1
-        return first_node_of_first_forward_way, last_node_of_first_forward_way, count_of_forward_ways_in_the_same_series
+        if (index_of_current_way > 0 and previous_role == "" and current_role == "forward") or \
+                (index_of_current_way == 0 and current_role == "forward"):
+            first_node_of_first_forward_way_in_the_series = first_node_current
+            last_node_of_first_forward_way_in_the_series = last_node_current
+            count_of_forward_roled_way_series += 1
+        return first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series
 
     def check_if_there_is_gap_at_the_beginning(self, index_of_current_way: int,
-                                               count_of_forward_ways_in_the_same_series: int,
+                                               count_of_forward_roled_way_series: int,
                                                role_of_first_way: str, is_mutcd_country: bool, previous_role: str,
                                                current_role: str, first_node_previous: str, first_node_current: str,
                                                last_node_previous: str, last_node_current: str,
@@ -212,7 +213,7 @@ class Analyzer:
         since we know then there's a gap, it's checked a few if statements later)
         """
 
-        if (index_of_current_way > 0 and count_of_forward_ways_in_the_same_series == 1 and (
+        if (index_of_current_way > 0 and count_of_forward_roled_way_series == 1 and (
                 role_of_first_way == "forward"
                 or (is_mutcd_country and way_queries.check_if_directional(role_of_first_way))) and (
                 previous_role == "forward" or (is_mutcd_country and way_queries.check_if_directional(previous_role))
@@ -248,7 +249,7 @@ class Analyzer:
 
         """This is a helper function to determine that there's a gap at the beginning especially with ways that are
         supposed to be forward.
-        
+
         **Returns**:has_directional_roles, error_information"""
         if (last_forward_way_before_backward_direction[-1] == last_node_current and (
                 last_node_previous == last_node_current
@@ -266,11 +267,11 @@ class Analyzer:
     def check_roundabout_gaps(self, index_of_current_way: int, previous_roundabout: bool, current_roundabout: bool,
                               previous_current: PreviousCurrentHighway,
                               error_information: list, pieces_of_roundabout: int,
-                              count_of_forward_ways_in_the_same_series: int, last_node_previous: str,
+                              count_of_forward_roled_way_series: int, last_node_previous: str,
                               last_node_current: str):
         if index_of_current_way > 0 and not previous_roundabout and current_roundabout:
             pieces_of_roundabout = 1
-            if count_of_forward_ways_in_the_same_series == 1:
+            if count_of_forward_roled_way_series == 1:
                 error_information.append(
                     ErrorHighway(previous_current, "Only one forward way before closed roundabout"))
             if last_node_previous == last_node_current:
@@ -291,7 +292,7 @@ class Analyzer:
                                            error_information: list, previous_current: PreviousCurrentHighway,
                                            first_node_of_first_forward_way_in_the_series: str,
                                            last_node_of_first_forward_way_in_the_series: str, motorway_split_way: bool,
-                                           count_of_forward_ways_in_the_same_series: int,
+                                           count_of_forward_roled_way_series: int,
                                            last_forward_way_before_backward_direction: list, current_highway: str,
                                            currently_checked_ref: str, network: str, previous_ref: str,
                                            last_roundabout_nodes: list):
@@ -340,7 +341,7 @@ class Analyzer:
                 last_node_previous, first_node_current, last_node_current,
                 first_node_of_first_forward_way_in_the_series,
                 last_node_of_first_forward_way_in_the_series, role_of_first_way,
-                count_of_forward_ways_in_the_same_series, last_forward_way_before_backward_direction, current_highway,
+                count_of_forward_roled_way_series, last_forward_way_before_backward_direction, current_highway,
                 currently_checked_ref, network, motorway_split_way, error_information, previous_current, previous_ref,
                 last_roundabout_nodes, current_nodes)
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
@@ -423,7 +424,7 @@ class Analyzer:
                                                  first_node_of_first_forward_way_in_the_series: str,
                                                  last_node_of_first_forward_way_in_the_series: str,
                                                  role_of_first_way: str,
-                                                 count_of_forward_ways_in_the_same_series: int,
+                                                 count_of_forward_roled_way_series: int,
                                                  last_forward_way_before_backward_direction: list,
                                                  current_highway: str,
                                                  currently_checked_ref: str,
@@ -444,7 +445,7 @@ class Analyzer:
         # now we are getting gaps, but we have to first investigate if this is a case with a motorway / trunk road:
         elif role_of_first_way == "forward" or (
                 is_mutcd_country and way_queries.check_if_directional(
-            role_of_first_way)) and count_of_forward_ways_in_the_same_series == 1:
+            role_of_first_way)) and count_of_forward_roled_way_series == 1:
             last_forward_way_before_backward_direction.append(previous_ref)
             last_forward_way_before_backward_direction.append(last_node_previous)
             if current_highway == "motorway" or current_highway == "trunk" or (currently_checked_ref.startswith("M")
