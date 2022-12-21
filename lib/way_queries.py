@@ -90,6 +90,7 @@ def get_ref_of_the_route(array):
         return array["ref"]
     return ""
 
+
 def get_relation_type(array):
     if "type" in array:
         return array["type"]
@@ -127,7 +128,14 @@ def check_connectivity(first_node_way1, last_node_way1, first_node_way2, last_no
 
 def check_if_directional(way_role):
     return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"
+
+
 def get_network(array):
     if "network" in array:
         return array["network"]
     return ""
+
+
+def determine_if_country_has_MUTCD_or_similar(array):
+    network = get_network(array)
+    return True if ("US" or "CA" or "AU" or "NZ") in network else False

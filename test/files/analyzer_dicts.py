@@ -1,6 +1,5 @@
 result_dict_multi_ways_rail = {
     'osm': {
-        '@author': 'Attila Kun',
         'node': [
             {
                 '@id': '-1',
@@ -164,7 +163,9 @@ relation_info_highway_to_test_backward_role = {
             '@role': 'backward',
             'nd': [
                 {'@ref': '-1'},
-                {'@ref': '-2'}
+                {'@ref': '-2'},
+                {'@ref': '-3'},
+                {'@ref': '-4'}
             ]
         },
     ],
@@ -230,5 +231,87 @@ relation_info_highway_forward = {
                 {'@ref': '-6'}
             ]
         },
+    ],
+}
+
+relation_info_gap_in_first_forward_series = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-4'},
+                {'@ref': '-3'}
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-5'},
+                {'@ref': '-6'}
+            ]
+        }
+    ],
+}
+
+relation_info_no_gap_in_first_forward_series = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-4'},
+                {'@ref': '-3'}
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-5'}
+            ]
+        }
     ],
 }

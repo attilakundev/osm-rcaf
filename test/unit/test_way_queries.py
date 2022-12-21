@@ -139,3 +139,7 @@ def test_get_the_refs_of_ways_in_the_relation():
 
 def test_get_network():
     assert way_queries.get_network(way_queries_dicts.relation) == "HU:national"
+
+def test_determine_if_country_has_MUTCD_or_similar():
+    result = way_queries.determine_if_country_has_MUTCD_or_similar(way_queries_dicts.relation2)
+    assert result is True

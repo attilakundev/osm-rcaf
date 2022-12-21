@@ -106,3 +106,7 @@ relation = {
     "type": "route",
     "route": "road"
 }
+
+relation2 = {
+    "network": "US:WV:County"
+}
