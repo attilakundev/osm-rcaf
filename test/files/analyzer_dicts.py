@@ -285,6 +285,12 @@ relation_info_no_gap_in_first_forward_series = {
                 {'@ref': '-1'},
                 {'@ref': '-2'}
             ],
+            'tag': [
+                {
+                    "@k": "oneway",
+                    "@v": "yes"
+                }
+            ]
         },
         {
             '@type': 'way',
@@ -293,6 +299,12 @@ relation_info_no_gap_in_first_forward_series = {
             'nd': [
                 {'@ref': '-2'},
                 {'@ref': '-3'}
+            ],
+            'tag': [
+                {
+                    "@k": "oneway",
+                    "@v": "yes"
+                }
             ]
         },
         {
@@ -302,6 +314,12 @@ relation_info_no_gap_in_first_forward_series = {
             'nd': [
                 {'@ref': '-4'},
                 {'@ref': '-3'}
+            ],
+            'tag': [
+                {
+                    "@k": "oneway",
+                    "@v": "yes"
+                }
             ]
         },
         {
@@ -311,6 +329,259 @@ relation_info_no_gap_in_first_forward_series = {
             'nd': [
                 {'@ref': '-3'},
                 {'@ref': '-5'}
+            ]
+        }
+    ],
+}
+
+relation_info_roundabout_only_one_forward_roled = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': '',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'},
+                {'@ref': '-5'}
+            ],
+            'tag': [
+                {
+                    '@k': 'junction',
+                    '@v': 'roundabout'
+                }
+            ]
+        },
+    ],
+}
+
+relation_info_roundabout_previous_last_is_current_last = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'},
+                {'@ref': '-3'}
+            ],
+            'tag': [
+                {
+                    '@k': 'junction',
+                    '@v': 'roundabout'
+                }
+            ]
+        },
+    ],
+}
+
+relation_info_roundabout_two_roundabout_pieces = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-5'},
+                {'@ref': '-6'},
+                {'@ref': '-7'}
+            ],
+            'tag': [
+                {
+                    '@k': 'junction',
+                    '@v': 'roundabout'
+                }
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-5',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-7'},
+                {'@ref': '-8'},
+                {'@ref': '-9'}
+            ],
+            'tag': [
+                {
+                    '@k': 'junction',
+                    '@v': 'roundabout'
+                }
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-6',
+            '@role': '',
+            'nd': [
+                {'@ref': '-8'},
+                {'@ref': '-9'},
+                {'@ref': '-10'}
+            ],
+        },
+    ],
+}
+
+relation_info_continuous_series = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-5'},
+                {'@ref': '-6'},
+                {'@ref': '-7'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-5',
+            '@role': '',
+            'nd': [
+                {'@ref': '-7'},
+                {'@ref': '-8'},
+                {'@ref': '-9'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-6',
+            '@role': '',
+            'nd': [
+                {'@ref': '-9'},
+                {'@ref': '-10'},
+            ],
+        },
+    ],
+    "network": "HU:National",
+    "ref": "9999"
+}
+
+relation_info_NNFN_pattern = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-5'},
+                {'@ref': '-6'},
+                {'@ref': '-7'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-5',
+            '@role': '',
+            'nd': [
+                {'@ref': '-7'},
+                {'@ref': '-8'},
+                {'@ref': '-9'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-6',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-9'},
+                {'@ref': '-10'},
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-7',
+            '@role': '',
+            'nd': [
+                {'@ref': '-10'},
+                {'@ref': '-11'},
+            ],
+        },
+    ],
+    "network": "HU:National",
+    "ref": "9999"
+}
+
+relation_info_no_gap_in_first_forward_series_no_oneway = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-2'},
+                {'@ref': '-3'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': 'forward',
+            'nd': [
+                {'@ref': '-4'},
+                {'@ref': '-3'}
+            ],
+        },
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-5'}
+            ],
+            'tag': [
+                {
+                    "@k": "oneway",
+                    "@v": "yes"
+                }
             ]
         }
     ],
