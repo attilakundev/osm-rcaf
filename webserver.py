@@ -1,5 +1,10 @@
 import sys
 from pathlib import Path
+project_path = Path(__file__).resolve().parent.absolute()
+sys.path.append(f"{project_path}")
+sys.path.append(f"{project_path}/lib")
+sys.path.append(f"{project_path}/lib/model")
+sys.path.append(f"{project_path}/test/files")
 
 import uvicorn
 import logging
@@ -10,8 +15,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-from lib.osm_data_parser import OSMDataParser
-from lib.analyzer import Analyzer
+from osm_data_parser import OSMDataParser
+from analyzer import Analyzer
 from memory_profiler import memory_usage
 
 project_path = Path(__file__).resolve().parent

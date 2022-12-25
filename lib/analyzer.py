@@ -242,6 +242,8 @@ class Analyzer:
 
     def check_if_mutcd_country_and_directional(self, has_directional_roles, is_mutcd_country, role_of_first_way,
                                                role_of_second_way):
+
+        """MUTCD = Manual on Uniform Traffic Control Devices"""
         if is_mutcd_country and (
                 way_queries.check_if_directional(role_of_first_way)
                 or way_queries.check_if_directional(role_of_second_way)):
