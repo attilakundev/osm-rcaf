@@ -668,7 +668,6 @@ relation_info_no_gap_in_two_by_two_splitting_highway = {
     "ref": "9999"
 }
 
-
 relation_info_motorway = {
     # What you need to know about highways, that whenever one side ends, the other one starts parallelly from the starting point of the other.
     'ways_to_search': [
@@ -734,7 +733,7 @@ relation_info_motorway = {
             '@ref': '-4',
             '@role': 'forward',
             'nd': [
-                {'@ref': '-5'}, # see the numbering difference? this is the other side of the motorway.
+                {'@ref': '-5'},  # see the numbering difference? this is the other side of the motorway.
                 {'@ref': '-6'}
             ],
             'tag': [
@@ -836,7 +835,6 @@ relation_info_motorway_not_split = {
     "network": "HU:national",
     "ref": "M99"
 }
-
 
 relation_info_one_piece_roundabout_to_split_ways = {
     'ways_to_search': [
@@ -977,7 +975,6 @@ relation_info_one_piece_roundabout_to_split_ways = {
     "ref": "99"
 }
 
-
 relation_info_one_piece_roundabout_to_split_ways_gap = {
     'ways_to_search': [
         {
@@ -1110,6 +1107,91 @@ relation_info_one_piece_roundabout_to_split_ways_gap = {
                     '@k': 'oneway',
                     '@v': 'yes'
                 },
+            ]
+        },
+    ],
+    "network": "HU:national",
+    "ref": "99"
+}
+
+relation_info_one_piece_roundabout_gap = {
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': '',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+            'tag': [
+                {
+                    '@k': 'highway',
+                    '@v': 'motorway'
+                },
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-2',
+            '@role': '',
+            'nd': [
+                {'@ref': '-4'},
+                {'@ref': '-5'},
+                {'@ref': '-2'},
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ],
+            'tag': [
+                {
+                    '@k': 'junction',
+                    '@v': 'roundabout'
+                },
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-3',
+            '@role': '',
+            'nd': [
+                {'@ref': '-6'},
+                {'@ref': '-7'}
+            ],
+            'tag': [
+                {
+                    '@k': 'highway',
+                    '@v': 'motorway'
+                },
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-4',
+            '@role': '',
+            'nd': [
+                {'@ref': '-8'},
+                {'@ref': '-9'}
+            ],
+            'tag': [
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-5',
+            '@role': '',
+            'nd': [
+                {'@ref': '-9'},
+                {'@ref': '-10'}
+            ],
+            'tag': [
             ]
         },
     ],
