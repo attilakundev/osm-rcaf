@@ -53,11 +53,11 @@ def check_session_variables(request):
         request.session["errors"] = [] # will contain ErrorModel classes or similar to this
     if request.session.get("relationData") is None:
         request.session["relationData"] = {} #Dictionary, like: relation = 23099, number_of_ways = 1009 etc.
-
+    return request
 
 @app.get("/", response_class=HTMLResponse)
 async def analyzer_page(request: Request):
-    check_session_variables(request)
+    request = check_session_variables(request)
     context = {"request": request, "title": request.session["title"], "language": request.session["language"],
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "loaded_relation": request.session["loaded_relation"],
@@ -67,6 +67,7 @@ async def analyzer_page(request: Request):
 
 @app.post("/analyze")
 async def analyze_url(request: Request, relation_id: str = Form(...)):
+    request = check_session_variables(request)
     #request.session["loaded_relation"] = OSMXMLParser.retrieve_XML_from_API(relation_id)
     #request.session["errors"], relation_length = analyzer.relation_checking(request.session["loaded_relation"])
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
@@ -74,6 +75,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
 
 @app.post("/analyze_file")
 async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
+    request = check_session_variables(request)
     xml_content = await relation_file.read()
     #request.session["loaded_relation"] = OSMXMLParser.parse_XML(xml_content)
     # request.session["errors"] = analyzer.analyze(request.session["loaded_relation"])
@@ -82,7 +84,8 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
 
 @app.get("/language", response_class=RedirectResponse)
 async def change_language(request: Request):
-    request.session["language"] = "EN" if request.session["language"] == "HU" else "HU"
+    request = check_session_variables(request)
+    request.session["language"] = "EN" if request.session["language"] != "EN" else "HU"
     if request.session["language"] == "EN":
         request.session["title"] = "OpenStreetMap Relation Continuity Analyzer and Fixer"
     else:
@@ -92,6 +95,7 @@ async def change_language(request: Request):
 
 @app.get("/debug_mode", response_class=RedirectResponse)
 async def debug_mode_switch(request: Request):
+    request = check_session_variables(request)
     request.session["debug_mode"] = "OFF" if request.session["debug_mode"] == "ON" else "ON"
     return "/"
 

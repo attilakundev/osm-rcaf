@@ -9,10 +9,10 @@ sys.path.append(f"{project_path}/lib/model")
 from fastapi.testclient import TestClient
 from webserver import app
 
-
 def test_client():
     client = TestClient(app)
     response = client.get("/")
+    assert client is not None
     assert response.status_code == 200
 
 
@@ -35,3 +35,13 @@ def test_analyze_file():
         files = {"relation_file": file}
         response = client.post("/analyze_file", files=files)
         assert response.status_code == 200  # because we redirect the user so it should be correct
+
+def test_language_changer():
+    client = TestClient(app)
+    response = client.get("/language")
+    assert response.status_code == 200
+
+def test_debug_mode():
+    client = TestClient(app)
+    response = client.get("/debug_mode")
+    assert response.status_code == 200

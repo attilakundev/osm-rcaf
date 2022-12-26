@@ -15,14 +15,14 @@ class OSMDataParser:
 
     # pull way and relation info to separate arrays (so they can be copied back)
     def gather_way_and_relation_info(self, data):
-        #ways_to_search is they way the ways are ordered in the relation.
+        # ways_to_search is they way the ways are ordered in the relation.
         relation_info: dict = {"nodes": [], "ways": [], "ways_to_search": []}
         for osmkey, osmvalue in data["osm"].items():
             if osmkey == "node":
                 relation_info["nodes"] = list(map(lambda x: x, osmvalue))
             if osmkey == "way" and type(osmvalue) is list:
                 relation_info["ways"] = list(map(lambda x: x, osmvalue))
-            elif osmkey =="way" and type(osmvalue) is dict:
+            elif osmkey == "way" and type(osmvalue) is dict:
                 relation_info["ways"] = [osmvalue]
             if osmkey == "relation" and type(osmvalue) is list:
                 # we always go through the very first array, because we're NOT interested in the rest relations,
@@ -33,6 +33,7 @@ class OSMDataParser:
                 # then do this for just one relation
                 relation_info = self.__gather_relation_info__(osmvalue.items(), relation_info)
         return relation_info
+
     def __gather_relation_info__(self, relation, relation_info):
         for key, value in relation:
             if key == "member":
@@ -44,21 +45,17 @@ class OSMDataParser:
             elif key == "tag":
                 if type(value) is list:
                     for key_value_pair in value:
+                        relation_info[key_value_pair["@k"]] = key_value_pair["@v"]
                         if key_value_pair["@k"] == "network":
-                            relation_info["network"] = key_value_pair["@v"]
                             relation_info["isMUTCDcountry"] = \
                                 "US" in key_value_pair["@v"] or "CA" in key_value_pair["@v"] or \
                                 "AU" in key_value_pair["@v"] or "NZ" in key_value_pair["@v"]
-                        else:
-                            relation_info[key_value_pair["@k"]] = key_value_pair["@v"]
                 else:
+                    relation_info[value["@k"]] = value["@v"]
                     if value["@k"] == "network":
-                        relation_info["network"] = value["@v"]
                         relation_info["isMUTCDcountry"] = \
                             "US" in value["@v"] or "CA" in value["@v"] or \
                             "AU" in value["@v"] or "NZ" in value["@v"]
-                    else:
-                        relation_info[value["@k"]] = value["@v"]
         # copy the ways to a separate array so the final result can be copied back there.
         return relation_info
 
@@ -69,12 +66,18 @@ class OSMDataParser:
                     relation_info["ways_to_search"][j]["attributes"] = self.__copy_attributes__(
                         relation_info["ways"][i])
                     relation_info["ways_to_search"][j]["nd"] = relation_info["ways"][i]["nd"]
-                    if "tag" in relation_info["ways_to_search"][j]:
-                        relation_info["ways_to_search"][j]["tag"] = relation_info["ways"][i]["tag"]
+                    if "tag" in relation_info["ways"][j]:
+                        if type(relation_info["ways"][i]["tag"]) is dict:
+                            relation_info["ways_to_search"][j]["tag"] = []
+                            relation_info["ways_to_search"][j]["tag"].append(relation_info["ways"][i]["tag"])
+                        else:
+                            relation_info["ways_to_search"][j]["tag"] = relation_info["ways"][i]["tag"]
         return relation_info
+
     def __copy_attributes__(self, attributes):
         attributes = {key: value for key, value in attributes.items() if "@" in key}
         return attributes
+
     def collect_information_about_the_relation(self, data):
         return_value: dict = self.append_ways_to_search_with_useful_info(self.gather_way_and_relation_info(data))
         return return_value

@@ -77,6 +77,7 @@ def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
     role_of_the_fourth_way = way_queries.get_role(ways[3])
     first_node_fourth_way = way_queries.get_start_node(ways[3])
     last_node_fourth_way = way_queries.get_end_node(ways[3])
+
     first_node_of_first_forward_way_in_the_series = -1
     last_node_of_first_forward_way_in_the_series = -1
     count_of_forward_roled_way_series = 0  # initially
@@ -94,6 +95,7 @@ def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
     assert [first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
             count_of_forward_roled_way_series] == ['-1', '-2', 1]
 
+    count_of_forward_roled_way_series = 0  # initially
     first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
     count_of_forward_roled_way_series = analyzer.is_the_way_in_forward_way_series(
         index_of_current_way=3,
@@ -104,8 +106,32 @@ def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
         first_node_of_first_forward_way_in_the_series=first_node_of_first_forward_way_in_the_series,
         last_node_of_first_forward_way_in_the_series=last_node_of_first_forward_way_in_the_series)
     assert [first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
-            count_of_forward_roled_way_series] == ['-4', '-5', 2]
+            count_of_forward_roled_way_series] == ['-4', '-5', 1]
 
+def test_is_the_way_in_forward_way_series_two_forward_ways():
+    # Arrange
+    ways = analyzer_dicts.relation_info_highway_forward[
+        "ways_to_search"]
+    # 4-5th way(forward and forward):
+    role_of_the_4th_way = way_queries.get_role(ways[3])
+    role_of_the_5th_way = way_queries.get_role(ways[4])
+    first_node_fifth_way = way_queries.get_start_node(ways[4])
+    last_node_fifth_way = way_queries.get_end_node(ways[4])
+
+    first_node_of_first_forward_way_in_the_series = -4
+    last_node_of_first_forward_way_in_the_series = -5
+    count_of_forward_roled_way_series = 1  #the 4th way is forward.
+
+    first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
+    count_of_forward_roled_way_series = analyzer.is_the_way_in_forward_way_series(
+        index_of_current_way=3,
+        previous_role=role_of_the_4th_way, current_role=role_of_the_5th_way,
+        count_of_forward_roled_way_series=count_of_forward_roled_way_series,
+        first_node_current=first_node_fifth_way,
+        last_node_current=last_node_fifth_way,
+        first_node_of_first_forward_way_in_the_series=first_node_of_first_forward_way_in_the_series,
+        last_node_of_first_forward_way_in_the_series=last_node_of_first_forward_way_in_the_series)
+    assert count_of_forward_roled_way_series == 2
 
 def test_is_the_way_in_forward_way_series_not_forward():
     # chose an arbritrary existing array which has no forward ways.

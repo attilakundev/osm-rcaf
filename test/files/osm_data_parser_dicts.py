@@ -15,7 +15,11 @@ result_dict = {
             'nd': [
                 {'@ref': '-101768'},
                 {'@ref': '-101769'}
-            ]
+            ],
+            'tag':
+                {'@k': 'oneway',
+                 '@v': 'yes'},
+
         },
         'relation': {
             '@id': '-99775',
@@ -29,6 +33,58 @@ result_dict = {
                 '@v': '999'
             }
         }
+    }
+}
+
+result_dict_multi_relation = {
+    'osm': {
+        '@generator': 'JOSM',
+        '@version': '0.6',
+        'node': [
+            {
+                '@id': '-101768'
+            },
+            {
+                '@id': '-101769'
+            }
+        ],
+        'way': {
+            '@id': '-101789',
+            'nd': [
+                {'@ref': '-101768'},
+                {'@ref': '-101769'}
+            ],
+            'tag':
+                {'@k': 'oneway',
+                 '@v': 'yes'},
+
+        },
+        'relation': [
+            {
+                '@id': '-99775',
+                'member': {
+                    '@type': 'way',
+                    '@ref': '-101789',
+                    '@role': 'outer'
+                },
+                'tag': {
+                    '@k': 'ref',
+                    '@v': '999'
+                }
+            },
+            {
+                '@id': '-99776',
+                'member': {
+                    '@type': 'way',
+                    '@ref': '-101789',
+                    '@role': 'outer'
+                },
+                'tag': {
+                    '@k': 'ref',
+                    '@v': '999'
+                }
+            },
+        ]
     }
 }
 
@@ -95,7 +151,9 @@ relation_info_result = {
             'nd': [
                 {'@ref': '-101768'},
                 {'@ref': '-101769'}
-            ]
+            ],
+            'tag': {'@k': 'oneway',
+                    '@v': 'yes'},
         }
     ],
     'ways_to_search': [
@@ -163,6 +221,142 @@ relation_info_result_appended = {
             'nd': [
                 {'@ref': '-101768'},
                 {'@ref': '-101769'}
+            ],
+            'tag':
+                {'@k': 'oneway',
+                 '@v': 'yes'},
+        }
+    ],
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-101789',
+            '@role': 'outer',
+            'attributes': {
+                '@id': '-101789'
+            },
+            'nd': [
+                {'@ref': '-101768'},
+                {'@ref': '-101769'}
+            ],
+            'tag': [
+                {'@k': 'oneway',
+                 '@v': 'yes'},
+            ]
+        }
+    ],
+    'ref': '999'
+}
+
+result_dict_MUTCD = {
+    'osm': {
+        '@generator': 'JOSM',
+        '@version': '0.6',
+        'node': [
+            {
+                '@id': '-101768'
+            },
+            {
+                '@id': '-101769'
+            }
+        ],
+        'way': {
+            '@id': '-101789',
+            'nd': [
+                {'@ref': '-101768'},
+                {'@ref': '-101769'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
+            ]
+
+        },
+        'relation': {
+            '@id': '-99775',
+            'member': {
+                '@type': 'way',
+                '@ref': '-101789',
+                '@role': 'outer'
+            },
+            'tag': {
+                '@k': 'network',
+                '@v': 'US:WV'
+            }
+        }
+    }
+}
+
+relation_info_result_relation_multiple_tags = {
+    'nodes': [
+        {
+            '@id': '-101768'
+        },
+        {
+            '@id': '-101769'
+        }
+    ],
+    'ways': [
+        {
+            '@id': '-101789',
+            'nd': [
+                {'@ref': '-101768'},
+                {'@ref': '-101769'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
+            ]
+        }
+    ],
+    'ways_to_search': [
+        {
+            '@type': 'way',
+            '@ref': '-101789',
+            '@role': 'outer'
+        }
+    ],
+    "isMUTCDcountry": True,
+    "network": "US:WV"
+}
+
+relation_info_way_has_multiple_tags_result_appended = {
+    'nodes': [
+        {
+            '@id': '-101768'
+        },
+        {
+            '@id': '-101769'
+        }
+    ],
+    'ways': [
+        {
+            '@id': '-101789',
+            'nd': [
+                {'@ref': '-101768'},
+                {'@ref': '-101769'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
             ]
         }
     ],
@@ -177,8 +371,19 @@ relation_info_result_appended = {
             'nd': [
                 {'@ref': '-101768'},
                 {'@ref': '-101769'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
             ]
         }
     ],
-    'ref': '999'
+    "isMUTCDcountry": True,
+    "network": "US:WV"
 }

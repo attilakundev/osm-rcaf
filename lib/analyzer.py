@@ -15,6 +15,11 @@ import way_queries
 
 class Analyzer:
     def relation_checking(self, loaded_relation):
+        """
+
+        :param loaded_relation: xml file
+        :return: error_information, correct_ways_count
+        """
         data_parser = OSMDataParser()
         error_information = []
         relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
@@ -22,7 +27,7 @@ class Analyzer:
         if way_queries.get_relation_type(relation_info) != "public_transport":
             role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
             if "route" in relation_info and (
-                    relation_info["route"] == "railway" or relation_info.get["route"] == "train"):
+                    relation_info.get("route") == "railway" or relation_info.get("route") == "train"):
                 return self.railway_checking(relation_info, error_information)
             elif "route" in relation_info:
                 return self.highway_checking(relation_info, error_information, role_of_first_way)
@@ -73,7 +78,7 @@ class Analyzer:
         index_of_current_way = count_of_forward_roled_way_series = pieces_of_roundabout = 0
         motorway_split_way = previous_oneway = previous_roundabout = has_directional_roles = False
         is_mutcd_country = way_queries.determine_if_country_has_MUTCD_or_similar(relation_info)
-        last_forward_way_before_backward_direction = current_nodes = previous_nodes = error_information = []
+        last_forward_way_before_backward_direction = current_nodes = previous_nodes = error_information = last_roundabout_nodes = []
         # last_forward_way_before_backward_direction:  when we have relation beginning with forward ways
         # (separated highway) connencting to a point
         first_node_previous = last_node_previous = previous_role = previous_ref = previous_highway \
@@ -107,7 +112,8 @@ class Analyzer:
                 first_node_current, last_node_current,
                 current_role, current_nodes)
 
-            last_roundabout_nodes = self.is_way_roundabout(current_roundabout, current_role, current_nodes)
+            last_roundabout_nodes = self.is_way_roundabout(current_roundabout, current_role, current_nodes,
+                                                           last_roundabout_nodes)
 
             first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
                 self.is_the_way_in_forward_way_series(
@@ -205,6 +211,8 @@ class Analyzer:
                 (index_of_current_way == 0 and current_role == "forward"):
             first_node_of_first_forward_way_in_the_series = first_node_current
             last_node_of_first_forward_way_in_the_series = last_node_current
+            count_of_forward_roled_way_series += 1
+        elif previous_role == "forward" and current_role == "forward":
             count_of_forward_roled_way_series += 1
         return first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series
 
@@ -350,8 +358,9 @@ class Analyzer:
             good_roundabout = way_queries.roundabout_checker(current_nodes,
                                                              previous_nodes)
             if not good_roundabout:
-                error_information.append(ErrorHighway(previous_current, "Roundabout gap"))
-                return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
+                error_information.append(ErrorHighway(previous_current, "Roundabout gap")) #this exists - coverage increases
+            #this case is not covered yet when good_roundabout is true..
+            return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # Special case, when there are a bunch of oneway roads connecting in weird order in the relation (2x2 lane road
         # to 2x2 separate highway, opposite of the starting 2x2 separate to 2x2 merged)
         elif index_of_current_way > 0 and (previous_role == "forward"
@@ -394,8 +403,8 @@ class Analyzer:
                                                                           previous_oneway, is_mutcd_country,
                                                                           role_of_first_way, has_directional_roles,
                                                                           error_information, previous_current)
-        elif (current_role == "forward" and (
-                is_mutcd_country and way_queries.check_if_directional(current_role))) and current_oneway:
+        elif ((current_role == "forward" or (
+                is_mutcd_country and way_queries.check_if_directional(current_role)))) and current_oneway:
             # We know all oneways are forward
             has_directional_roles = self.check_if_mutcd_country_and_directional(has_directional_roles,
                                                                                 is_mutcd_country, current_role,

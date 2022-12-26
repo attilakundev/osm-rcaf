@@ -10,6 +10,7 @@ sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/test/files")
 import way_queries
 import way_queries_dicts
+import osm_data_parser_dicts
 
 
 def test_get_nodes():
@@ -18,7 +19,11 @@ def test_get_nodes():
     nodes = way_queries.get_nodes(way_queries_dicts.relation["ways"][0])
     # Assert
     assert nodes == [1, 2, 3]
-
+def test_get_role():
+    has_role = way_queries.get_role(way_queries_dicts.relation["ways"][0])
+    no_role = way_queries.get_role(way_queries_dicts.relation2)
+    assert has_role == "forward"
+    assert no_role == ""
 
 def test_start_node():
     # Arrange is done at the beginning
@@ -36,9 +41,22 @@ def test_end_node():
     assert last_node == 3
 
 
-def tests_get_way_ref():
+def test_get_way_ref():
     assert way_queries.get_way_ref(way_queries_dicts.relation["ways"][2]) == "3"
+    assert way_queries.get_way_ref(way_queries_dicts.relation["ways"]) == ""
 
+def test_get_highway():
+    assert way_queries.get_highway(way_queries_dicts.relation["ways"][0]) == "primary"
+    assert way_queries.get_highway(way_queries_dicts.relation["ways"][2]) == ""
+    assert way_queries.get_highway(way_queries_dicts.relation["ways"]) == ""
+def test_get_railway():
+    assert way_queries.get_railway(way_queries_dicts.relation["ways"][0]) == "rail"
+    assert way_queries.get_railway(way_queries_dicts.relation["ways"][3]) == ""
+    assert way_queries.get_railway(way_queries_dicts.relation["ways"]) == ""
+def test_get_highway_ref():
+    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"][0]) == ""
+    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"][1]) == "3"
+    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"]) == ""
 
 def test_is_roundabout():
     # Arrange is done at the beginning
@@ -60,6 +78,7 @@ def test_remove_tag():
     # Arrange is done at the beginning
     # Act
     way_queries.remove_tag(way_queries_dicts.relation["ways"][0], "oneway", "yes")
+    way_queries.remove_tag(osm_data_parser_dicts.relation_info_result_appended["ways"][0], "oneway", "yes")
     # Assert
     assert way_queries_dicts.relation["ways"][0]["tag"] == [{
         "@k": "highway",
@@ -72,12 +91,14 @@ def test_remove_tag():
             "@k": "junction",
             "@v": "roundabout"
         }]
+    assert osm_data_parser_dicts.relation_info_result_appended["ways"][0]["tag"] == []
 
 
 def test_modify_role():
     way_queries.modify_role(way_queries_dicts.relation["ways"][0], "backward")
     assert way_queries_dicts.relation["ways"][0]["@role"] == "backward"
-
+    way_queries.modify_role(way_queries_dicts.relation["ways"][0], "forward")
+    assert way_queries_dicts.relation["ways"][0]["@role"] == "forward"
 
 def test_get_ref_of_the_route():
     # Arrange is done at the beginning
@@ -131,6 +152,7 @@ def test_check_connectivity():
 
 def test_get_relation_type():
     assert way_queries.get_relation_type(way_queries_dicts.relation) == "route"
+    assert way_queries.get_relation_type(way_queries_dicts.relation2) == ""
 
 
 def test_get_the_refs_of_ways_in_the_relation():

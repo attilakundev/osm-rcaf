@@ -2,7 +2,7 @@ relation = {
     "ways": [
         {
             "@ref": "1",
-            "@role": "",
+            "@role": "forward",
             "@type": "way",
             "attributes": {
                 "@id": "1"
@@ -78,6 +78,10 @@ relation = {
                     "@k": "junction",
                     "@v": "roundabout"
                 },
+                {
+                    "@k": "ref",
+                    "@v": "3"
+                }
             ]
         },
         {
@@ -94,8 +98,8 @@ relation = {
             "@type": "way",
             "tag": [
                 {
-                    "@k": "highway",
-                    "@v": "primary"
+                    "@k": "ref",
+                    "@v": "3"
                 }
             ]
         },
