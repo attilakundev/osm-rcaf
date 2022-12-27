@@ -14,15 +14,19 @@ import way_queries
 
 
 class Analyzer:
+    def get_relation_info(self, loaded_relation):
+        data_parser = OSMDataParser()
+        relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
+        return relation_info
+
     def relation_checking(self, loaded_relation):
         """
 
         :param loaded_relation: xml file
         :return: error_information, correct_ways_count
         """
-        data_parser = OSMDataParser()
         error_information = []
-        relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
+        relation_info = self.get_relation_info(loaded_relation)
         # so it'll take whatever relation it is
         if way_queries.get_relation_type(relation_info) != "public_transport":
             role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
@@ -358,8 +362,9 @@ class Analyzer:
             good_roundabout = way_queries.roundabout_checker(current_nodes,
                                                              previous_nodes)
             if not good_roundabout:
-                error_information.append(ErrorHighway(previous_current, "Roundabout gap")) #this exists - coverage increases
-            #this case is not covered yet when good_roundabout is true..
+                error_information.append(
+                    ErrorHighway(previous_current, "Roundabout gap"))  # this exists - coverage increases
+            # this case is not covered yet when good_roundabout is true..
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # Special case, when there are a bunch of oneway roads connecting in weird order in the relation (2x2 lane road
         # to 2x2 separate highway, opposite of the starting 2x2 separate to 2x2 merged)

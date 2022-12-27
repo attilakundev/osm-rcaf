@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' generator='JOSM'>
-    <node id='-101768'/>
-    <node id='-101769'/>
-    <way id='-101789'>
-        <nd ref='-101768'/>
-        <nd ref='-101769'/>
+    <node id='-1'/>
+    <node id='-2'/>
+    <way id='-1'>
+        <nd ref='-1'/>
+        <nd ref='-2'/>
         <tag k="oneway" v="yes"/>
     </way>
     <relation id='-99775'>
-        <member type='way' ref='-101789' role='outer'/>
+        <member type='way' ref='-1' role='outer'/>
         <tag k='ref' v='999'/>
     </relation>
 </osm>

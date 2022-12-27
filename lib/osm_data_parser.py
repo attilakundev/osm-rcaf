@@ -63,16 +63,22 @@ class OSMDataParser:
         for i in range(0, len(relation_info["ways_to_search"])):
             for j in range(0, len(relation_info["ways"])):
                 if relation_info["ways"][j]["@id"] == relation_info["ways_to_search"][i]["@ref"]:
-                    relation_info["ways_to_search"][j]["attributes"] = self.__copy_attributes__(
-                        relation_info["ways"][i])
-                    relation_info["ways_to_search"][j]["nd"] = relation_info["ways"][i]["nd"]
+                    relation_info["ways_to_search"][i]["attributes"] = self.__copy_attributes__(
+                        relation_info["ways"][j])
+                    relation_info["ways_to_search"][i]["nd"] = relation_info["ways"][j]["nd"]
                     if "tag" in relation_info["ways"][j]:
-                        if type(relation_info["ways"][i]["tag"]) is dict:
-                            relation_info["ways_to_search"][j]["tag"] = []
-                            relation_info["ways_to_search"][j]["tag"].append(relation_info["ways"][i]["tag"])
+                        if type(relation_info["ways"][j]["tag"]) is dict:
+                            relation_info["ways_to_search"][i]["tag"] = []
+                            relation_info["ways_to_search"][i]["tag"].append(relation_info["ways"][j]["tag"])
                         else:
-                            relation_info["ways_to_search"][j]["tag"] = relation_info["ways"][i]["tag"]
+                            relation_info["ways_to_search"][i]["tag"] = relation_info["ways"][j]["tag"]
         return relation_info
+
+    def check_way_attributes_id(self, relation_info):
+        result = []
+        for i in range(0, len(relation_info["ways_to_search"])):
+            result.append(relation_info["ways_to_search"][i]["attributes"]["@id"])
+        return result
 
     def __copy_attributes__(self, attributes):
         attributes = {key: value for key, value in attributes.items() if "@" in key}

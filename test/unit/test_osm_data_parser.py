@@ -67,8 +67,9 @@ def test_append_ways_to_search_with_useful_info():
     assert result_where_relation_has_multiple_tags == osm_data_parser_dicts.relation_info_way_has_multiple_tags_result_appended
 
 
+
 def test_helper_copy_attributes():
     attributes = data_parser.__copy_attributes__(osm_data_parser_dicts.relation_info_result["ways"][0])
     assert attributes == {
-        '@id': '-101789'
+        '@id': '-1'
     }

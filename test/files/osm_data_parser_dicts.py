@@ -4,17 +4,17 @@ result_dict = {
         '@version': '0.6',
         'node': [
             {
-                '@id': '-101768'
+                '@id': '-1'
             },
             {
-                '@id': '-101769'
+                '@id': '-2'
             }
         ],
         'way': {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag':
                 {'@k': 'oneway',
@@ -25,7 +25,7 @@ result_dict = {
             '@id': '-99775',
             'member': {
                 '@type': 'way',
-                '@ref': '-101789',
+                '@ref': '-1',
                 '@role': 'outer'
             },
             'tag': {
@@ -42,17 +42,17 @@ result_dict_multi_relation = {
         '@version': '0.6',
         'node': [
             {
-                '@id': '-101768'
+                '@id': '-1'
             },
             {
-                '@id': '-101769'
+                '@id': '-2'
             }
         ],
         'way': {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag':
                 {'@k': 'oneway',
@@ -64,7 +64,7 @@ result_dict_multi_relation = {
                 '@id': '-99775',
                 'member': {
                     '@type': 'way',
-                    '@ref': '-101789',
+                    '@ref': '-1',
                     '@role': 'outer'
                 },
                 'tag': {
@@ -76,7 +76,7 @@ result_dict_multi_relation = {
                 '@id': '-99776',
                 'member': {
                     '@type': 'way',
-                    '@ref': '-101789',
+                    '@ref': '-1',
                     '@role': 'outer'
                 },
                 'tag': {
@@ -94,24 +94,24 @@ result_dict_multi_ways = {
         '@version': '0.6',
         'node': [
             {
-                '@id': '-101768',
+                '@id': '-1',
             },
             {
-                '@id': '-101769',
+                '@id': '-2',
             }
         ],
         'way': [{
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ]
         },
             {
-                '@id': '-101790',
+                '@id': '-2',
                 'nd': [
-                    {'@ref': '-101768'},
-                    {'@ref': '-101769'}
+                    {'@ref': '-1'},
+                    {'@ref': '-2'}
                 ]
             }
         ],
@@ -119,12 +119,12 @@ result_dict_multi_ways = {
             '@id': '-99775',
             'member': [{
                 '@type': 'way',
-                '@ref': '-101789',
+                '@ref': '-1',
                 '@role': 'outer'
             },
                 {
                     '@type': 'way',
-                    '@ref': '-101790',
+                    '@ref': '-2',
                     '@role': 'outer'
                 },
             ],
@@ -139,18 +139,18 @@ result_dict_multi_ways = {
 relation_info_result = {
     'nodes': [
         {
-            '@id': '-101768'
+            '@id': '-1'
         },
         {
-            '@id': '-101769'
+            '@id': '-2'
         }
     ],
     'ways': [
         {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag': {'@k': 'oneway',
                     '@v': 'yes'},
@@ -159,7 +159,7 @@ relation_info_result = {
     'ways_to_search': [
         {
             '@type': 'way',
-            '@ref': '-101789',
+            '@ref': '-1',
             '@role': 'outer'
         }
     ],
@@ -169,37 +169,37 @@ relation_info_result = {
 relation_info_result_multi_ways = {
     'nodes': [
         {
-            '@id': '-101768'
+            '@id': '-1'
         },
         {
-            '@id': '-101769'
+            '@id': '-2'
         }
     ],
     'ways': [
         {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ]
         },
         {
-            '@id': '-101790',
+            '@id': '-2',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ]
         }
     ],
     'ways_to_search': [
         {
             '@type': 'way',
-            '@ref': '-101789',
+            '@ref': '-1',
             '@role': 'outer'
         },
         {
             '@type': 'way',
-            '@ref': '-101790',
+            '@ref': '-2',
             '@role': 'outer'
         }
     ],
@@ -209,18 +209,18 @@ relation_info_result_multi_ways = {
 relation_info_result_appended = {
     'nodes': [
         {
-            '@id': '-101768'
+            '@id': '-1'
         },
         {
-            '@id': '-101769'
+            '@id': '-2'
         }
     ],
     'ways': [
         {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag':
                 {'@k': 'oneway',
@@ -230,14 +230,14 @@ relation_info_result_appended = {
     'ways_to_search': [
         {
             '@type': 'way',
-            '@ref': '-101789',
+            '@ref': '-1',
             '@role': 'outer',
             'attributes': {
-                '@id': '-101789'
+                '@id': '-1'
             },
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag': [
                 {'@k': 'oneway',
@@ -254,37 +254,67 @@ result_dict_MUTCD = {
         '@version': '0.6',
         'node': [
             {
-                '@id': '-101768'
+                '@id': '-1'
             },
             {
-                '@id': '-101769'
+                '@id': '-2'
+            },
+            {
+                '@id': '-3'
+            },
+            {
+                '@id': '-4'
             }
         ],
-        'way': {
-            '@id': '-101789',
-            'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
-            ],
-            'tag': [
-                {
-                    '@k': 'oneway',
-                    '@v': 'yes'
-                },
-                {
-                    '@k': 'ref',
-                    '@v': '3'
-                }
-            ]
-
-        },
+        'way': [
+            {
+                '@id': '-1',
+                'nd': [
+                    {'@ref': '-1'},
+                    {'@ref': '-2'}
+                ],
+                'tag': [
+                    {
+                        '@k': 'oneway',
+                        '@v': 'yes'
+                    },
+                    {
+                        '@k': 'ref',
+                        '@v': '3'
+                    }
+                ]
+            },
+            {
+                '@id': '-2',
+                'nd': [
+                    {'@ref': '-3'},
+                    {'@ref': '-4'}
+                ],
+                'tag': [
+                    {
+                        '@k': 'oneway',
+                        '@v': 'yes'
+                    },
+                    {
+                        '@k': 'ref',
+                        '@v': '3'
+                    }
+                ]
+            },
+        ],
         'relation': {
             '@id': '-99775',
-            'member': {
-                '@type': 'way',
-                '@ref': '-101789',
-                '@role': 'outer'
-            },
+            'member': [
+                {
+                    '@type': 'way',
+                    '@ref': '-2',
+                    '@role': 'outer'
+                },
+                {
+                    '@type': 'way',
+                    '@ref': '-1',
+                    '@role': 'outer'
+                }],
             'tag': {
                 '@k': 'network',
                 '@v': 'US:WV'
@@ -296,18 +326,24 @@ result_dict_MUTCD = {
 relation_info_result_relation_multiple_tags = {
     'nodes': [
         {
-            '@id': '-101768'
+            '@id': '-1'
         },
         {
-            '@id': '-101769'
+            '@id': '-2'
+        },
+        {
+            '@id': '-3'
+        },
+        {
+            '@id': '-4'
         }
     ],
     'ways': [
         {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag': [
                 {
@@ -319,12 +355,34 @@ relation_info_result_relation_multiple_tags = {
                     '@v': '3'
                 }
             ]
-        }
+        },
+        {
+            '@id': '-2',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
+            ]
+        },
     ],
     'ways_to_search': [
         {
             '@type': 'way',
-            '@ref': '-101789',
+            '@ref': '-2',
+            '@role': 'outer'
+        },
+        {
+            '@type': 'way',
+            '@ref': '-1',
             '@role': 'outer'
         }
     ],
@@ -335,18 +393,24 @@ relation_info_result_relation_multiple_tags = {
 relation_info_way_has_multiple_tags_result_appended = {
     'nodes': [
         {
-            '@id': '-101768'
+            '@id': '-1'
         },
         {
-            '@id': '-101769'
+            '@id': '-2'
+        },
+        {
+            '@id': '-3'
+        },
+        {
+            '@id': '-4'
         }
     ],
     'ways': [
         {
-            '@id': '-101789',
+            '@id': '-1',
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag': [
                 {
@@ -358,19 +422,58 @@ relation_info_way_has_multiple_tags_result_appended = {
                     '@v': '3'
                 }
             ]
-        }
+        },
+        {
+            '@id': '-2',
+            'nd': [
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
+            ]
+        },
     ],
     'ways_to_search': [
         {
             '@type': 'way',
-            '@ref': '-101789',
+            '@ref': '-2',
             '@role': 'outer',
             'attributes': {
-                '@id': '-101789'
+                '@id': '-2'
             },
             'nd': [
-                {'@ref': '-101768'},
-                {'@ref': '-101769'}
+                {'@ref': '-3'},
+                {'@ref': '-4'}
+            ],
+            'tag': [
+                {
+                    '@k': 'oneway',
+                    '@v': 'yes'
+                },
+                {
+                    '@k': 'ref',
+                    '@v': '3'
+                }
+            ]
+        },
+        {
+            '@type': 'way',
+            '@ref': '-1',
+            '@role': 'outer',
+            'attributes': {
+                '@id': '-1'
+            },
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
             ],
             'tag': [
                 {
