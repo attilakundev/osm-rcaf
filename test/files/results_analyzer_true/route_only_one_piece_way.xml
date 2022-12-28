@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM' editor='Attila Kun'>
+    <node id='-1'/>
+    <node id='-2'/>
+    <way id='-1'>
+        <nd ref='-1'/>
+        <nd ref='-2'/>
+    </way>
+    <relation id='-1'>
+        <member type='way' ref='-1' role='forward'/>
+        <tag k='ref' v='999'/>
+        <tag k='route' v='road'/>
+        <tag k='type' v='route'/>
+    </relation>
+</osm>

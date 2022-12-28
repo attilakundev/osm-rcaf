@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' editor='Attila Kun'>
+    <node id='-1'/>
+    <node id='-2'/>
+    <node id='-3'/>
+    <node id='-4'/>
+    <way id='-1'>
+        <nd ref='-1'/>
+        <nd ref='-2'/>
+    </way>
+    <way id='-2'>
+        <nd ref='-2'/>
+        <nd ref='-3'/>
+    </way>
+    <way id='-3'>
+        <nd ref='-3'/>
+        <nd ref='-4'/>
+    </way>
+    <relation id='-1'>
+        <member type='way' ref='-1' role=''/>
+        <member type='way' ref='-2' role=''/>
+        <member type='way' ref='-3' role=''/>
+        <tag k='ref' v='999'/>
+        <tag k='route' v='road'/>
+        <tag k='type' v='route'/>
+    </relation>
+</osm>

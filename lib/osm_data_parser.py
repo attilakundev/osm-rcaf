@@ -77,7 +77,12 @@ class OSMDataParser:
     def check_way_attributes_id(self, relation_info):
         result = []
         for i in range(0, len(relation_info["ways_to_search"])):
-            result.append(relation_info["ways_to_search"][i]["attributes"]["@id"])
+            try:
+                result.append(relation_info["ways_to_search"][i]["attributes"]["@id"])
+            except KeyError as e:
+                currently_checked_way = relation_info['ways_to_search'][i]['@ref']
+                raise KeyError(f"The relation's way ({currently_checked_way}) doesn't exist in the <way> tags,"
+                               f" this is mostly a unit-testing issue, please fix it.")
         return result
 
     def __copy_attributes__(self, attributes):

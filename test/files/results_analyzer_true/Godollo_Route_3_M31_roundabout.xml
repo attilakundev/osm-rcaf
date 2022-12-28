@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload="false" generator='JOSM' editor='Attila Kun'>
+  <bounds minlat='47.5865779' minlon='19.3020451' maxlat='47.5909847' maxlon='19.3125379' origin='CGImap 0.8.8 (1745471 spike-07.openstreetmap.org)' />
+  <node id='-43' timestamp='2022-03-14T21:46:20Z' uid='1755379' user='ozmium' visible='true' version='7' changeset='118487334' lat='47.5886998' lon='19.3069997' />
+  <node id='-3' timestamp='2014-09-13T12:57:00Z' uid='1971976' user='nagy_balint' visible='true' version='6' changeset='25410901' lat='47.5878773' lon='19.3008254' />
+  <node id='-45' timestamp='2013-07-12T10:40:44Z' uid='434925' user='Athes' visible='true' version='3' changeset='16924277' lat='47.5895697' lon='19.3122115' />
+  <node id='-26' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='7' changeset='117179562' lat='47.5879353' lon='19.3069332' />
+  <node id='-17' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='7' changeset='117179562' lat='47.5881188' lon='19.3064746' />
+  <node id='-6' timestamp='2014-09-13T09:39:06Z' uid='1971976' user='nagy_balint' visible='true' version='4' changeset='25407446' lat='47.5882929' lon='19.3041108' />
+  <node id='-20' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='7' changeset='117179562' lat='47.5880058' lon='19.3065544' />
+  <node id='-37' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='5' changeset='117179562' lat='47.5884787' lon='19.3075757' />
+  <node id='-34' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='7' changeset='117179562' lat='47.588169' lon='19.3071744' />
+  <node id='-13' timestamp='2022-03-14T21:46:20Z' uid='1755379' user='ozmium' visible='true' version='6' changeset='118487334' lat='47.5883835' lon='19.3059364' />
+  <node id='-28' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='7' changeset='117179562' lat='47.5879967' lon='19.3070769' />
+  <node id='-42' timestamp='2011-04-18T04:48:58Z' uid='55843' user='flaktack' visible='true' version='2' changeset='7893599' lat='47.5890728' lon='19.3094323' />
+  <node id='-24' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='6' changeset='117179562' lat='47.5879264' lon='19.3067636' />
+  <node id='-41' timestamp='2014-09-13T09:39:11Z' uid='1971976' user='nagy_balint' visible='true' version='2' changeset='25407446' lat='47.5889921' lon='19.30922' />
+  <node id='-32' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='6' changeset='117179562' lat='47.5881064' lon='19.3071652' />
+  <node id='-10' timestamp='2018-08-22T15:09:36Z' uid='7530849' user='Zsolt Medgyesi' visible='true' version='3' changeset='61892608' lat='47.5884078' lon='19.3055143' />
+  <node id='-23' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='4' changeset='117179562' lat='47.5879362' lon='19.3067065' />
+  <node id='-22' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='4' changeset='117179562' lat='47.5879523' lon='19.3066526' />
+  <node id='-18' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='4' changeset='117179562' lat='47.5880793' lon='19.3064905' />
+  <node id='-30' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='3' changeset='117179562' lat='47.5880475' lon='19.3071319' />
+  <node id='-21' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5879761' lon='19.3065999' />
+  <node id='-33' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5881375' lon='19.3071729' />
+  <node id='-14' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='3' changeset='117179562' lat='47.5882839' lon='19.3062412' />
+  <node id='-36' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5883434' lon='19.3073336' />
+  <node id='-12' timestamp='2018-08-22T15:09:36Z' uid='7530849' user='Zsolt Medgyesi' visible='true' version='2' changeset='61892608' lat='47.5883906' lon='19.3058207' />
+  <node id='-9' timestamp='2018-08-22T15:09:36Z' uid='7530849' user='Zsolt Medgyesi' visible='true' version='2' changeset='61892608' lat='47.5884063' lon='19.3053988' />
+  <node id='-39' timestamp='2014-09-13T09:38:47Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25407446' lat='47.5887786' lon='19.3083843' />
+  <node id='-40' timestamp='2014-09-13T09:38:48Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25407446' lat='47.5889024' lon='19.3088354' />
+  <node id='-7' timestamp='2014-09-13T09:38:45Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25407446' lat='47.5883715' lon='19.3049681' />
+  <node id='-8' timestamp='2018-08-22T15:09:36Z' uid='7530849' user='Zsolt Medgyesi' visible='true' version='2' changeset='61892608' lat='47.5883983' lon='19.3052556' />
+  <node id='-11' timestamp='2018-08-22T15:09:36Z' uid='7530849' user='Zsolt Medgyesi' visible='true' version='2' changeset='61892608' lat='47.5884023' lon='19.3056739' />
+  <node id='-38' timestamp='2014-09-13T09:38:47Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25407446' lat='47.5886653' lon='19.3080703' />
+  <node id='-25' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5879238' lon='19.3068492' />
+  <node id='-27' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.58796' lon='19.3070106' />
+  <node id='-29' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5880209' lon='19.3071069' />
+  <node id='-19' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5880406' lon='19.3065175' />
+  <node id='-31' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5880762' lon='19.3071515' />
+  <node id='-16' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='3' changeset='117179562' lat='47.5881464' lon='19.3064672' />
+  <node id='-35' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='2' changeset='117179562' lat='47.5882607' lon='19.3072327' />
+  <node id='-1' timestamp='2014-09-13T12:56:17Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25410901' lat='47.5877568' lon='19.3001701' />
+  <node id='-2' timestamp='2014-09-13T12:56:18Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25410901' lat='47.5878193' lon='19.3004816' />
+  <node id='-4' timestamp='2014-09-13T12:56:18Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25410901' lat='47.5879385' lon='19.3012268' />
+  <node id='-5' timestamp='2014-09-13T12:56:18Z' uid='1971976' user='nagy_balint' visible='true' version='1' changeset='25410901' lat='47.5879953' lon='19.3016099' />
+  <node id='-44' timestamp='2019-04-07T12:42:41Z' uid='9038947' user='MyFudalli' visible='true' version='1' changeset='68975209' lat='47.5892859' lon='19.310624' />
+  <node id='-15' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='1' changeset='117179562' lat='47.5882043' lon='19.3064198'>
+    <tag k='direction' v='forward' />
+    <tag k='highway' v='give_way' />
+  </node>
+  <way id='-6' timestamp='2022-05-14T18:10:40Z' uid='9038947' user='MyFudalli' visible='true' version='8' changeset='120988595'>
+    <nd ref='-34' />
+    <nd ref='-35' />
+    <nd ref='-36' />
+    <nd ref='-37' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='destination' v='Gödöllő' />
+    <tag k='destination:ref' v='3' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k636m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-3' timestamp='2022-02-08T22:44:19Z' uid='906236' user='urbalazs' visible='true' version='9' changeset='117179562'>
+    <nd ref='-13' />
+    <nd ref='-14' />
+    <nd ref='-15' />
+    <nd ref='-16' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k058m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-2' timestamp='2018-08-28T12:47:24Z' uid='7187009' user='ITineris_bulk' visible='true' version='7' changeset='62070043'>
+    <nd ref='-6' />
+    <nd ref='-7' />
+    <nd ref='-8' />
+    <nd ref='-9' />
+    <nd ref='-10' />
+    <nd ref='-11' />
+    <nd ref='-12' />
+    <nd ref='-13' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='highway' v='primary' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k058m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-7' timestamp='2018-08-28T12:47:24Z' uid='7187009' user='ITineris_bulk' visible='true' version='6' changeset='62070043'>
+    <nd ref='-37' />
+    <nd ref='-38' />
+    <nd ref='-39' />
+    <nd ref='-40' />
+    <nd ref='-41' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='highway' v='primary' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k636m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-10' timestamp='2022-05-14T18:10:40Z' uid='9038947' user='MyFudalli' visible='true' version='4' changeset='120988595'>
+    <nd ref='-42' />
+    <nd ref='-43' />
+    <tag k='destination' v='Kerepes' />
+    <tag k='destination:ref' v='3' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='3' />
+  </way>
+  <way id='-11' timestamp='2019-04-07T12:42:42Z' uid='9038947' user='MyFudalli' visible='true' version='6' changeset='68975209'>
+    <nd ref='-42' />
+    <nd ref='-44' />
+    <nd ref='-45' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='highway' v='primary' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k636m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-8' timestamp='2018-08-28T12:47:24Z' uid='7187009' user='ITineris_bulk' visible='true' version='4' changeset='62070043'>
+    <nd ref='-41' />
+    <nd ref='-42' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='highway' v='primary' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k636m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-1' timestamp='2018-08-28T12:47:54Z' uid='7187009' user='ITineris_bulk' visible='true' version='6' changeset='62070043'>
+    <nd ref='-1' />
+    <nd ref='-2' />
+    <nd ref='-3' />
+    <nd ref='-4' />
+    <nd ref='-5' />
+    <nd ref='-6' />
+    <tag k='HU:ed_direction' v='forward' />
+    <tag k='bicycle' v='yes' />
+    <tag k='highway' v='primary' />
+    <tag k='ref' v='3' />
+    <tag k='ref:HU:edid' v='3u25k058m' />
+    <tag k='toll:hgv' v='yes' />
+  </way>
+  <way id='-4' timestamp='2022-05-14T18:10:40Z' uid='9038947' user='MyFudalli' visible='true' version='1' changeset='120988595'>
+    <nd ref='-16' />
+    <nd ref='-17' />
+    <nd ref='-18' />
+    <nd ref='-19' />
+    <nd ref='-20' />
+    <nd ref='-21' />
+    <nd ref='-22' />
+    <nd ref='-23' />
+    <nd ref='-24' />
+    <nd ref='-25' />
+    <nd ref='-26' />
+    <nd ref='-27' />
+    <nd ref='-28' />
+    <tag k='highway' v='primary' />
+    <tag k='junction' v='roundabout' />
+    <tag k='ref' v='3' />
+  </way>
+  <way id='-5' timestamp='2022-05-14T18:10:40Z' uid='9038947' user='MyFudalli' visible='true' version='1' changeset='120988595'>
+    <nd ref='-28' />
+    <nd ref='-29' />
+    <nd ref='-30' />
+    <nd ref='-31' />
+    <nd ref='-32' />
+    <nd ref='-33' />
+    <nd ref='-34' />
+    <tag k='highway' v='primary' />
+    <tag k='junction' v='roundabout' />
+    <tag k='ref' v='3' />
+  </way>
+  <way id='-9' timestamp='2022-05-14T18:10:40Z' uid='9038947' user='MyFudalli' visible='true' version='1' changeset='120988595'>
+    <nd ref='-43' />
+    <nd ref='-6' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='3' />
+  </way>
+
+  <relation id='23099' action='modify' timestamp='2022-12-23T16:08:21Z' uid='8675622' user='Narvik2' visible='true' version='455' changeset='130427593'>
+    <member type='way' ref='-1' role='' />
+    <member type='way' ref='-2' role='forward' />
+    <member type='way' ref='-3' role='forward' />
+    <member type='way' ref='-4' role='forward' />
+    <member type='way' ref='-5' role='forward' />
+    <member type='way' ref='-6' role='forward' />
+    <member type='way' ref='-7' role='forward' />
+    <member type='way' ref='-8' role='forward' />
+    <member type='way' ref='-9' role='forward' />
+    <member type='way' ref='-10' role='forward' />
+    <member type='way' ref='-11' role='' />
+    <tag k='network' v='HU:national' />
+    <tag k='ref' v='3' />
+    <tag k='route' v='road' />
+    <tag k='type' v='route' />
+  </relation>
+</osm>

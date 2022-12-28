@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' editor='Attila Kun'>
+  <node id='-1' />
+  <node id='-2' />
+  <node id='-3' />
+  <node id='-4' />
+  <node id='-5' />
+  <node id='-6' />
+  <node id='-7' />
+  <node id='-8' />
+  <node id='-9' />
+  <node id='-10' />
+  <node id='-11' />
+  <node id='-12' />
+  <node id='-13' />
+  <way id='-1' action='modify' visible='true'>
+    <nd ref='-1' />
+    <nd ref='-2' />
+    <nd ref='-3' />
+    <tag k='highway' v='primary' />
+  </way>
+  <way id='-2' action='modify' visible='true'>
+    <nd ref='-3' />
+    <nd ref='-4' />
+    <nd ref='-5' />
+    <tag k='highway' v='primary' />
+  </way>
+  <way id='-3' action='modify' visible='true'>
+    <nd ref='-5' />
+    <nd ref='-6' />
+    <nd ref='-7' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+  </way>
+  <way id='-4' action='modify' visible='true'>
+    <nd ref='-7' />
+    <nd ref='-8' />
+    <nd ref='-9' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+  </way>
+  <way id='-5' action='modify' visible='true'>
+    <nd ref='-11' />
+    <nd ref='-10' />
+    <nd ref='-5' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes' />
+  </way>
+  <way id='-6' action='modify' visible='true'>
+    <nd ref='-13' />
+    <nd ref='-12' />
+    <nd ref='-11' />
+    <tag k='highway' v='primary' />
+    <tag k='oneway' v='yes'/>
+  </way>
+  <relation id='-99846' action='modify' visible='true'>
+    <member type='way' ref='-1' role='' />
+    <member type='way' ref='-2' role='' />
+    <member type='way' ref='-3' role='forward' />
+    <member type='way' ref='-4' role='forward' />
+    <member type='way' ref='-5' role='forward' />
+    <member type='way' ref='-6' role='forward' />
+    <tag k='ref' v='999' />
+    <tag k='route' v='road' />
+    <tag k='type' v='route' />
+  </relation>
+</osm>
