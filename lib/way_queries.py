@@ -98,6 +98,7 @@ def get_relation_type(array):
 
 
 def get_way_ref(array):
+    """:returns: The id of the way."""
     if "@ref" in array:
         return array["@ref"]
     return ""
