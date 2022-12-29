@@ -33,6 +33,7 @@ def test_route_closed_roundabout_entry_divided_exit_divided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = data_parser.check_way_attributes_id(relation_info)
     assert way_ids == ["-6", "-5", "-4", "-2", "-1", "-3", "-7"]
+    assert 1 == 1
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 7
