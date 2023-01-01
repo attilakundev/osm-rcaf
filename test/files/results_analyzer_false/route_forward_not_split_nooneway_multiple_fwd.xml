@@ -43,7 +43,7 @@
     <nd ref='-11' />
     <tag k='highway' v='primary' />
   </way>
-  <relation id='-99802' action='modify' visible='true'>
+  <relation id='-1' action='modify' visible='true'>
     <member type='way' ref='-1' role='' />
     <member type='way' ref='-4' role='forward' />
     <member type='way' ref='-5' role='forward' />
