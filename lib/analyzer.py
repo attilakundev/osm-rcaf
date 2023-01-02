@@ -341,7 +341,7 @@ class Analyzer:
         way."""
         if index_of_current_way > 0 and (
                 first_node_previous == first_node_current or first_node_previous == last_node_current
-                or last_node_previous == first_node_current or last_node_previous == last_node_current):
+                or last_node_previous == first_node_current or last_node_previous == last_node_current or (previous_roundabout and not current_roundabout and way_queries.roundabout_checker(current_nodes, previous_nodes))):
             has_directional_roles, error_information = self.check_role_issues_in_continuous_way(index_of_current_way,
                                                                                                 previous_role,
                                                                                                 current_role,

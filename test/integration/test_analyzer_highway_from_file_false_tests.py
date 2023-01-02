@@ -65,6 +65,7 @@ def test_route_forward_split_oneway_gap():
     assert error_information[0].error_type == "Gap in forward series"
     assert correct_ways_count == 5
 
+
 def test_route_norole_split_nooneway():
     file_path = f"{project_path}/test/files/results_analyzer_false/route_norole_split_nooneway.xml"
     file = open(file_path, "r").read()
@@ -73,3 +74,43 @@ def test_route_norole_split_nooneway():
     assert len(error_information) == 1
     assert error_information[0].error_type == "Gap"
     assert correct_ways_count == 5
+
+
+def test_route_closed_roundabout_entry_divided_exit_notdivided_norole():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_closed_roundabout_entry_divided_exit_notdivided_norole.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 2
+    assert error_information[0].error_type == "Wrong role setup"
+    assert correct_ways_count == 3
+
+
+def test_route_closed_roundabout_entry_divided_exit_divided_norole():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_closed_roundabout_entry_divided_exit_divided_norole.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 4
+    assert error_information[0].error_type == "Wrong role setup"
+    assert correct_ways_count == 3
+
+
+def test_route_open_roundabout_entry_divided_exit_divided_no_role():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_open_roundabout_entry_divided_exit_divided_no_role.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 2
+    assert error_information[0].error_type == "Wrong role setup"
+    assert correct_ways_count == 6
+
+def test_route_open_roundabout_entry_divided_exit_divided_extra_members():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_open_roundabout_entry_divided_exit_divided_extra_members.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 2
+    assert error_information[0].prev_curr.current_ref == "-1"
+    assert error_information[0].error_type == "Gap in forward series"
+    assert correct_ways_count == 9
