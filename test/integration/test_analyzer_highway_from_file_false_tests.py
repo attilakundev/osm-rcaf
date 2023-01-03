@@ -105,21 +105,64 @@ def test_route_open_roundabout_entry_divided_exit_divided_no_role():
     assert error_information[0].error_type == "Wrong role setup"
     assert correct_ways_count == 6
 
+
 def test_route_open_roundabout_entry_divided_exit_divided_extra_members():
     file_path = f"{project_path}/test/files/results_analyzer_false/route_open_roundabout_entry_divided_exit_divided_extra_members.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 2
-    assert error_information[0].error_type == "Gap in forward series"
-    assert correct_ways_count == 9
+    assert error_information[0].error_type == "Duplicated roundabout ways"
+    assert error_information[1].error_type == "Duplicated roundabout ways"
+    assert correct_ways_count == 10
 
-def test_route_open_roundabout_entry_divided_exit_divided_extra_members():
+
+def test_route_open_roundabout_entry_divided_exit_divided_no_role_extra_members():
     file_path = f"{project_path}/test/files/results_analyzer_false/route_open_roundabout_entry_divided_exit_divided_no_role_extra_members.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 10
+    assert error_information[0].error_type == "Wrong role setup"
+    assert error_information[1].error_type == "Forward role missing at roundabout"
+    assert error_information[5].error_type == "Duplicated roundabout ways"
+    assert error_information[6].error_type == "Forward role missing at roundabout"
+    assert error_information[7].error_type == "Wrong role setup"
+    assert error_information[8].error_type == "Gap"
+    assert error_information[9].error_type == "Gap"
+    assert correct_ways_count == 2
+
+
+def test_route_motorway_two_sided_no_role():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_motorway_two_sided_no_role.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
     assert 1 == 1
     error_information, correct_ways_count = analyzer.relation_checking(data)
-    assert len(error_information) == 11 #1-7. has wrong-role, 8 and 9th way that has error has two: gap and wrong role setup
+    assert len(error_information) == 4
     assert error_information[0].error_type == "Wrong role setup"
+    assert error_information[1].error_type == "Wrong role setup"
+    assert error_information[2].error_type == "Gap"
+    assert error_information[3].error_type == "Wrong role setup"
+    assert correct_ways_count == 0
+
+
+def test_route_motorway_not_split():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_motorway_not_split.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 1
+    assert error_information[0].error_type == "Motorway not split"
     assert correct_ways_count == 2
+
+
+def test_route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry_exit():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    assert 1 == 1
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 1
+    assert error_information[0].error_type == "Wrong order of roundabout entries"
+    assert correct_ways_count == 6

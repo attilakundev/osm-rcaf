@@ -79,15 +79,22 @@ class Analyzer:
         used if a complete relation is about to be tested."""
         route_number = way_queries.get_ref_of_the_route(relation_info)
         network = way_queries.get_network(relation_info)
-        index_of_current_way = count_of_forward_roled_way_series = pieces_of_roundabout = 0
+        index_of_current_way = 0
+        count_of_forward_roled_way_series = 0
+        pieces_of_roundabout = 0
+        length_of_error_information_at_the_beginning_of_iteration = 0
+        the_amount_to_be_decreased_from_length_of_error_information = 0
         motorway_split_way = previous_oneway = previous_roundabout = has_directional_roles = False
         is_mutcd_country = way_queries.determine_if_country_has_MUTCD_or_similar(relation_info)
-        last_forward_way_before_backward_direction = current_nodes = previous_nodes = error_information = last_roundabout_nodes = []
+        last_forward_way_before_backward_direction = current_nodes = previous_nodes = last_roundabout_nodes = []
+        error_information = []
+        roundabout_ways = []
         # last_forward_way_before_backward_direction:  when we have relation beginning with forward ways
         # (separated highway) connencting to a point
         first_node_previous = last_node_previous = previous_role = previous_ref = previous_highway \
             = first_node_of_first_forward_way_in_the_series = last_node_of_first_forward_way_in_the_series = ""
         for elem_val in relation_info["ways_to_search"]:
+            length_of_error_information_at_the_beginning_of_iteration = len(error_information)
             # current = current way, previous = previous way
             first_node_current = way_queries.get_start_node(elem_val)
             last_node_current = way_queries.get_end_node(elem_val)
@@ -116,8 +123,18 @@ class Analyzer:
                 first_node_current, last_node_current,
                 current_role, current_nodes)
 
-            last_roundabout_nodes = self.is_way_roundabout(current_roundabout, current_role, current_nodes,
-                                                           last_roundabout_nodes)
+            last_roundabout_nodes, roundabout_ways, error_information = self.is_way_roundabout(current_roundabout,
+                                                                                               current_role,
+                                                                                               current_nodes,
+                                                                                               current_ref,
+                                                                                               roundabout_ways,
+                                                                                               last_roundabout_nodes,
+                                                                                               error_information,
+                                                                                               previous_current)
+            error_information = self.determine_role_errors_at_the_beginning_highway(index_of_current_way, current_role,
+                                                                                    current_oneway,
+                                                                                    current_highway, current_roundabout,
+                                                                                    error_information, previous_current)
 
             first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
                 self.is_the_way_in_forward_way_series(
@@ -142,14 +159,16 @@ class Analyzer:
                                                                                                    previous_current)
 
             pieces_of_roundabout, error_information = self.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                                previous_roundabout,
-                                                                                                current_roundabout, current_role,
-                                                                                                previous_current,
-                                                                                                error_information,
-                                                                                                pieces_of_roundabout,
-                                                                                                count_of_forward_roled_way_series,
-                                                                                                last_node_previous,
-                                                                                                last_node_current, first_node_current)
+                                                                                                  previous_roundabout,
+                                                                                                  current_roundabout,
+                                                                                                  current_role,
+                                                                                                  previous_current,
+                                                                                                  error_information,
+                                                                                                  pieces_of_roundabout,
+                                                                                                  count_of_forward_roled_way_series,
+                                                                                                  last_node_previous,
+                                                                                                  last_node_current,
+                                                                                                  first_node_current)
 
             last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information = self.check_if_way_connects_continuously(
                 relation_info["ways_to_search"], previous_nodes, current_nodes, index_of_current_way,
@@ -173,7 +192,10 @@ class Analyzer:
                                                                  len(relation_info["ways_to_search"]),
                                                                  current_highway, route_number, network,
                                                                  current_role, error_information, previous_current)
-        correct_ways_count = len(relation_info["ways_to_search"]) - len(error_information)
+            if len(error_information) - length_of_error_information_at_the_beginning_of_iteration > 1:
+                the_amount_to_be_decreased_from_length_of_error_information += 1
+        correct_ways_count = len(relation_info["ways_to_search"]) - len(
+            error_information) + the_amount_to_be_decreased_from_length_of_error_information
         return error_information, correct_ways_count
 
     def is_role_backward(self, first_node_current: str, last_node_current: str, current_role: str, current_nodes: list):
@@ -189,14 +211,19 @@ class Analyzer:
         return first_node_current, last_node_current, current_role, current_nodes
 
     def is_way_roundabout(self, current_roundabout: bool, current_role: str, current_nodes: list,
-                          last_roundabout_nodes: list):
+                          current_ref: str, roundabout_ways: list, last_roundabout_nodes: list, error_information: list,
+                          prev_curr: PreviousCurrentHighway):
         """Is the current way a roundabout? if yes, collect all its nodes' reference number
 
         **Returns**: last_roundabout_nodes
         """
+        if current_roundabout:
+            if current_ref in roundabout_ways:
+                error_information.append(ErrorHighway(prev_curr, "Duplicated roundabout ways"))
+            roundabout_ways.append(current_ref)
         if current_role == "" and current_roundabout is True:
-            return current_nodes
-        return last_roundabout_nodes  # we don't change its value.
+            return current_nodes, roundabout_ways, error_information
+        return last_roundabout_nodes, roundabout_ways, error_information  # we don't change its value.
 
     def is_the_way_in_forward_way_series(self, index_of_current_way: int, previous_role: str, current_role: str,
                                          count_of_forward_roled_way_series: int, first_node_current: str,
@@ -295,11 +322,14 @@ class Analyzer:
             return has_directional_roles, error_information
 
     def determine_roundabout_errors_and_number(self, index_of_current_way: int, previous_roundabout: bool,
-                                             current_roundabout: bool, current_role: str,
-                                             previous_current: PreviousCurrentHighway,
-                                             error_information: list, pieces_of_roundabout: int,
-                                             count_of_forward_roled_way_series: int, last_node_previous: str,
-                                             last_node_current: str, first_node_current: str):
+                                               current_roundabout: bool, current_role: str,
+                                               previous_current: PreviousCurrentHighway,
+                                               error_information: list, pieces_of_roundabout: int,
+                                               count_of_forward_roled_way_series: int, last_node_previous: str,
+                                               last_node_current: str, first_node_current: str):
+        if current_roundabout and current_role == "" and first_node_current != last_node_current:
+            error_information.append(
+                ErrorHighway(previous_current, "Forward role missing at roundabout"))
         if index_of_current_way > 0 and not previous_roundabout and current_roundabout:
             pieces_of_roundabout = 1
             if count_of_forward_roled_way_series == 1:
@@ -339,9 +369,17 @@ class Analyzer:
 
         The returned data may have the same value as before, it depends on the evaluation of the currently checked
         way."""
+        # Check if the roundabout's entry way is in wrong order.
+        if 0 < index_of_current_way < len(
+                ways_to_search) - 2 and last_node_previous == last_node_current and way_queries.is_roundabout(
+            ways_to_search[index_of_current_way+2]):
+            error_information.append(ErrorHighway(previous_current, "Wrong order of roundabout entries"))
+            return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         if index_of_current_way > 0 and (
                 first_node_previous == first_node_current or first_node_previous == last_node_current
-                or last_node_previous == first_node_current or last_node_previous == last_node_current or (previous_roundabout and not current_roundabout and way_queries.roundabout_checker(current_nodes, previous_nodes))):
+                or last_node_previous == first_node_current or last_node_previous == last_node_current or (
+                        previous_roundabout and not current_roundabout and way_queries.roundabout_checker(current_nodes,
+                                                                                                          previous_nodes))):
             has_directional_roles, error_information = self.check_role_issues_in_continuous_way(index_of_current_way,
                                                                                                 previous_role,
                                                                                                 current_role,
@@ -532,6 +570,16 @@ class Analyzer:
                 (current_highway == "motorway" or current_highway == "trunk") or (
                 route_number.startswith("M") and network.startswith("HU"))) and current_role == "forward":
             error_information.append(ErrorHighway(previous_current, "Motorway not split"))
+        return error_information
+
+    def determine_role_errors_at_the_beginning_highway(self, index_of_current_way: int, current_role: str,
+                                                       current_oneway: bool, current_highway: str,
+                                                       current_roundabout: bool,
+                                                       error_information: ErrorHighway,
+                                                       previous_current: PreviousCurrentHighway):
+        if index_of_current_way == 0:
+            if current_role == "" and (current_oneway or current_roundabout or current_highway == "motorway"):
+                error_information.append(ErrorHighway(previous_current, "Wrong role setup"))
         return error_information
 
     def multipolygon_checking(self, relation_info):

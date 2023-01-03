@@ -52,16 +52,23 @@ def test_is_way_roundabout():
     current_roundabout = way_queries.is_roundabout(ways_to_search[0])
     not_roundabout = way_queries.is_roundabout(ways_to_search[1])
     current_role = way_queries.get_role(ways_to_search[0])
+    current_nodes = way_queries.get_nodes(ways_to_search[0])
+    roundabout_ways = []
+    error_information = []
+    prev_curr = PreviousCurrentHighway()
     nodes = way_queries.get_nodes(ways_to_search[0])
     # Act
     last_roundabout_nodes = []  # init
-    last_roundabout_nodes = analyzer.is_way_roundabout(current_roundabout, current_role, nodes, last_roundabout_nodes)
-    last_roundabout_nodes_not_roundabout = analyzer.is_way_roundabout(not_roundabout, current_role, nodes,
-                                                                      last_roundabout_nodes)
+    last_roundabout_nodes, roundabout_ways, error_information = analyzer.is_way_roundabout(current_roundabout, current_role, current_nodes, roundabout_ways, nodes,
+                                                       last_roundabout_nodes, error_information, prev_curr)
+    current_nodes = way_queries.get_nodes(ways_to_search[1])
+    current_role = way_queries.get_role(ways_to_search[1])
+    last_roundabout_nodes_not_roundabout, roundabout_ways, error_information = analyzer.is_way_roundabout(not_roundabout, current_nodes, current_role, roundabout_ways, nodes,
+                                                       last_roundabout_nodes, error_information, prev_curr)
     # Assert
     assert last_roundabout_nodes == ["-1", "-2"]
     assert last_roundabout_nodes_not_roundabout == ["-1", "-2"]
-
+    assert len(error_information) == 0
 
 def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
     # Arrange
@@ -420,18 +427,20 @@ def test_check_roundabout_gaps_continuous_no_roundabout_series():
     last_node_previous = way_queries.get_end_node(ways[index_of_current_way - 1])
     last_node_current = way_queries.get_end_node(ways[index_of_current_way])
     previous_current = PreviousCurrentHighway()
-    current_role="forward"
+    current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
     pieces_of_roundabout, error_information = analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                            previous_roundabout,
-                                                                                            current_roundabout,current_role,
-                                                                                            previous_current,
-                                                                                            error_information,
-                                                                                            pieces_of_roundabout,
-                                                                                            count_of_forward_roled_way_series,
-                                                                                            last_node_previous,
-                                                                                            last_node_current,first_node_current)
+                                                                                              previous_roundabout,
+                                                                                              current_roundabout,
+                                                                                              current_role,
+                                                                                              previous_current,
+                                                                                              error_information,
+                                                                                              pieces_of_roundabout,
+                                                                                              count_of_forward_roled_way_series,
+                                                                                              last_node_previous,
+                                                                                              last_node_current,
+                                                                                              first_node_current)
     # Assert
     assert pieces_of_roundabout == 0
     assert len(error_information) == 0
@@ -758,7 +767,7 @@ def test_check_the_situation_with_2_by_2_ways_when_it_starts_from_a_complete_rou
         first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
         role_of_first_way, count_of_forward_roled_way_series, last_forward_way_before_backward_direction,
         current_highway, route_number, network, motorway_split_way, error_information,
-        prev_curr, previous_ref, last_roundabout_nodes, current_nodes,previous_nodes)
+        prev_curr, previous_ref, last_roundabout_nodes, current_nodes, previous_nodes)
     assert last_forward_way_before_backward_direction_from_method == [
         way_queries.get_way_ref(ways[index_of_current_way - 1]),
         previous_nodes]
