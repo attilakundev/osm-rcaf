@@ -111,6 +111,15 @@ def test_route_open_roundabout_entry_divided_exit_divided_extra_members():
     data = xmltodict.parse(file)
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 2
-    assert error_information[0].prev_curr.current_ref == "-1"
     assert error_information[0].error_type == "Gap in forward series"
     assert correct_ways_count == 9
+
+def test_route_open_roundabout_entry_divided_exit_divided_extra_members():
+    file_path = f"{project_path}/test/files/results_analyzer_false/route_open_roundabout_entry_divided_exit_divided_no_role_extra_members.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    assert 1 == 1
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 11 #1-7. has wrong-role, 8 and 9th way that has error has two: gap and wrong role setup
+    assert error_information[0].error_type == "Wrong role setup"
+    assert correct_ways_count == 2

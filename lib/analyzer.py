@@ -141,15 +141,15 @@ class Analyzer:
                                                                                                    error_information,
                                                                                                    previous_current)
 
-            pieces_of_roundabout, error_information = self.determine_roundabout_gaps_and_number(index_of_current_way,
+            pieces_of_roundabout, error_information = self.determine_roundabout_errors_and_number(index_of_current_way,
                                                                                                 previous_roundabout,
-                                                                                                current_roundabout,
+                                                                                                current_roundabout, current_role,
                                                                                                 previous_current,
                                                                                                 error_information,
                                                                                                 pieces_of_roundabout,
                                                                                                 count_of_forward_roled_way_series,
                                                                                                 last_node_previous,
-                                                                                                last_node_current)
+                                                                                                last_node_current, first_node_current)
 
             last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information = self.check_if_way_connects_continuously(
                 relation_info["ways_to_search"], previous_nodes, current_nodes, index_of_current_way,
@@ -294,12 +294,12 @@ class Analyzer:
             error_information.append(ErrorHighway(prev_curr=previous_current, error_type="Gap at the beginning"))
             return has_directional_roles, error_information
 
-    def determine_roundabout_gaps_and_number(self, index_of_current_way: int, previous_roundabout: bool,
-                                             current_roundabout: bool,
+    def determine_roundabout_errors_and_number(self, index_of_current_way: int, previous_roundabout: bool,
+                                             current_roundabout: bool, current_role: str,
                                              previous_current: PreviousCurrentHighway,
                                              error_information: list, pieces_of_roundabout: int,
                                              count_of_forward_roled_way_series: int, last_node_previous: str,
-                                             last_node_current: str):
+                                             last_node_current: str, first_node_current: str):
         if index_of_current_way > 0 and not previous_roundabout and current_roundabout:
             pieces_of_roundabout = 1
             if count_of_forward_roled_way_series == 1:
