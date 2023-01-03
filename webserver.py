@@ -17,8 +17,6 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from osm_data_parser import OSMDataParser
 from analyzer import Analyzer
-from memory_profiler import memory_usage
-
 project_path = Path(__file__).resolve().parent
 
 logging.basicConfig(level=logging.INFO)
