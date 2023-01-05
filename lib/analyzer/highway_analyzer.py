@@ -2,77 +2,17 @@
 import sys
 from pathlib import Path
 
-project_path = Path(__file__).parents[3].absolute()
+project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/model")
 
-from osm_data_parser import OSMDataParser
-from previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
-from error_hwy import ErrorHighway, ErrorMultipolygon
+from previous_current import PreviousCurrentHighway
+from error_hwy import ErrorHighway
 import way_queries
 
 
-class Analyzer:
-    def get_relation_info(self, loaded_relation):
-        data_parser = OSMDataParser()
-        relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
-        return relation_info
-
-    def relation_checking(self, loaded_relation):
-        """
-
-        :param loaded_relation: xml file
-        :return: error_information, correct_ways_count
-        """
-        error_information = []
-        relation_info = self.get_relation_info(loaded_relation)
-        # so it'll take whatever relation it is
-        if way_queries.get_relation_type(relation_info) != "public_transport":
-            role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
-            if "route" in relation_info and (
-                    relation_info.get("route") == "railway" or relation_info.get("route") == "train"):
-                return self.railway_checking(relation_info, error_information)
-            elif "route" in relation_info:
-                return self.highway_checking(relation_info, error_information, role_of_first_way)
-            else:
-                return self.multipolygon_checking(relation_info)
-        return "OutOfScope"
-
-    def railway_checking(self, relation_info, error_information):
-        first_node_previous = ""
-        last_node_previous = ""
-        previous_ref = ""
-        correct_ways_count = 0
-        for elem_val in relation_info["ways_to_search"]:
-            first_node_current = way_queries.get_start_node(elem_val)
-            last_node_current = way_queries.get_end_node(elem_val)
-            current_ref = way_queries.get_way_ref(elem_val)
-            # just check, if the way is connected to the other
-            if first_node_previous != "" and last_node_previous != "" and previous_ref != "":
-                prev_curr = PreviousCurrentHighway(first_node_previous=first_node_previous,
-                                                   last_node_previous=last_node_previous,
-                                                   first_node_current=first_node_current,
-                                                   last_node_current=last_node_current,
-                                                   current_ref=current_ref, previous_ref=previous_ref)
-                is_error = self.check_rails_if_the_ways_are_not_connected(first_node_previous, last_node_previous,
-                                                                          first_node_current, last_node_current)
-                if is_error:
-                    error_information.append([prev_curr, "Railway not connecting"])
-            first_node_previous = way_queries.get_start_node(elem_val)
-            last_node_previous = way_queries.get_end_node(elem_val)
-            previous_ref = way_queries.get_way_ref(elem_val)
-            correct_ways_count = len(relation_info["ways_to_search"]) - len(error_information)
-        return error_information, correct_ways_count  # the number of errors could be calculated
-        # from len(error_information)
-
-    def check_rails_if_the_ways_are_not_connected(self, first_node_previous, last_node_previous,
-                                                  first_node_current, last_node_current):
-        if first_node_previous != "" and last_node_previous != "" and not way_queries.check_connectivity(
-                first_node_previous, last_node_previous, first_node_current, last_node_current):
-            return True
-        return False
-
+class HighwayAnalyzer:
     # good for highway=* tags (primary, secondary, etc. and even trails and cycle routes)
     def highway_checking(self, relation_info: dict, error_information: list, role_of_first_way: str):
         """Highway checking. This is where the gaps for a highway is checked. For unit tests, this should be only
@@ -82,12 +22,10 @@ class Analyzer:
         index_of_current_way = 0
         count_of_forward_roled_way_series = 0
         pieces_of_roundabout = 0
-        length_of_error_information_at_the_beginning_of_iteration = 0
         the_amount_to_be_decreased_from_length_of_error_information = 0
         motorway_split_way = previous_oneway = previous_roundabout = has_directional_roles = False
         is_mutcd_country = way_queries.determine_if_country_has_MUTCD_or_similar(relation_info)
-        last_forward_way_before_backward_direction = current_nodes = previous_nodes = last_roundabout_nodes = []
-        error_information = []
+        last_forward_way_before_backward_direction = previous_nodes = last_roundabout_nodes = []
         roundabout_ways = []
         # last_forward_way_before_backward_direction:  when we have relation beginning with forward ways
         # (separated highway) connencting to a point
@@ -581,6 +519,3 @@ class Analyzer:
             if current_role == "" and (current_oneway or current_roundabout or current_highway == "motorway"):
                 error_information.append(ErrorHighway(previous_current, "Wrong role setup"))
         return error_information
-
-    def multipolygon_checking(self, relation_info):
-        return ""

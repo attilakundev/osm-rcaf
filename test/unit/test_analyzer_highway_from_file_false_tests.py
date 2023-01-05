@@ -7,6 +7,7 @@ import xmltodict
 project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
+sys.path.append(f"{project_path}/lib/analyzer")
 sys.path.append(f"{project_path}/lib/model")
 sys.path.append(f"{project_path}/test/files")
 from osm_data_parser import OSMDataParser
