@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+    <node id='-1'/>
+    <node id='-2'/>
+    <node id='-3'/>
+    <way id='-1'>
+        <nd ref='-1'/>
+        <nd ref='-2'/>
+        <nd ref='-3'/>
+        <nd ref='-1'/>
+    </way>
+    <relation id='-99775'>
+        <member type='way' ref='-1' role='outer'/>
+        <tag k='natural' v='wood'/>
+        <tag k='type' v='multipolygon'/>
+    </relation>
+</osm>
