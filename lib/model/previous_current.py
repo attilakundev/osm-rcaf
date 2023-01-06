@@ -36,5 +36,6 @@ class PreviousCurrentMultipolygon:
     current_ref: str = ""
     current_role: str = ""
 
-    currently_sought_roles_member_nodes: list = field(default_factory=list)
+    currently_sought_role_first_member_nodes: list = field(default_factory=list)
     currently_sought_role: str = ""
+    ref_of_first_way_of_the_area: str = ""

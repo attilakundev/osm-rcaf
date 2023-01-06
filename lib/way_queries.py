@@ -96,7 +96,10 @@ def get_relation_type(array):
         return array["type"]
     return ""
 
-
+def get_relation_member_type(array):
+    if "@type" in array:
+        return array["@type"]
+    return ""
 def get_way_ref(array):
     """:returns: The id of the way."""
     if "@ref" in array:

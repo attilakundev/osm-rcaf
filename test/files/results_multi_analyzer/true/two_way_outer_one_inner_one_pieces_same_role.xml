@@ -20,7 +20,7 @@
     </way>
     <relation id='-99775'>
         <member type='way' ref='-1' role='outer'/>
-        <member type='way' ref='-2' role='inner'/>
+        <member type='way' ref='-2' role='outer'/>
         <tag k='natural' v='wood'/>
         <tag k='type' v='multipolygon'/>
     </relation>
