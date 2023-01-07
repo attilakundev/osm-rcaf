@@ -15,11 +15,14 @@
         <nd ref='-3'/>
     </way>
     <way id='-3'>
+        <nd ref='-3'/>
         <nd ref='-4'/>
+    </way>
+    <way id='-4'>
         <nd ref='-5'/>
         <nd ref='-6'/>
     </way>
-     <way id='-4'>
+    <way id='-5'>
         <nd ref='-6'/>
         <nd ref='-1'/>
     </way>
@@ -28,6 +31,7 @@
         <member type='way' ref='-2' role='outer'/>
         <member type='way' ref='-3' role='outer'/>
         <member type='way' ref='-4' role='outer'/>
+        <member type='way' ref='-5' role='outer'/>
         <tag k='natural' v='wood'/>
         <tag k='type' v='multipolygon'/>
     </relation>

@@ -73,3 +73,20 @@ def test_four_way_outer_two_inner_two_pieces():
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 4
+
+
+def test_four_way_one_area_continuous():
+    file_path = f"{project_path}/test/files/results_multi_analyzer/true/four_way_one_area_continuous.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 0
+    assert correct_ways_count == 4
+
+def test_eight_way_two_area_continuous():
+    file_path = f"{project_path}/test/files/results_multi_analyzer/true/eight_way_two_area_continuous.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 0
+    assert correct_ways_count == 8

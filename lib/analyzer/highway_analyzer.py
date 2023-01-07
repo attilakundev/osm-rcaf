@@ -403,7 +403,7 @@ class HighwayAnalyzer:
                                                                                 current_role)
             return has_directional_roles, error_information
         else:
-            # it runs whenever there's no role for oneway OR it's not forward / cardinal role / empty.
+            # it runs whenever there's no role for oneway OR it's oneway but its role is not forward / cardinal role.
             error_information.append(ErrorHighway(previous_current, "Wrong role setup"))
             return has_directional_roles, error_information
 
