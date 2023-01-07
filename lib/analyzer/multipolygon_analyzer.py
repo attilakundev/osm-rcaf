@@ -47,7 +47,7 @@ class MultipolygonAnalyzer:
             ways_to_search[index])  # the nodes of the area's first way
         ref_of_first_way_of_the_area = way_queries.get_way_ref(ways_to_search[index])
         first_node_previous = last_node_previous = previous_role = previous_ref = ""
-        way_count_of_one_polygon = 0
+        way_count_of_one_polygon = 1
         ways_to_search_length = len(ways_to_search)
         for index, elem_val in enumerate(ways_to_search):
             # current = current way, previous = previous way
@@ -67,10 +67,9 @@ class MultipolygonAnalyzer:
                                                                currently_sought_role_first_member_nodes=nodes_of_first_way_of_the_area,
                                                                currently_sought_role=currently_sought_role,
                                                                ref_of_first_way_of_the_area=ref_of_first_way_of_the_area)
-                error_information, way_count_of_one_polygon = self.check_if_the_only_polygon_consists_of_one_way(
+                error_information = self.check_if_the_only_polygon_consists_of_one_way(
                     first_node_current,
                     last_node_current,
-                    way_count_of_one_polygon,
                     index, ways_to_search_length,
                     previous_current,
                     error_information)
@@ -78,11 +77,11 @@ class MultipolygonAnalyzer:
                     way_count_of_one_polygon \
                     = self.check_if_way_is_continuous_or_not(first_node_previous, last_node_previous,
                                                              first_node_current, last_node_current,
-                                                             previous_role, current_role, previous_current,
+                                                             current_role, previous_current,
                                                              error_information, currently_sought_role,
                                                              nodes_of_first_way_of_the_area,
                                                              ref_of_first_way_of_the_area, way_count_of_one_polygon,
-                                                             index, ways_to_search_length)
+                                                             index, ways_to_search_length, elem_val)
                 first_node_previous = first_node_current
                 last_node_previous = last_node_current
                 previous_role = current_role
@@ -92,76 +91,91 @@ class MultipolygonAnalyzer:
 
     def check_if_way_is_continuous_or_not(self, first_node_previous: str, last_node_previous: str,
                                           first_node_current: str,
-                                          last_node_current: str, previous_role: str, current_role: str,
+                                          last_node_current: str, current_role: str,
                                           previous_current: PreviousCurrentMultipolygon,
                                           error_information: list, currently_sought_role: str,
                                           nodes_of_first_way_of_the_area: list,
                                           ref_of_first_way_of_the_area: str, way_count_of_one_polygon: int, index: int,
-                                          ways_to_search_length: int):
-        if current_role == currently_sought_role:
-            error_information, way_count_of_one_polygon = self.check_if_previous_area_is_not_connected(
+                                          ways_to_search_length: int, elem_val: dict):
+        if way_count_of_one_polygon > 2:
+            error_information, way_count_of_one_polygon = self.check_if_area_consists_of_more_than_one_way(
                 first_node_previous, last_node_previous, first_node_current,
                 last_node_current, nodes_of_first_way_of_the_area, error_information,
-                way_count_of_one_polygon, previous_current, index, ways_to_search_length)
+                way_count_of_one_polygon, previous_current, index, ways_to_search_length, currently_sought_role,
+                current_role, elem_val)
         else:
-            error_information, way_count_of_one_polygon = self.check_if_previous_area_is_not_connected(
+            error_information, way_count_of_one_polygon = self.check_if_area_consists_of_one_way(
                 first_node_previous, last_node_previous, first_node_current,
                 last_node_current, nodes_of_first_way_of_the_area, error_information,
-                way_count_of_one_polygon, previous_current, index, ways_to_search_length)
+                way_count_of_one_polygon, previous_current, index, ways_to_search_length, currently_sought_role,
+                current_role, elem_val)
+        way_count_of_one_polygon += 1
         return error_information, currently_sought_role, nodes_of_first_way_of_the_area, ref_of_first_way_of_the_area, \
             way_count_of_one_polygon
 
-    def check_if_previous_area_is_not_connected_role_change(self, first_node_previous, last_node_previous,
-                                                            first_node_current,
-                                                            last_node_current, nodes_of_first_way_of_the_area,
-                                                            error_information,
-                                                            way_count_of_one_polygon, previous_current, index,
-                                                            ways_to_search_length):
-        if not way_queries.check_connectivity(first_node_previous, last_node_previous, first_node_current,
-                                              last_node_current):
-            pass
-
-    def check_if_previous_area_is_not_connected(self, first_node_previous, last_node_previous, first_node_current,
-                                                last_node_current, nodes_of_first_way_of_the_area, error_information,
-                                                way_count_of_one_polygon, previous_current, index,
-                                                ways_to_search_length):
-        #If we're at the second way, which is basically after the first two, check if those two connect together:
+    def check_if_area_consists_of_one_way(self, first_node_previous, last_node_previous, first_node_current,
+                                          last_node_current, nodes_of_first_way_of_the_area, error_information,
+                                          way_count_of_one_polygon, previous_current, index,
+                                          ways_to_search_length, currently_sought_role, current_role, elem_val):
+        # Check if there is no connection at all between the previous and the current area and the previous one has the gap OR both has the gap:
         if not way_queries.check_connectivity(first_node_previous, last_node_previous, first_node_current,
                                               last_node_current) and 0 < index:
-            way_count_of_one_polygon = self.check_if_previous_area_is_not_connecting_depending_on_area_size(
-                error_information, first_node_previous, index, last_node_previous, nodes_of_first_way_of_the_area,
-                previous_current, way_count_of_one_polygon)
-        # Check if we're at the last way. if the polygon's last item isn't connecting to the first item, then it's an error.
-        if index == ways_to_search_length - 1 > 0 and way_count_of_one_polygon >= 1 and not self.check_way_closedness_for_two_ways(
-                nodes_of_first_way_of_the_area[0],
-                nodes_of_first_way_of_the_area[-1],
-                first_node_current, last_node_current):
-            error_information.append(ErrorMultipolygon(previous_current, "Gap in multipolygon"))
+            if first_node_previous != last_node_previous:
+                error_information.append(ErrorMultipolygon(previous_current, "Gap in an area consisting of one way"))
+            if index == ways_to_search_length - 1 and first_node_current != last_node_current:
+                error_information.append(
+                    ErrorMultipolygon(previous_current, "Gap in an area consisting of one way at the end"))
             way_count_of_one_polygon = 1
-
-
-
+        # Check if the previous way connects but the current one doesn't and it's at the end of the relation.
+        elif first_node_previous == last_node_previous and first_node_current != last_node_current and \
+                index == ways_to_search_length - 1 > 0:
+            error_information.append(
+                ErrorMultipolygon(previous_current, "Gap in an area consisting of one way at the end"))
+        # Check if the way area consists of two ways only
+        elif not self.check_way_closedness_for_two_ways(first_node_previous,last_node_previous,first_node_current,last_node_current) and index == ways_to_search_length -1 > 0:
+            error_information.append(
+                ErrorMultipolygon(previous_current, "Gap in an area consisting of one way at the end"))
         return error_information, way_count_of_one_polygon
 
-    def check_if_previous_area_is_not_connecting_depending_on_area_size(self, error_information, first_node_previous,
-                                                                        index, last_node_previous,
+    def check_if_area_consists_of_more_than_one_way(self, first_node_previous, last_node_previous, first_node_current,
+                                                     last_node_current, nodes_of_first_way_of_the_area,
+                                                     error_information,
+                                                     way_count_of_one_polygon, previous_current, index,
+                                                     ways_to_search_length, currently_sought_role, current_role,
+                                                     elem_val):
+        # If we're at the second way, which is basically after the first two, check if those two connect together:
+        if not way_queries.check_connectivity(first_node_previous, last_node_previous, first_node_current,
+                                              last_node_current) and 1 < index < ways_to_search_length - 1:
+            way_count_of_one_polygon = self.check_if_previous_area_is_not_connecting(
+                error_information, first_node_previous, index, last_node_previous,
+                nodes_of_first_way_of_the_area,
+                previous_current, way_count_of_one_polygon)
+        # Check if we're at the last way. if the polygon's last item isn't connecting to the first item, then it's an error.
+        elif index == ways_to_search_length - 1 > 0 and way_count_of_one_polygon > 1 and not self.check_way_closedness_for_two_ways(
+                nodes_of_first_way_of_the_area[0],
+                nodes_of_first_way_of_the_area[-1],
+                first_node_current, last_node_current) and current_role == currently_sought_role:
+            error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon at the end"))
+            way_count_of_one_polygon = 0
+        way_count_of_one_polygon += 1
+        return error_information, way_count_of_one_polygon
+
+    def check_if_previous_area_is_not_connecting(self, error_information, first_node_previous,
+                                                                        index,
+                                                                        last_node_previous,
                                                                         nodes_of_first_way_of_the_area,
                                                                         previous_current, way_count_of_one_polygon):
-        way_count_of_one_polygon = 1
         if not self.check_way_closedness_for_two_ways(nodes_of_first_way_of_the_area[0],
                                                       nodes_of_first_way_of_the_area[-1],
                                                       first_node_previous, last_node_previous) and index > 1:
-            error_information.append(ErrorMultipolygon(previous_current, "Gap in multipolygon"))
-
-        elif index > 0 and way_count_of_one_polygon == 1 and first_node_previous != last_node_previous:
-            error_information.append(ErrorMultipolygon(previous_current, "Gap in multipolygon"))
+            error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon"))
+            way_count_of_one_polygon = 1
         return way_count_of_one_polygon
 
     def check_if_the_only_polygon_consists_of_one_way(self, first_node_current,
-                                                      last_node_current, way_count_of_one_polygon,
+                                                      last_node_current,
                                                       index, ways_to_search_length, previous_current,
                                                       error_information):
-        way_count_of_one_polygon += 1
-        if index == ways_to_search_length - 1 and first_node_current != last_node_current and way_count_of_one_polygon == 1:
+        if index == ways_to_search_length - 1 == 0 and first_node_current != last_node_current:
             error_information.append(ErrorMultipolygon(previous_current, "Gap in multipolygon"))
-        return error_information, way_count_of_one_polygon
+        return error_information

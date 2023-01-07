@@ -127,8 +127,7 @@ def roundabout_checker(nodes_of_roundabout, nodes_of_previous_way):
 def check_connectivity(first_node_way1, last_node_way1, first_node_way2, last_node_way2):
     return (first_node_way1 == last_node_way2 or first_node_way2 == last_node_way1 or
             first_node_way1 == first_node_way2 or last_node_way1 == last_node_way2 or
-            first_node_way1 == last_node_way1 or first_node_way2 == last_node_way2)
-
+            first_node_way1 == last_node_way1)
 
 def check_if_directional(way_role):
     return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"
