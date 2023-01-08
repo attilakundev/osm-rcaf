@@ -13,13 +13,13 @@ class OSMDataParser:
         dictionary = xmltodict.parse(relation_file)
         return dictionary
     def get_relation_ids(self, loaded_data):
-        relations_list = loaded_data["osm"].items()["relation"]
+        relations_list = loaded_data["osm"]["relation"]
         if type(relations_list) is dict:
-            return relations_list.items()["@id"]
-        elif type(relations_list) is list:
-            return [relation.items()["@id"] for relation in relations_list]
+            return relations_list["@id"]
         else:
-            return ""
+            #We know it's a list
+            assert type(relations_list) == list
+            return [relation["@id"] for relation in relations_list]
 
     # pull way and relation info to separate arrays (so they can be copied back)
     def gather_way_and_relation_info(self, data, relation_id: str = ""):
@@ -38,7 +38,7 @@ class OSMDataParser:
                 # but the very first is what WE need. We don't want to edit other relations.
                 if relation_id != "":
                     index = \
-                        [index for index, relation in enumerate(osmvalue) if relation.items()["@id"] == relation_id][0]
+                        [index for index, relation in enumerate(osmvalue) if relation["@id"] == relation_id][0]
                     relation_info = self.__gather_relation_info__(osmvalue[index].items(), relation_info)
                 else:
                     relation_info = self.__gather_relation_info__(osmvalue[0].items(), relation_info)

@@ -20,6 +20,9 @@ multipolygon_analyzer = MultipolygonAnalyzer()
 
 class Analyzer:
     def get_relation_info(self, loaded_relation_file, relation_id: str = ""):
+        """This facilitates the retrieval of the relation's information. Relation ID is optional,
+        because if you leave it empty, it automatically assigns the first relation for anaylzing.
+        """
         data_parser = OSMDataParser()
         relation_info = data_parser.collect_information_about_the_relation(loaded_relation_file, relation_id)
         return relation_info

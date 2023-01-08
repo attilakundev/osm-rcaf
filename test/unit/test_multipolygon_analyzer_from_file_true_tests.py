@@ -105,3 +105,12 @@ def test_los_angeles_bad():
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 2
     assert correct_ways_count == 212
+
+def test_double_multipolygon_check_second():
+    file_path = f"{project_path}/test/files/results_multi_analyzer/double_multipolygon.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    relation_ids = data_parser.get_relation_ids(data)
+    error_information, correct_ways_count = analyzer.relation_checking(data, relation_ids[1])
+    assert len(error_information) == 0
+    assert correct_ways_count == 2

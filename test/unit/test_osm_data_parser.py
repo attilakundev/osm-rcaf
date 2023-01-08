@@ -34,6 +34,11 @@ def test_get_relation_ids_multiple():
     relation_ids = data_parser.get_relation_ids(data)
     assert relation_ids == ["-99748", "-99750"]
 
+def test_get_relation_ids_single():
+    file = open(f'{project_path}/test/files/simplest_way.xml', "r").read()
+    data = xmltodict.parse(file)
+    relation_ids = data_parser.get_relation_ids(data)
+    assert relation_ids == "-99775"
 def test_gather_way_and_relation_info_dict():
     relation_info = data_parser.gather_way_and_relation_info(osm_data_parser_dicts.result_dict)
     assert relation_info == osm_data_parser_dicts.relation_info_result

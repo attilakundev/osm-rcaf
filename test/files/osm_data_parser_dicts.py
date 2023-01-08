@@ -1,6 +1,6 @@
 result_dict = {
     'osm': {
-        '@generator': 'JOSM',
+        '@editor': 'Attila Kun',
         '@version': '0.6',
         'node': [
             {
