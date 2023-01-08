@@ -90,3 +90,18 @@ def test_eight_way_two_area_continuous():
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 8
+
+def test_los_angeles_good():
+    file_path = f"{project_path}/test/files/results_multi_analyzer/los_angeles_good.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 0
+    assert correct_ways_count == 214
+def test_los_angeles_bad():
+    file_path = f"{project_path}/test/files/results_multi_analyzer/los_angeles_bad.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 2
+    assert correct_ways_count == 212

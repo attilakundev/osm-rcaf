@@ -28,6 +28,11 @@ def test_retrieve_XML_from_API(monkeypatch):
     dictionary = xmltodict.parse(relation_file)
     assert dictionary == osm_data_parser_dicts.result_dict
 
+def test_get_relation_ids_multiple():
+    file = open(f'{project_path}/test/files/results_multi_analyzer/double_multipolygon.xml', "r").read()
+    data = xmltodict.parse(file)
+    relation_ids = data_parser.get_relation_ids(data)
+    assert relation_ids == ["-99748", "-99750"]
 
 def test_gather_way_and_relation_info_dict():
     relation_info = data_parser.gather_way_and_relation_info(osm_data_parser_dicts.result_dict)

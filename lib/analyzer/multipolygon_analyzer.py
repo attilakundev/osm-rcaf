@@ -51,7 +51,7 @@ class MultipolygonAnalyzer:
                                                                currently_sought_role_first_member_nodes=nodes_of_first_way_of_the_area,
                                                                currently_sought_role=currently_sought_role,
                                                                ref_of_first_way_of_the_area=ref_of_first_way_of_the_area)
-                error_information = self.check_if_current_way_has_no_role(current_role, error_information,
+                error_information= self.check_if_current_way_has_no_role(current_role, error_information,
                                                                           previous_current)
                 error_information = self.check_if_the_only_polygon_consists_of_one_way(
                     first_node_current,
@@ -84,13 +84,13 @@ class MultipolygonAnalyzer:
                                           ref_of_first_way_of_the_area: str, way_count_of_one_polygon: int, index: int,
                                           ways_to_search_length: int, elem_val: dict):
         if way_count_of_one_polygon > 1:
-            error_information, way_count_of_one_polygon = self.check_if_area_consists_of_more_than_one_way(
+            error_information, way_count_of_one_polygon,nodes_of_first_way_of_the_area, currently_sought_role = self.check_if_area_consists_of_more_than_one_way(
                 first_node_previous, last_node_previous, first_node_current,
                 last_node_current, nodes_of_first_way_of_the_area, error_information,
                 way_count_of_one_polygon, previous_current, index, ways_to_search_length, currently_sought_role,
                 current_role, elem_val)
         else:
-            error_information, way_count_of_one_polygon = self.check_if_area_consists_of_one_way(
+            error_information, way_count_of_one_polygon, nodes_of_first_way_of_the_area, currently_sought_role = self.check_if_area_consists_of_one_way(
                 first_node_previous, last_node_previous, first_node_current,
                 last_node_current, nodes_of_first_way_of_the_area, error_information,
                 way_count_of_one_polygon, previous_current, index, ways_to_search_length, currently_sought_role,
@@ -108,10 +108,13 @@ class MultipolygonAnalyzer:
                                               last_node_current) and 0 < index:
             if first_node_previous != last_node_previous:
                 error_information.append(ErrorMultipolygon(previous_current, "Gap in an area consisting of one way"))
-            if index == ways_to_search_length - 1 and first_node_current != last_node_current:
-                error_information.append(
-                    ErrorMultipolygon(previous_current, "Gap in an area consisting of one way at the end"))
+                nodes_of_first_way_of_the_area = way_queries.get_nodes(
+                    elem_val)
+                if index == ways_to_search_length - 1 and first_node_current != last_node_current:
+                    error_information.append(
+                        ErrorMultipolygon(previous_current, "Gap in an area consisting of one way at the end"))
             way_count_of_one_polygon = 0
+            currently_sought_role = current_role
         # Check if the previous way connects but the current one doesn't and it's at the end of the relation.
         elif first_node_previous == last_node_previous and first_node_current != last_node_current and \
                 index == ways_to_search_length - 1 > 0:
@@ -122,7 +125,7 @@ class MultipolygonAnalyzer:
                                                         last_node_current) and index == ways_to_search_length - 1 > 0:
             error_information.append(
                 ErrorMultipolygon(previous_current, "Gap in multi way multipolygon at the end"))
-        return error_information, way_count_of_one_polygon
+        return error_information, way_count_of_one_polygon, nodes_of_first_way_of_the_area, currently_sought_role
 
     def check_if_area_consists_of_more_than_one_way(self, first_node_previous, last_node_previous, first_node_current,
                                                     last_node_current, nodes_of_first_way_of_the_area,
@@ -133,30 +136,25 @@ class MultipolygonAnalyzer:
         # If we're at the second way, which is basically after the first two, check if those two connect together:
         if not way_queries.check_connectivity(first_node_previous, last_node_previous, first_node_current,
                                               last_node_current) and 1 < index < ways_to_search_length - 1:
-            way_count_of_one_polygon, nodes_of_first_way_of_the_area = self.check_if_previous_area_is_not_connecting(
+            way_count_of_one_polygon, nodes_of_first_way_of_the_area, currently_sought_role = self.check_if_previous_area_is_not_connecting(
                 error_information, first_node_previous, index, elem_val, last_node_previous,
                 nodes_of_first_way_of_the_area,
-                previous_current, way_count_of_one_polygon)
+                previous_current, way_count_of_one_polygon,current_role,currently_sought_role)
         # Check if we're at the last way. if the polygon's last item isn't connecting to the first item,
         # then it's an error.
-        elif index == ways_to_search_length - 1 > 0 and way_count_of_one_polygon == 1 and not self.check_way_closedness_for_two_ways(
-                nodes_of_first_way_of_the_area[0],
-                nodes_of_first_way_of_the_area[-1],
-                first_node_current, last_node_current) and current_role == currently_sought_role:
-            error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon at the end"))
         elif index == ways_to_search_length - 1 > 0 and way_count_of_one_polygon > 1 and not self.check_way_closedness_for_more_than_two_ways(
                 nodes_of_first_way_of_the_area[0],
                 nodes_of_first_way_of_the_area[-1],
                 first_node_current, last_node_current) and current_role == currently_sought_role:
             error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon at the end"))
-        return error_information, way_count_of_one_polygon
+        return error_information, way_count_of_one_polygon,nodes_of_first_way_of_the_area, currently_sought_role
 
     def check_if_previous_area_is_not_connecting(self, error_information, first_node_previous,
                                                  index, elem_val,
                                                  last_node_previous,
                                                  nodes_of_first_way_of_the_area,
-                                                 previous_current, way_count_of_one_polygon):
-        # If the previous two ways aren't connecting to each other:
+                                                 previous_current, way_count_of_one_polygon, current_role, currently_sought_role):
+        # If the previous two ways aren't connecting to each other, and now we are detecting another polygon:
         if way_count_of_one_polygon == 2 and not self.check_way_closedness_for_two_ways(
                 nodes_of_first_way_of_the_area[0],
                 nodes_of_first_way_of_the_area[-1],
@@ -164,8 +162,9 @@ class MultipolygonAnalyzer:
             way_count_of_one_polygon = 0
             nodes_of_first_way_of_the_area = way_queries.get_nodes(
                 elem_val)
+            currently_sought_role = current_role
             error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon"))
-        # If the series of ways(# of ways greater than 2) don't make a closed polygon:
+        # If the series of ways(# of ways greater than 2) don't make a closed polygon, and now we are detecting another polygon:
         elif way_count_of_one_polygon > 2 and not self.check_way_closedness_for_more_than_two_ways(
                 nodes_of_first_way_of_the_area[0],
                 nodes_of_first_way_of_the_area[-1],
@@ -173,6 +172,7 @@ class MultipolygonAnalyzer:
             way_count_of_one_polygon = 0
             nodes_of_first_way_of_the_area = way_queries.get_nodes(
                 elem_val)
+            currently_sought_role = current_role
             error_information.append(ErrorMultipolygon(previous_current, "Gap in multi way multipolygon"))
         # If the series of ways are connecting (#of ways > 2, and now we are detecting another polygon:
         elif way_count_of_one_polygon > 2 and self.check_way_closedness_for_more_than_two_ways(
@@ -182,7 +182,8 @@ class MultipolygonAnalyzer:
             way_count_of_one_polygon = 0
             nodes_of_first_way_of_the_area = way_queries.get_nodes(
                 elem_val)
-        return way_count_of_one_polygon, nodes_of_first_way_of_the_area
+            currently_sought_role = current_role
+        return way_count_of_one_polygon, nodes_of_first_way_of_the_area, currently_sought_role
 
     def check_if_the_only_polygon_consists_of_one_way(self, first_node_current,
                                                       last_node_current,

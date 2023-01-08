@@ -17,21 +17,24 @@ railway_analyzer = RailwayAnalyzer()
 highway_analyzer = HighwayAnalyzer()
 multipolygon_analyzer = MultipolygonAnalyzer()
 
+
 class Analyzer:
-    def get_relation_info(self, loaded_relation):
+    def get_relation_info(self, loaded_relation_file, relation_id: str = ""):
         data_parser = OSMDataParser()
-        relation_info = data_parser.collect_information_about_the_relation(loaded_relation)  # generalized function
+        relation_info = data_parser.collect_information_about_the_relation(loaded_relation_file, relation_id)
         return relation_info
 
-    def relation_checking(self, loaded_relation):
+    def relation_checking(self, loaded_relation_file, relation_id: str = ""):
         """
 
-        :param loaded_relation: xml file
+        :param loaded_relation_file: xml file
+        :param relation_id: this will be fed from front-end application or console, if you don't supply value, it
+         assumes you want the first relation to be analyzed.
         :return: error_information, correct_ways_count
         """
         error_information = []
-        relation_info = self.get_relation_info(loaded_relation)
-        # so it'll take whatever relation it is
+        relation_info = self.get_relation_info(loaded_relation_file, relation_id)
+        # so it'll take whatever relation it is except if it's public transport because that can't be analyzed.
         if way_queries.get_relation_type(relation_info) != "public_transport":
             role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
             if "route" in relation_info and (

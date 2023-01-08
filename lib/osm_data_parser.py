@@ -12,9 +12,17 @@ class OSMDataParser:
         relation_file = requests.get(url).content
         dictionary = xmltodict.parse(relation_file)
         return dictionary
+    def get_relation_ids(self, loaded_data):
+        relations_list = loaded_data["osm"].items()["relation"]
+        if type(relations_list) is dict:
+            return relations_list.items()["@id"]
+        elif type(relations_list) is list:
+            return [relation.items()["@id"] for relation in relations_list]
+        else:
+            return ""
 
     # pull way and relation info to separate arrays (so they can be copied back)
-    def gather_way_and_relation_info(self, data):
+    def gather_way_and_relation_info(self, data, relation_id: str = ""):
         # ways_to_search is they way the ways are ordered in the relation.
         relation_info: dict = {"nodes": [], "ways": [], "ways_to_search": []}
         for osmkey, osmvalue in data["osm"].items():
@@ -28,11 +36,17 @@ class OSMDataParser:
                 # we always go through the very first array, because we're NOT interested in the rest relations,
                 # eg. Hungary's relation has 8 relations with itself, because it's member of other relations
                 # but the very first is what WE need. We don't want to edit other relations.
-                relation_info = self.__gather_relation_info__(osmvalue[0].items(), relation_info)
+                if relation_id != "":
+                    index = \
+                        [index for index, relation in enumerate(osmvalue) if relation.items()["@id"] == relation_id][0]
+                    relation_info = self.__gather_relation_info__(osmvalue[index].items(), relation_info)
+                else:
+                    relation_info = self.__gather_relation_info__(osmvalue[0].items(), relation_info)
+                return relation_info
             elif osmkey == "relation" and type(osmvalue) is dict:
                 # then do this for just one relation
                 relation_info = self.__gather_relation_info__(osmvalue.items(), relation_info)
-        return relation_info
+                return relation_info
 
     def __gather_relation_info__(self, relation, relation_info):
         for key, value in relation:
@@ -89,6 +103,7 @@ class OSMDataParser:
         attributes = {key: value for key, value in attributes.items() if "@" in key}
         return attributes
 
-    def collect_information_about_the_relation(self, data):
-        return_value: dict = self.append_ways_to_search_with_useful_info(self.gather_way_and_relation_info(data))
+    def collect_information_about_the_relation(self, data, relation_id):
+        return_value: dict = self.append_ways_to_search_with_useful_info(
+            self.gather_way_and_relation_info(data, relation_id))
         return return_value
