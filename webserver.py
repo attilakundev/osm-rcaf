@@ -2,10 +2,7 @@ import sys
 from pathlib import Path
 project_path = Path(__file__).resolve().parent.absolute()
 sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/analyzer")
-sys.path.append(f"{project_path}/lib/model")
-sys.path.append(f"{project_path}/test/files")
 
 import uvicorn
 import logging

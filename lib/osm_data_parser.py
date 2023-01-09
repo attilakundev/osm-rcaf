@@ -10,7 +10,10 @@ class OSMDataParser:
     def retrieve_XML_from_API(self, relation_number):
         url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
         relation_file = requests.get(url).content
-        dictionary = xmltodict.parse(relation_file)
+        if "osm" not in str(relation_file):
+            raise FileNotFoundError("This file doesn't exist")
+        else:
+            dictionary = xmltodict.parse(relation_file)
         return dictionary
     def get_relation_ids(self, loaded_data):
         relations_list = loaded_data["osm"]["relation"]
