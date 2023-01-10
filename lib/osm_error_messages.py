@@ -1,8 +1,8 @@
+import sys
+import gettext
+from pathlib import Path
 from error_hwy import ErrorHighway, ErrorMultipolygon
 from previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
-import sys
-from pathlib import Path
-import gettext
 
 project_path = Path(__file__).resolve().parent.absolute()
 sys.path.append(f"{project_path}")
@@ -90,7 +90,6 @@ class OSMErrorMessages:
                     if type(error) == ErrorHighway:
 
                         previous_ref = self.remote_way(error.prev_curr.previous_ref, source)
-                        current_way = self.remote_way(error.prev_curr.current_ref, source)
                         last_forward_way_before_backward_direction = self.remote_last_forward_way_before_backward_direction(
                             error.prev_curr.last_forward_way_before_backward_direction, source)
                         currently_checked_ref = error.prev_curr.currently_checked_ref
@@ -101,14 +100,14 @@ class OSMErrorMessages:
                         match error.error_type:
                             case "Gap at the beginning":
                                 messages.append(_("\n[ERROR] Relation ref={currently_checked_ref}"
-                                                  " has gap at way: {current_way}\n"
+                                                  " has gap at way: {current_ref}\n"
                                                   "This case occured because there is a gap,"
                                                   "this happened at the beginning of the "
                                                   "relation, since it started with a 2x2 seperated highway. "
                                                   "The ID of last way before going to backward direction: "
                                                   "{last_forward_way_before_backward_direction}\n{nodes}"
                                                   .format(currently_checked_ref=currently_checked_ref,
-                                                          current_way=current_way,
+                                                          current_ref=current_ref,
                                                           last_forward_way_before_backward_direction=last_forward_way_before_backward_direction,
                                                           nodes=nodes_and_other_information))
                                                 )
@@ -116,8 +115,8 @@ class OSMErrorMessages:
                             case "Split roundabout":
                                 messages.append(
                                     _("\nINFO: There is a roundabout split up to multiple ways, "
-                                      "last known way is {current_way}\n{nodes}").format(
-                                        current_way=current_way,
+                                      "last known way is {current_ref}\n{nodes}").format(
+                                        current_ref=current_ref,
                                         nodes=nodes_and_other_information)
                                 )
                             case "Forward but not oneway":
@@ -217,7 +216,28 @@ class OSMErrorMessages:
                                 )
                     else:
                         # type is ErrorMultipolygon
-                        pass
+                        previous_ref = self.remote_way(error.prev_curr.previous_ref, source)
+                        current_ref = self.remote_way(error.prev_curr.current_ref, source)
+                        nodes_and_other_information = self.previous_current_nodes_multi(error.prev_curr,
+                                                                                      source,
+                                                                                      _)
+                        match error.error_type:
+                            case "Gap in an area consisting of one way":
+                                messages.append(_("\n[ERROR] Multipolygon "
+                                                  " has an area consisting of one way unclosed: {current_ref}\n"
+                                                  "\n{nodes}"
+                                                  .format(current_ref=current_ref,
+                                                          nodes=nodes_and_other_information)))
+                            case "Gap in an area consisting of one way at the end":
+                                pass
+                            case "Gap in multi way multipolygon at the end":
+                                pass
+                            case "Gap in multi way multipolygon":
+                                pass
+                            case "Gap in multipolygon":
+                                pass
+                            case "No role":
+                                pass
         else:
             messages.append(_("This relation has no errors at all."))
             pass
