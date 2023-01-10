@@ -506,6 +506,12 @@ relation_info_NNFN_pattern = {
                 {'@ref': '-6'},
                 {'@ref': '-7'}
             ],
+            'tag': [
+                {
+                    "@k": "highway",
+                    "@v": "motorway"
+                }
+            ]
         },
         {
             '@type': 'way',
@@ -516,6 +522,12 @@ relation_info_NNFN_pattern = {
                 {'@ref': '-8'},
                 {'@ref': '-9'}
             ],
+            'tag': [
+                {
+                    "@k": "highway",
+                    "@v": "motorway"
+                }
+            ]
         },
         {
             '@type': 'way',
@@ -525,6 +537,12 @@ relation_info_NNFN_pattern = {
                 {'@ref': '-9'},
                 {'@ref': '-10'},
             ],
+            'tag': [
+                {
+                    "@k": "highway",
+                    "@v": "motorway"
+                }
+            ]
         },
         {
             '@type': 'way',
@@ -534,6 +552,12 @@ relation_info_NNFN_pattern = {
                 {'@ref': '-10'},
                 {'@ref': '-11'},
             ],
+            'tag': [
+                {
+                    "@k": "highway",
+                    "@v": "motorway"
+                }
+            ]
         },
     ],
     "network": "HU:national",

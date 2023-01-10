@@ -1,0 +1,107 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid   ""
+msgstr  "Project-Id-Version: PACKAGE VERSION\n"
+        "Report-Msgid-Bugs-To: \n"
+        "POT-Creation-Date: 2023-01-10 10:18+0100\n"
+        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+        "Language-Team: LANGUAGE <LL@li.org>\n"
+        "Language: \n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=CHARSET\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+#: lib/osm_error_messages.py:32
+#, python-brace-format
+msgid   "Previous way's first and last nodes: {first_node_previous} and "
+        "{last_node_previous}\n"
+        "Role: {previous_role}\n"
+        "Roundabout: {previous_roundabout}\n"
+        "One way road: {previous_oneway}\n"
+        "Current way's first and last nodes: {first_node_current} and "
+        "{last_node_current}\n"
+        "Role: {current_role}\n"
+        "Roundabout: {current_roundabout}\n"
+        "One way road: {current_oneway}\n"
+msgstr  ""
+
+#: lib/osm_error_messages.py:64
+#, python-brace-format
+msgid   "=================[Relation #{relation_id}]================="
+msgstr  ""
+
+#: lib/osm_error_messages.py:66
+#, python-brace-format
+msgid   "Link of the relation: {relation}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:69
+#, python-format, python-brace-format
+msgid   "This relation has {errors} errors and {correct_ways_count} correct "
+        "ways. That's {correctness}% correct."
+msgstr  ""
+
+#: lib/osm_error_messages.py:88
+#, python-brace-format
+msgid   "\n"
+        "ERROR: Relation ref={currently_checked_ref} has gap at way: "
+        "{current_way}\n"
+        "This case occured because there is a gap,this happened at the "
+        "beginning of the relation, since it started with a 2x2 seperated "
+        "highway. The ID of last way before going to backward direction: "
+        "{last_forward_way_before_backward_direction}\n"
+        "{nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:103
+#, python-brace-format
+msgid   "\n"
+        "INFO: There is a roundabout split up to multiple ways, last known "
+        "way is {current_way}\n"
+        "{nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:110
+#, python-brace-format
+msgid   "\n"
+        "ERROR: Relation ref={currently_checked_ref} has a road segment "
+        "whichhas forward role, but not oneway and the following road segment "
+        "is a normal road segment, way number where this was found: "
+        "{current_ref}\n"
+        " Previous way:{previous_ref}\n"
+        "{nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:121
+#, python-brace-format
+msgid   "\n"
+        "ERROR: Relation ref={currently_checked_ref} has wrong role setup at "
+        "way: {current_ref}\n"
+        "{nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:127
+#, python-brace-format
+msgid   "\n"
+        "ERROR: Relation ref={currently_checked_ref} has gap at roundabout: "
+        "{current_ref}\n"
+        "{nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:134
+#, python-brace-format
+msgid   "\n"
+        "ERROR: Relation ref={currently_checked_ref} has gap at way: "
+        "{current_ref}\n"
+        " This case occured because there is a gap. It's found in a series of "
+        "ways with forward role. {nodes}"
+msgstr  ""
+
+#: lib/osm_error_messages.py:161
+msgid   "This relation has no errors at all."
+msgstr  ""

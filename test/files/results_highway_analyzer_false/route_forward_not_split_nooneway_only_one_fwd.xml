@@ -11,19 +11,19 @@
         <nd ref='-1'/>
         <nd ref='-2'/>
         <nd ref='-3'/>
-        <tag k='highway' v='primary'/>
+        <tag k='highway' v='motorway'/>
     </way>
     <way id='-2'>
         <nd ref='-3'/>
         <nd ref='-4'/>
         <nd ref='-5'/>
-        <tag k='highway' v='primary'/>
+        <tag k='highway' v='motorway'/>
     </way>
     <way id='-3'>
         <nd ref='-5'/>
         <nd ref='-6'/>
         <nd ref='-7'/>
-        <tag k='highway' v='primary'/>
+        <tag k='highway' v='motorway'/>
     </way>
     <relation id='-1'>
         <member type='way' ref='-1' role=''/>

@@ -27,7 +27,8 @@ def test_is_role_backward():
     current_nodes_before_reverse = way_queries.get_nodes(ways_to_search[0])
     # Act
     first, last, current_role, current_nodes = highway_analyzer.is_role_backward(first_node_current, last_node_current,
-                                                                         current_role, current_nodes_before_reverse)
+                                                                                 current_role,
+                                                                                 current_nodes_before_reverse)
     # Assert
     assert [first, last, current_role] == ["-4", "-1", "forward"]
     assert current_nodes == ["-4", "-3", "-2", "-1"]
@@ -41,7 +42,8 @@ def test_is_role_not_backward():
     current_role = "forward"
     current_nodes_before_reverse = way_queries.get_nodes(ways_to_search[0])
     first, last, current_role, current_nodes = highway_analyzer.is_role_backward(first_node_current, last_node_current,
-                                                                         current_role, current_nodes_before_reverse)
+                                                                                 current_role,
+                                                                                 current_nodes_before_reverse)
     assert [first, last, current_role] == ["-1", "-4", "forward"]
     assert current_nodes == ["-1", "-2", "-3", "-4"]
 
@@ -59,16 +61,24 @@ def test_is_way_roundabout():
     nodes = way_queries.get_nodes(ways_to_search[0])
     # Act
     last_roundabout_nodes = []  # init
-    last_roundabout_nodes, roundabout_ways, error_information = highway_analyzer.is_way_roundabout(current_roundabout, current_role, current_nodes, roundabout_ways, nodes,
-                                                       last_roundabout_nodes, error_information, prev_curr)
+    last_roundabout_nodes, roundabout_ways, error_information = highway_analyzer.is_way_roundabout(current_roundabout,
+                                                                                                   current_role,
+                                                                                                   current_nodes,
+                                                                                                   roundabout_ways,
+                                                                                                   nodes,
+                                                                                                   last_roundabout_nodes,
+                                                                                                   error_information,
+                                                                                                   prev_curr)
     current_nodes = way_queries.get_nodes(ways_to_search[1])
     current_role = way_queries.get_role(ways_to_search[1])
-    last_roundabout_nodes_not_roundabout, roundabout_ways, error_information = highway_analyzer.is_way_roundabout(not_roundabout, current_nodes, current_role, roundabout_ways, nodes,
-                                                       last_roundabout_nodes, error_information, prev_curr)
+    last_roundabout_nodes_not_roundabout, roundabout_ways, error_information = highway_analyzer.is_way_roundabout(
+        not_roundabout, current_nodes, current_role, roundabout_ways, nodes,
+        last_roundabout_nodes, error_information, prev_curr)
     # Assert
     assert last_roundabout_nodes == ["-1", "-2"]
     assert last_roundabout_nodes_not_roundabout == ["-1", "-2"]
     assert len(error_information) == 0
+
 
 def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
     # Arrange
@@ -91,7 +101,7 @@ def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
     # Act
     # First condition: we check it for the beginning
     first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
-    count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
+        count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
         index_of_current_way=0,
         previous_role="", current_role=role_of_the_first_way,
         count_of_forward_roled_way_series=count_of_forward_roled_way_series,
@@ -104,7 +114,7 @@ def test_is_the_way_in_forward_way_series_beginning_way_is_forward():
 
     count_of_forward_roled_way_series = 0  # initially
     first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
-    count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
+        count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
         index_of_current_way=3,
         previous_role=role_of_the_third_way, current_role=role_of_the_fourth_way,
         count_of_forward_roled_way_series=count_of_forward_roled_way_series,
@@ -131,7 +141,7 @@ def test_is_the_way_in_forward_way_series_two_forward_ways():
     count_of_forward_roled_way_series = 1  # the 4th way is forward.
 
     first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
-    count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
+        count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
         index_of_current_way=3,
         previous_role=role_of_the_4th_way, current_role=role_of_the_5th_way,
         count_of_forward_roled_way_series=count_of_forward_roled_way_series,
@@ -153,7 +163,7 @@ def test_is_the_way_in_forward_way_series_not_forward():
     first_node_first_way = way_queries.get_start_node(ways[1])
     last_node_first_way = way_queries.get_end_node(ways[1])
     first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, \
-    count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
+        count_of_forward_roled_way_series = highway_analyzer.is_the_way_in_forward_way_series(
         index_of_current_way=3,
         previous_role=role_of_the_first_way, current_role=role_of_the_second_way,
         count_of_forward_roled_way_series=count_of_forward_roled_way_series,
@@ -185,19 +195,20 @@ def test_check_if_there_is_gap_at_the_beginning():
     previous_current = PreviousCurrentHighway()
     error_information = []
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(index_of_current_way,
-                                                                                               count_of_forward_roled_series,
-                                                                                               role_of_first_way,
-                                                                                               is_mutcd, previous_role,
-                                                                                               current_role,
-                                                                                               first_node_previous,
-                                                                                               last_node_previous,
-                                                                                               first_node_current,
-                                                                                               last_node_current,
-                                                                                               last_forward_way_before_backward_direction,
-                                                                                               has_directional_roles,
-                                                                                               error_information,
-                                                                                               previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(
+        index_of_current_way,
+        count_of_forward_roled_series,
+        role_of_first_way,
+        is_mutcd, previous_role,
+        current_role,
+        first_node_previous,
+        last_node_previous,
+        first_node_current,
+        last_node_current,
+        last_forward_way_before_backward_direction,
+        has_directional_roles,
+        error_information,
+        previous_current)
 
     assertion = ErrorHighway(previous_current, "Gap at the beginning")
     assert type(error_information[0]) == ErrorHighway
@@ -224,19 +235,20 @@ def test_check_if_there_is_gap_at_the_beginning_USA():
     error_information = []
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(index_of_current_way,
-                                                                                               count_of_forward_roled_series,
-                                                                                               role_of_first_way,
-                                                                                               is_mutcd, previous_role,
-                                                                                               current_role,
-                                                                                               first_node_previous,
-                                                                                               last_node_previous,
-                                                                                               first_node_current,
-                                                                                               last_node_current,
-                                                                                               last_forward_way_before_backward_direction,
-                                                                                               has_directional_roles,
-                                                                                               error_information,
-                                                                                               previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(
+        index_of_current_way,
+        count_of_forward_roled_series,
+        role_of_first_way,
+        is_mutcd, previous_role,
+        current_role,
+        first_node_previous,
+        last_node_previous,
+        first_node_current,
+        last_node_current,
+        last_forward_way_before_backward_direction,
+        has_directional_roles,
+        error_information,
+        previous_current)
 
     assertion = ErrorHighway(previous_current, "Gap at the beginning")
     assert type(error_information[0]) == ErrorHighway
@@ -264,19 +276,20 @@ def test_check_if_there_is_no_gap_at_the_beginning():
     previous_current = PreviousCurrentHighway()
     error_information = []
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(index_of_current_way,
-                                                                                               count_of_forward_roled_series,
-                                                                                               role_of_first_way,
-                                                                                               is_mutcd, previous_role,
-                                                                                               current_role,
-                                                                                               first_node_previous,
-                                                                                               last_node_previous,
-                                                                                               first_node_current,
-                                                                                               last_node_current,
-                                                                                               last_forward_way_before_backward_direction,
-                                                                                               has_directional_roles,
-                                                                                               error_information,
-                                                                                               previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_if_there_is_gap_at_the_beginning(
+        index_of_current_way,
+        count_of_forward_roled_series,
+        role_of_first_way,
+        is_mutcd, previous_role,
+        current_role,
+        first_node_previous,
+        last_node_previous,
+        first_node_current,
+        last_node_current,
+        last_forward_way_before_backward_direction,
+        has_directional_roles,
+        error_information,
+        previous_current)
 
     assert len(error_information) == 0
     assert has_directional_roles is False
@@ -288,15 +301,19 @@ def test_check_if_mutcd_country_and_directional():
     is_mutcd_hungary = way_queries.determine_if_country_has_MUTCD_or_similar(way_queries_dicts.relation)
     role_of_first_way, role_of_second_way = "north", "south"
     role_of_first_way_forward, role_of_second_way_forward = "forward", "forward"
-    has_directional_roles_usa = highway_analyzer.check_if_mutcd_country_and_directional(has_directional_roles, is_mutcd_usa,
-                                                                                role_of_first_way, role_of_second_way)
+    has_directional_roles_usa = highway_analyzer.check_if_mutcd_country_and_directional(has_directional_roles,
+                                                                                        is_mutcd_usa,
+                                                                                        role_of_first_way,
+                                                                                        role_of_second_way)
     has_directional_roles_hungary = highway_analyzer.check_if_mutcd_country_and_directional(has_directional_roles,
-                                                                                    is_mutcd_hungary, role_of_first_way,
-                                                                                    role_of_second_way)
-    has_directional_roles_usa_no_cardinal = highway_analyzer.check_if_mutcd_country_and_directional(has_directional_roles,
-                                                                                            is_mutcd_usa,
-                                                                                            role_of_first_way_forward,
-                                                                                            role_of_second_way_forward)
+                                                                                            is_mutcd_hungary,
+                                                                                            role_of_first_way,
+                                                                                            role_of_second_way)
+    has_directional_roles_usa_no_cardinal = highway_analyzer.check_if_mutcd_country_and_directional(
+        has_directional_roles,
+        is_mutcd_usa,
+        role_of_first_way_forward,
+        role_of_second_way_forward)
     assert [has_directional_roles_usa, has_directional_roles_usa_no_cardinal, has_directional_roles_hungary] == [True,
                                                                                                                  False,
                                                                                                                  False]
@@ -317,17 +334,18 @@ def test_check_roundabout_gaps_only_one_forward_way():
     current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
-    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                              previous_roundabout,
-                                                                                              current_roundabout,
-                                                                                              current_role,
-                                                                                              previous_current,
-                                                                                              error_information,
-                                                                                              pieces_of_roundabout,
-                                                                                              count_of_forward_roled_way_series,
-                                                                                              last_node_previous,
-                                                                                              last_node_current,
-                                                                                              first_node_current)
+    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+        index_of_current_way,
+        previous_roundabout,
+        current_roundabout,
+        current_role,
+        previous_current,
+        error_information,
+        pieces_of_roundabout,
+        count_of_forward_roled_way_series,
+        last_node_previous,
+        last_node_current,
+        first_node_current)
     # Assert
     assert pieces_of_roundabout == 1
     assert len(error_information) == 1
@@ -348,17 +366,18 @@ def test_check_roundabout_gaps_when_previous_last_is_current_last():
     current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
-    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                              previous_roundabout,
-                                                                                              current_roundabout,
-                                                                                              current_role,
-                                                                                              previous_current,
-                                                                                              error_information,
-                                                                                              pieces_of_roundabout,
-                                                                                              count_of_forward_roled_way_series,
-                                                                                              last_node_previous,
-                                                                                              last_node_current,
-                                                                                              first_node_current)
+    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+        index_of_current_way,
+        previous_roundabout,
+        current_roundabout,
+        current_role,
+        previous_current,
+        error_information,
+        pieces_of_roundabout,
+        count_of_forward_roled_way_series,
+        last_node_previous,
+        last_node_current,
+        first_node_current)
     # Assert
     assert pieces_of_roundabout == 1
     assert len(error_information) == 1
@@ -379,17 +398,18 @@ def test_check_roundabout_gaps_no_gaps_but_two_pieces_of_roundabout():
     current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
-    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                              previous_roundabout,
-                                                                                              current_roundabout,
-                                                                                              current_role,
-                                                                                              previous_current,
-                                                                                              error_information,
-                                                                                              pieces_of_roundabout,
-                                                                                              count_of_forward_roled_way_series,
-                                                                                              last_node_previous,
-                                                                                              last_node_current,
-                                                                                              first_node_current)
+    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+        index_of_current_way,
+        previous_roundabout,
+        current_roundabout,
+        current_role,
+        previous_current,
+        error_information,
+        pieces_of_roundabout,
+        count_of_forward_roled_way_series,
+        last_node_previous,
+        last_node_current,
+        first_node_current)
     assert pieces_of_roundabout == 2
     assert len(error_information) == 0
     # now comes the case when we reach the end of roundabout:
@@ -401,17 +421,18 @@ def test_check_roundabout_gaps_no_gaps_but_two_pieces_of_roundabout():
     current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
-    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                              previous_roundabout,
-                                                                                              current_roundabout,
-                                                                                              current_role,
-                                                                                              previous_current,
-                                                                                              error_information,
-                                                                                              pieces_of_roundabout,
-                                                                                              count_of_forward_roled_way_series,
-                                                                                              last_node_previous,
-                                                                                              last_node_current,
-                                                                                              first_node_current)
+    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+        index_of_current_way,
+        previous_roundabout,
+        current_roundabout,
+        current_role,
+        previous_current,
+        error_information,
+        pieces_of_roundabout,
+        count_of_forward_roled_way_series,
+        last_node_previous,
+        last_node_current,
+        first_node_current)
     assert pieces_of_roundabout == 0
     assert len(error_information) == 0
 
@@ -430,17 +451,18 @@ def test_check_roundabout_gaps_continuous_no_roundabout_series():
     current_role = "forward"
     first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
-    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                              previous_roundabout,
-                                                                                              current_roundabout,
-                                                                                              current_role,
-                                                                                              previous_current,
-                                                                                              error_information,
-                                                                                              pieces_of_roundabout,
-                                                                                              count_of_forward_roled_way_series,
-                                                                                              last_node_previous,
-                                                                                              last_node_current,
-                                                                                              first_node_current)
+    pieces_of_roundabout, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+        index_of_current_way,
+        previous_roundabout,
+        current_roundabout,
+        current_role,
+        previous_current,
+        error_information,
+        pieces_of_roundabout,
+        count_of_forward_roled_way_series,
+        last_node_previous,
+        last_node_current,
+        first_node_current)
     # Assert
     assert pieces_of_roundabout == 0
     assert len(error_information) == 0
@@ -451,6 +473,7 @@ def test_check_role_issues_in_continuous_way_normal_way():
     relation = analyzer_dicts.relation_info_continuous_series
     ways = relation["ways_to_search"]
     index_of_current_way = 1
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
     current_role = way_queries.get_role(ways[index_of_current_way])
     previous_oneway = way_queries.is_oneway(ways[index_of_current_way - 1])
@@ -462,18 +485,20 @@ def test_check_role_issues_in_continuous_way_normal_way():
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(index_of_current_way,
-                                                                                            previous_role,
-                                                                                            current_role,
-                                                                                            previous_oneway,
-                                                                                            current_oneway,
-                                                                                            is_mutcd_country,
-                                                                                            role_of_first_way,
-                                                                                            has_directional_roles,
-                                                                                            last_forward_way_before_backward_direction,
-                                                                                            previous_nodes,
-                                                                                            error_information,
-                                                                                            previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
+        index_of_current_way,
+        previous_highway,
+        previous_role,
+        current_role,
+        previous_oneway,
+        current_oneway,
+        is_mutcd_country,
+        role_of_first_way,
+        has_directional_roles,
+        last_forward_way_before_backward_direction,
+        previous_nodes,
+        error_information,
+        previous_current)
     assert has_directional_roles is False
     assert current_role == ""
     assert current_oneway is False
@@ -485,6 +510,7 @@ def test_check_role_issues_in_continuous_way_forward_in_a_non_forward_series():
     relation = analyzer_dicts.relation_info_NNFN_pattern
     ways = relation["ways_to_search"]
     index_of_current_way = 3
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
     current_role = way_queries.get_role(ways[index_of_current_way])
     previous_oneway = way_queries.is_oneway(ways[index_of_current_way - 1])
@@ -496,21 +522,24 @@ def test_check_role_issues_in_continuous_way_forward_in_a_non_forward_series():
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(index_of_current_way,
-                                                                                            previous_role,
-                                                                                            current_role,
-                                                                                            previous_oneway,
-                                                                                            current_oneway,
-                                                                                            is_mutcd_country,
-                                                                                            role_of_first_way,
-                                                                                            has_directional_roles,
-                                                                                            last_forward_way_before_backward_direction,
-                                                                                            previous_nodes,
-                                                                                            error_information,
-                                                                                            previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
+        index_of_current_way,
+        previous_highway,
+        previous_role,
+        current_role,
+        previous_oneway,
+        current_oneway,
+        is_mutcd_country,
+        role_of_first_way,
+        has_directional_roles,
+        last_forward_way_before_backward_direction,
+        previous_nodes,
+        error_information,
+        previous_current)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
+    assert previous_highway =="motorway"
     assert len(error_information) == 1
     assert error_information[0].error_type == "Forward and non-oneway without ability to move backward"
 
@@ -520,6 +549,7 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series():
     relation_new = analyzer_dicts.relation_info_no_gap_in_first_forward_series
     ways = relation_new["ways_to_search"]
     index_of_current_way = 3
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
     current_role = way_queries.get_role(ways[index_of_current_way])
     previous_oneway = way_queries.is_oneway(ways[index_of_current_way - 1])
@@ -531,18 +561,20 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series():
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(index_of_current_way,
-                                                                                            previous_role,
-                                                                                            current_role,
-                                                                                            previous_oneway,
-                                                                                            current_oneway,
-                                                                                            is_mutcd_country,
-                                                                                            role_of_first_way,
-                                                                                            has_directional_roles,
-                                                                                            last_forward_way_before_backward_direction,
-                                                                                            previous_nodes,
-                                                                                            error_information,
-                                                                                            previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
+        index_of_current_way,
+        previous_highway,
+        previous_role,
+        current_role,
+        previous_oneway,
+        current_oneway,
+        is_mutcd_country,
+        role_of_first_way,
+        has_directional_roles,
+        last_forward_way_before_backward_direction,
+        previous_nodes,
+        error_information,
+        previous_current)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
@@ -555,6 +587,7 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series_no_oneway():
     relation = analyzer_dicts.relation_info_no_gap_in_first_forward_series_no_oneway
     ways = relation["ways_to_search"]
     index_of_current_way = 2
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
     current_role = way_queries.get_role(ways[index_of_current_way])
     previous_oneway = way_queries.is_oneway(ways[index_of_current_way - 1])
@@ -566,18 +599,20 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series_no_oneway():
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(index_of_current_way,
-                                                                                            previous_role,
-                                                                                            current_role,
-                                                                                            previous_oneway,
-                                                                                            current_oneway,
-                                                                                            is_mutcd_country,
-                                                                                            role_of_first_way,
-                                                                                            has_directional_roles,
-                                                                                            last_forward_way_before_backward_direction,
-                                                                                            previous_nodes,
-                                                                                            error_information,
-                                                                                            previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
+        index_of_current_way,
+        previous_highway,
+        previous_role,
+        current_role,
+        previous_oneway,
+        current_oneway,
+        is_mutcd_country,
+        role_of_first_way,
+        has_directional_roles,
+        last_forward_way_before_backward_direction,
+        previous_nodes,
+        error_information,
+        previous_current)
     assert current_role == "forward"
     assert previous_role == "forward"
     assert current_oneway is False
@@ -589,6 +624,7 @@ def test_check_role_issues_in_wrong_role_setup():
     relation = analyzer_dicts.relation_info_no_gap_in_first_forward_series_no_oneway
     ways = relation["ways_to_search"]
     index_of_current_way = 3
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
     current_role = way_queries.get_role(ways[index_of_current_way])
     previous_oneway = way_queries.is_oneway(ways[index_of_current_way - 1])
@@ -600,18 +636,20 @@ def test_check_role_issues_in_wrong_role_setup():
     last_node_previous = way_queries.get_end_node(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
     # Act
-    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(index_of_current_way,
-                                                                                            previous_role,
-                                                                                            current_role,
-                                                                                            previous_oneway,
-                                                                                            current_oneway,
-                                                                                            is_mutcd_country,
-                                                                                            role_of_first_way,
-                                                                                            has_directional_roles,
-                                                                                            last_forward_way_before_backward_direction,
-                                                                                            last_node_previous,
-                                                                                            error_information,
-                                                                                            previous_current)
+    has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
+        index_of_current_way,
+        previous_highway,
+        previous_role,
+        current_role,
+        previous_oneway,
+        current_oneway,
+        is_mutcd_country,
+        role_of_first_way,
+        has_directional_roles,
+        last_forward_way_before_backward_direction,
+        last_node_previous,
+        error_information,
+        previous_current)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
@@ -792,8 +830,10 @@ def test_check_if_motorway_not_split():
     previous_current = PreviousCurrentHighway()
     # Act
     error_information = highway_analyzer.check_if_motorway_not_split(motorway_split_way, index_of_current_way,
-                                                             length_of_ways_to_search, current_highway, route_number,
-                                                             network, current_role, error_information, previous_current)
+                                                                     length_of_ways_to_search, current_highway,
+                                                                     route_number,
+                                                                     network, current_role, error_information,
+                                                                     previous_current)
     assert motorway_split_way is False
     assert index_of_current_way == length_of_ways_to_search - 1
     assert current_highway == "motorway"
@@ -806,6 +846,7 @@ def test_check_if_way_connects_continuously():
     relation = analyzer_dicts.relation_info_one_piece_roundabout_to_split_ways_gap
     ways = relation["ways_to_search"]
     index_of_current_way = 4
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     is_mutcd_country = way_queries.determine_if_country_has_MUTCD_or_similar(relation)
     has_directional_roles = False
     last_node_previous = way_queries.get_end_node(ways[index_of_current_way - 1])
@@ -830,23 +871,25 @@ def test_check_if_way_connects_continuously():
     first_node_previous = current_role = previous_oneway = current_oneway = previous_roundabout = current_roundabout = ""  # not needed now
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-    error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_nodes, current_nodes,
-                                                                    index_of_current_way, first_node_previous,
-                                                                    last_node_previous, first_node_current,
-                                                                    last_node_current, previous_role, current_role,
-                                                                    previous_oneway,
-                                                                    previous_roundabout, current_roundabout,
-                                                                    current_oneway, is_mutcd_country,
-                                                                    role_of_first_way,
-                                                                    has_directional_roles,
-                                                                    error_information, prev_curr,
-                                                                    first_node_of_first_forward_way_in_the_series,
-                                                                    last_node_of_first_forward_way_in_the_series,
-                                                                    motorway_split_way,
-                                                                    count_of_forward_roled_way_series,
-                                                                    last_forward_way_before_backward_direction,
-                                                                    current_highway, route_number, network,
-                                                                    previous_ref, last_roundabout_nodes)
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+                                                                                index_of_current_way,
+                                                                                first_node_previous,
+                                                                                last_node_previous, first_node_current,
+                                                                                last_node_current, previous_role,
+                                                                                current_role,
+                                                                                previous_oneway,
+                                                                                previous_roundabout, current_roundabout,
+                                                                                current_oneway, is_mutcd_country,
+                                                                                role_of_first_way,
+                                                                                has_directional_roles,
+                                                                                error_information, prev_curr,
+                                                                                first_node_of_first_forward_way_in_the_series,
+                                                                                last_node_of_first_forward_way_in_the_series,
+                                                                                motorway_split_way,
+                                                                                count_of_forward_roled_way_series,
+                                                                                last_forward_way_before_backward_direction,
+                                                                                current_highway, route_number, network,
+                                                                                previous_ref, last_roundabout_nodes)
 
     assert motorway_split_way is False
     assert has_directional_roles is False
@@ -865,6 +908,7 @@ def test_check_if_way_connects_continuously_checking_role_issues_wrong_role():
     ways = relation["ways_to_search"]
     index_of_current_way = 3
     count_of_forward_roled_way_series = 0
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_nodes = current_nodes = last_forward_way_before_backward_direction = last_roundabout_nodes = []
     previous_roundabout = current_roundabout = motorway_split_way = has_directional_roles = False
     previous_role = way_queries.get_role(ways[index_of_current_way - 1])
@@ -883,23 +927,25 @@ def test_check_if_way_connects_continuously_checking_role_issues_wrong_role():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-    error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_nodes, current_nodes,
-                                                                    index_of_current_way, first_node_previous,
-                                                                    last_node_previous, first_node_current,
-                                                                    last_node_current, previous_role, current_role,
-                                                                    previous_oneway,
-                                                                    previous_roundabout, current_roundabout,
-                                                                    current_oneway, is_mutcd_country,
-                                                                    role_of_first_way,
-                                                                    has_directional_roles,
-                                                                    error_information, previous_current,
-                                                                    first_node_of_first_forward_way_in_the_series,
-                                                                    last_node_of_first_forward_way_in_the_series,
-                                                                    motorway_split_way,
-                                                                    count_of_forward_roled_way_series,
-                                                                    last_forward_way_before_backward_direction,
-                                                                    current_highway, route_number, network,
-                                                                    previous_ref, last_roundabout_nodes)
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway,previous_nodes, current_nodes,
+                                                                                index_of_current_way,
+                                                                                first_node_previous,
+                                                                                last_node_previous, first_node_current,
+                                                                                last_node_current, previous_role,
+                                                                                current_role,
+                                                                                previous_oneway,
+                                                                                previous_roundabout, current_roundabout,
+                                                                                current_oneway, is_mutcd_country,
+                                                                                role_of_first_way,
+                                                                                has_directional_roles,
+                                                                                error_information, previous_current,
+                                                                                first_node_of_first_forward_way_in_the_series,
+                                                                                last_node_of_first_forward_way_in_the_series,
+                                                                                motorway_split_way,
+                                                                                count_of_forward_roled_way_series,
+                                                                                last_forward_way_before_backward_direction,
+                                                                                current_highway, route_number, network,
+                                                                                previous_ref, last_roundabout_nodes)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
@@ -917,6 +963,7 @@ def test_check_if_way_connects_continuously_relation_info_one_piece_roundabout_g
     ways = relation["ways_to_search"]
     index_of_current_way = 2
     count_of_forward_roled_way_series = 0
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_nodes = current_nodes = last_forward_way_before_backward_direction = last_roundabout_nodes = []
     previous_roundabout = way_queries.is_roundabout(ways[index_of_current_way - 1])
     current_roundabout = way_queries.is_roundabout(ways[index_of_current_way])
@@ -937,23 +984,25 @@ def test_check_if_way_connects_continuously_relation_info_one_piece_roundabout_g
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-    error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_nodes, current_nodes,
-                                                                    index_of_current_way, first_node_previous,
-                                                                    last_node_previous, first_node_current,
-                                                                    last_node_current, previous_role, current_role,
-                                                                    previous_oneway,
-                                                                    previous_roundabout, current_roundabout,
-                                                                    current_oneway, is_mutcd_country,
-                                                                    role_of_first_way,
-                                                                    has_directional_roles,
-                                                                    error_information, previous_current,
-                                                                    first_node_of_first_forward_way_in_the_series,
-                                                                    last_node_of_first_forward_way_in_the_series,
-                                                                    motorway_split_way,
-                                                                    count_of_forward_roled_way_series,
-                                                                    last_forward_way_before_backward_direction,
-                                                                    current_highway, route_number, network,
-                                                                    previous_ref, last_roundabout_nodes)
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+                                                                                index_of_current_way,
+                                                                                first_node_previous,
+                                                                                last_node_previous, first_node_current,
+                                                                                last_node_current, previous_role,
+                                                                                current_role,
+                                                                                previous_oneway,
+                                                                                previous_roundabout, current_roundabout,
+                                                                                current_oneway, is_mutcd_country,
+                                                                                role_of_first_way,
+                                                                                has_directional_roles,
+                                                                                error_information, previous_current,
+                                                                                first_node_of_first_forward_way_in_the_series,
+                                                                                last_node_of_first_forward_way_in_the_series,
+                                                                                motorway_split_way,
+                                                                                count_of_forward_roled_way_series,
+                                                                                last_forward_way_before_backward_direction,
+                                                                                current_highway, route_number, network,
+                                                                                previous_ref, last_roundabout_nodes)
     assert has_directional_roles is False
     assert current_roundabout is False
     assert previous_roundabout is True
@@ -967,6 +1016,7 @@ def test_check_if_way_connects_continuously_relation_info_gap():
     ways = relation["ways_to_search"]
     index_of_current_way = 3
     count_of_forward_roled_way_series = 0
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     previous_nodes = current_nodes = last_forward_way_before_backward_direction = last_roundabout_nodes = []
     previous_roundabout = way_queries.is_roundabout(ways[index_of_current_way - 1])
     current_roundabout = way_queries.is_roundabout(ways[index_of_current_way])
@@ -987,23 +1037,25 @@ def test_check_if_way_connects_continuously_relation_info_gap():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-    error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_nodes, current_nodes,
-                                                                    index_of_current_way, first_node_previous,
-                                                                    last_node_previous, first_node_current,
-                                                                    last_node_current, previous_role, current_role,
-                                                                    previous_oneway,
-                                                                    previous_roundabout, current_roundabout,
-                                                                    current_oneway, is_mutcd_country,
-                                                                    role_of_first_way,
-                                                                    has_directional_roles,
-                                                                    error_information, previous_current,
-                                                                    first_node_of_first_forward_way_in_the_series,
-                                                                    last_node_of_first_forward_way_in_the_series,
-                                                                    motorway_split_way,
-                                                                    count_of_forward_roled_way_series,
-                                                                    last_forward_way_before_backward_direction,
-                                                                    current_highway, route_number, network,
-                                                                    previous_ref, last_roundabout_nodes)
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+                                                                                index_of_current_way,
+                                                                                first_node_previous,
+                                                                                last_node_previous, first_node_current,
+                                                                                last_node_current, previous_role,
+                                                                                current_role,
+                                                                                previous_oneway,
+                                                                                previous_roundabout, current_roundabout,
+                                                                                current_oneway, is_mutcd_country,
+                                                                                role_of_first_way,
+                                                                                has_directional_roles,
+                                                                                error_information, previous_current,
+                                                                                first_node_of_first_forward_way_in_the_series,
+                                                                                last_node_of_first_forward_way_in_the_series,
+                                                                                motorway_split_way,
+                                                                                count_of_forward_roled_way_series,
+                                                                                last_forward_way_before_backward_direction,
+                                                                                current_highway, route_number, network,
+                                                                                previous_ref, last_roundabout_nodes)
     assert has_directional_roles is False
     assert current_roundabout is False
     assert previous_roundabout is False
@@ -1016,6 +1068,7 @@ def test_check_if_way_connects_continuously_relation_info_no_gap():
     relation = analyzer_dicts.relation_info_one_piece_roundabout_gap
     ways = relation["ways_to_search"]
     index_of_current_way = 4
+    previous_highway = way_queries.get_highway(ways[index_of_current_way - 1])
     count_of_forward_roled_way_series = 0
     previous_nodes = current_nodes = last_forward_way_before_backward_direction = last_roundabout_nodes = []
     previous_roundabout = way_queries.is_roundabout(ways[index_of_current_way - 1])
@@ -1037,23 +1090,25 @@ def test_check_if_way_connects_continuously_relation_info_no_gap():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-    error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_nodes, current_nodes,
-                                                                    index_of_current_way, first_node_previous,
-                                                                    last_node_previous, first_node_current,
-                                                                    last_node_current, previous_role, current_role,
-                                                                    previous_oneway,
-                                                                    previous_roundabout, current_roundabout,
-                                                                    current_oneway, is_mutcd_country,
-                                                                    role_of_first_way,
-                                                                    has_directional_roles,
-                                                                    error_information, previous_current,
-                                                                    first_node_of_first_forward_way_in_the_series,
-                                                                    last_node_of_first_forward_way_in_the_series,
-                                                                    motorway_split_way,
-                                                                    count_of_forward_roled_way_series,
-                                                                    last_forward_way_before_backward_direction,
-                                                                    current_highway, route_number, network,
-                                                                    previous_ref, last_roundabout_nodes)
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+                                                                                index_of_current_way,
+                                                                                first_node_previous,
+                                                                                last_node_previous, first_node_current,
+                                                                                last_node_current, previous_role,
+                                                                                current_role,
+                                                                                previous_oneway,
+                                                                                previous_roundabout, current_roundabout,
+                                                                                current_oneway, is_mutcd_country,
+                                                                                role_of_first_way,
+                                                                                has_directional_roles,
+                                                                                error_information, previous_current,
+                                                                                first_node_of_first_forward_way_in_the_series,
+                                                                                last_node_of_first_forward_way_in_the_series,
+                                                                                motorway_split_way,
+                                                                                count_of_forward_roled_way_series,
+                                                                                last_forward_way_before_backward_direction,
+                                                                                current_highway, route_number, network,
+                                                                                previous_ref, last_roundabout_nodes)
     assert has_directional_roles is False
     assert current_roundabout is False
     assert previous_roundabout is False
