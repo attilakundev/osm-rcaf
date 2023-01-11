@@ -1,0 +1,314 @@
+# Hungarian translation for OpenStreetMap Relation Continuity Analyzer and Fixer.
+# Copyright (C) 2023 Attila Kun
+# This file is distributed under the same license as the OSMRCAF package.
+# Attila Kun <attila@attilakundev.com>, 2023
+
+msgid   ""
+msgstr  "Project-Id-Version: 0.0.1\n"
+        "Report-Msgid-Bugs-To: Attila Kun <attila@attilakundev.com>\n"
+        "POT-Creation-Date: 2023-01-12 00:21+0100\n"
+        "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "Last-Translator: Attila Kun <attila@attilakundev.com>\n"
+        "Language-Team: No team yet\n"
+        "Language: hu\n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+#: lib/osm_error_messages.py:32
+#, python-brace-format
+msgid   "Previous way's first and last nodes: {first_node_previous} and "
+        "{last_node_previous}\n"
+        "Role: {previous_role}\n"
+        "Roundabout: {previous_roundabout}\n"
+        "One way road: {previous_oneway}\n"
+        "Current way's first and last nodes: {first_node_current} and "
+        "{last_node_current}\n"
+        "Role: {current_role}\n"
+        "Roundabout: {current_roundabout}\n"
+        "One way road: {current_oneway}\n"
+msgstr  "Előző szakasz első és utolsó pontja: {first_node_previous} and "
+        "{last_node_previous}\n"
+        "Szerep: {previous_role}\n"
+        "Körforgalom: {previous_roundabout}\n"
+        "Egyirányú út: {previous_oneway}\n"
+        "Jelenlegi szakasz első és utolsó pontja: {first_node_current} és "
+        "{last_node_current}\n"
+        "Szerep: {previous_role}\n"
+        "Körforgalom: {previous_roundabout}\n"
+        "Egyirányú út: {previous_oneway}\n"
+
+#: lib/osm_error_messages.py:55
+#, python-brace-format
+msgid   "Previous way's first and last nodes: {first_node_previous} and "
+        "{last_node_previous}\n"
+        "Role: {previous_role}\n"
+        "Current way's first and last nodes: {first_node_current} and "
+        "{last_node_current}\n"
+        "Role: {current_role}\n"
+msgstr  "Előző szakasz első és utolsó pontja: {first_node_previous} és "
+        "{last_node_previous}\n"
+        "Szerep: {previous_role}\n"
+        "Jelenlegi szakasz első és utolsó pontja: {first_node_current} és "
+        "{last_node_current}\n"
+        "Szerep: {current_role}\n"
+
+#: lib/osm_error_messages.py:79
+#, python-brace-format
+msgid   "=================[Relation #{relation_id}]================="
+msgstr  "=================[{relation_id}. számú kapcsolat]================="
+
+#: lib/osm_error_messages.py:81
+#, python-brace-format
+msgid   "Link of the relation: {relation}"
+msgstr  "Link a kapcsolathoz: {relation}"
+
+#: lib/osm_error_messages.py:84
+#, python-format, python-brace-format
+msgid   "This relation has {errors} errors and {correct_ways_count} correct "
+        "ways. That's {correctness}% correct."
+msgstr  "Ennek a kapcsolatnak {errors} hibája és {correct_ways_count} helyes "
+        "útszakasza van. Ez {correctness}%-ban helyes."
+
+#: lib/osm_error_messages.py:102
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has gap "
+        "at way: {current_ref}\n"
+        "This case occured because there is a gap,this happened at the "
+        "beginning of the relation, since it started with a 2x2 seperated "
+        "highway. The ID of last way before going to backward direction: "
+        "{last_forward_way_before_backward_direction}\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak van egy  "
+        "szakadása a {current_ref} számú szakasznál. \n"
+        "Ez azért történt, mert szakadás van, és ez a kapcsolat elejénél történt, "
+        "ahol 2x2 sávos elkülönített útszakasznál kezd."
+        " Azonosítója az utolsó útszakasznak mielőtt a vissza irányba nem megy át a kapcsolat: "
+        "{last_forward_way_before_backward_direction}\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:117
+#, python-brace-format
+msgid   "\n"
+        "INFO: There is a roundabout split up to multiple ways, last known "
+        "way is {current_ref}\n"
+        "{nodes}"
+msgstr  "\n"
+        "INFO: Van egy több darabra szelt körforgalom, az utolsó ismert szakasza"
+        "{current_ref} számú."
+        "{nodes}"
+
+#: lib/osm_error_messages.py:124
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has a "
+        "road segment which has forward role, but not oneway and the "
+        "following road segment is a normal road segment, way number where "
+        "this was found: {current_ref}\n"
+        " Previous way:{previous_ref}\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak van egy "
+        "szegmense ami forward, de nem egyirányú "
+        "és a következő útszegmens egy rendes útszegmens, a szakasz száma ahol a probléma "
+        "található: {current_ref}\n"
+        " Previous way:{previous_ref}\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:136
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has wrong "
+        "role setup at way: {current_ref}\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a "
+        "{current_ref} számú szakaszánál rossz szerep van beállítva.\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:143
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has gap "
+        "at roundabout: {current_ref}\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a "
+        "{current_ref} számú körforgalomnál szakadás van.\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:151
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has gap "
+        "at way: {current_ref}\n"
+        " It's found in a series of ways with forward role.\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a "
+        "{current_ref} számú tagjánál szakadás van.\n"
+        "Ez egy többtagú forward szerepű szakasznál található.\n"
+        "{nodes}"
+
+
+#: lib/osm_error_messages.py:161
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has gap "
+        "at way: {current_ref}\n"
+        " There is only one connecting way into the closed (its start and end "
+        "nodes are the same) roundabout instead of two.\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a "
+        "{current_ref} számú tagjánál szakadás van.\n"
+        "Egyetlen szakasz megy bele "
+        "(a kezdő és végpontja ugyanaz) a kettő helyett.\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:172
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has the "
+        "way {current_ref} earlier than needed, it's a roundabout entry node "
+        "and it should be swapped in order to maintain the continuity. \n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a {current_ref} számú tagja előbb"
+        "van a kelleténél, mert ez egy körforgalmi behajtó pont és meg kéne a kettő behajtó sorrendjét cserélni "
+        "a folytonosság fenttartásához. \n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:183
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has the "
+        "way {current_ref} roundabout way duplicated, this is wrong, since "
+        "the route only contains the roundabout once. \n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak a "
+        "{current_ref} számú körforgalma duplikálva van, ez rossz, mert "
+        "az útvonal a körforgalmat csak egyszer tartalmazza. \n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:194
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has a "
+        "roundabout {current_ref}  with forward role missing. \n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak van egy "
+        "{previous_ref} számú darabolt körforgalmas szakasza, a forward szerep hiányzik róla."
+        "{nodes}"
+
+#: lib/osm_error_messages.py:204
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has a one-"
+        "way road {previous_ref}  with forward role missing. \n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolatnak van egy "
+        "{previous_ref} számú darabolt körforgalmas szakasza, a forward szerep hiányzik róla."
+        "{nodes}"
+
+#: lib/osm_error_messages.py:214
+msgid   "\n"
+        "[WARNING] The motorway is continuous, however it reached back from "
+        "start point to (almost) start point via other lane. It should be "
+        "done that the motorway's right lane goes first to the end point, "
+        "then left lane from first to end point."
+msgstr  "\n"
+        "[FIGYELMEZTETÉS] Az autópálya folytonos, habár visszatért (majdnem) a kezdőponthoz "
+        "a másik sávon keresztül. Úgy kellene ezt megcsinálni, "
+        "hogy az autópálya jobboldali sávja az ugyanúgy a kiinduló ponttól "
+        "a végéig tartson mint a baloldalon levő."
+
+#: lib/osm_error_messages.py:220
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Relation with route number {currently_checked_ref} has gap "
+        "at way: {current_ref}\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A {currently_checked_ref} útszámú kapcsolat szakadt ennél a szakasznál: "
+        "{current_ref}\n"
+        "{nodes}"
+
+
+#: lib/osm_error_messages.py:235
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Multipolygon has an area consisting of one way unclosed, the "
+        "way affected: {current_ref}\n"
+        "\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A multipolygon-nak lezáratlanul van egy szakaszból álló területe, "
+        "az érintett szakasz: {current_ref}\n"
+        "\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:242
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Multipolygon has an area consisting of one way unclosed at "
+        "the end of the relation, the way affected: {current_ref}\n"
+        "\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A multipolygon-nak lezáratlanul van egy szakaszból álló területe "
+        "a kapcsolat végén, az érintett szakasz: {current_ref}\n"
+        "\n"
+        "{nodes}"
+
+
+#: lib/osm_error_messages.py:249
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Multipolygon has an area consisting of multiple ways "
+        "unclosed at the end of the relation, the way affected: "
+        "{current_ref}\n"
+        "\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A multipolygon-nak egy lezáratlan több szakaszból álló területe van "
+        "a kapcsolat végén, az érintett szakasz: {current_ref}\n"
+        "\n"
+        "{nodes}"
+
+
+#: lib/osm_error_messages.py:256
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Multipolygon has an area consisting of multiple ways "
+        "unclosed, the way affected: {current_ref}\n"
+        "\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A multipolygon-nak egy lezáratlan több szakaszból álló területe van, "
+        "az érintett szakasz: {current_ref}\n"
+        "\n"
+        "{nodes}"
+
+#: lib/osm_error_messages.py:263
+#, python-brace-format
+msgid   "\n"
+        "[ERROR] Multipolygon has a way which doesn't have a role, the way "
+        "affected: {current_ref}\n"
+        "\n"
+        "{nodes}"
+msgstr  "\n"
+        "[HIBA] A multipolygon-nak van egy szakasza amire nincsen szerep feltüntetve, az érintett"
+        "szakasz: {current_ref}\n"
+        "\n"
+        "{nodes}"
+
+
+#: lib/osm_error_messages.py:271
+msgid   "This relation has no errors and gaps at all."
+msgstr  "A kapcsolatnak egyáltalán nincsen hibája és szakadása."

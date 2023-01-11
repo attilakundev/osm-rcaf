@@ -190,7 +190,7 @@ class MultipolygonAnalyzer:
                                                       index, ways_to_search_length, previous_current,
                                                       error_information):
         if index == ways_to_search_length - 1 == 0 and first_node_current != last_node_current:
-            error_information.append(ErrorMultipolygon(previous_current, "Gap in multipolygon"))
+            error_information.append(ErrorMultipolygon(previous_current, "Gap in an area consisting of one way"))
         return error_information
 
     def check_way_closedness_for_two_ways(self, first_node_previous: str, last_node_previous: str,

@@ -99,7 +99,7 @@ class OSMErrorMessages:
                                                                                       _)
                         match error.error_type:
                             case "Gap at the beginning":
-                                messages.append(_("\n[ERROR] Relation ref={currently_checked_ref}"
+                                messages.append(_("\n[ERROR] Relation with route number {currently_checked_ref}"
                                                   " has gap at way: {current_ref}\n"
                                                   "This case occured because there is a gap,"
                                                   "this happened at the beginning of the "
@@ -121,9 +121,10 @@ class OSMErrorMessages:
                                 )
                             case "Forward but not oneway":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has a road segment which"
-                                      "has forward role, but not oneway and the following road segment"
-                                      " is a normal road segment, way number where this was found: {current_ref}\n "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has a road segment which "
+                                      "has forward role, but not oneway and the following road segment "
+                                      "is a normal road segment, way number where this was found: {current_ref}\n "
                                       "Previous way:{previous_ref}\n{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
                                         current_ref=current_ref,
@@ -132,20 +133,23 @@ class OSMErrorMessages:
                                 )
                             case "Wrong role setup":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has wrong role setup at way:"
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has wrong role setup at way:"
                                       " {current_ref}\n{nodes}".format(currently_checked_ref=currently_checked_ref,
                                                                        current_ref=current_ref,
                                                                        nodes=nodes_and_other_information)))
                             case "Roundabout gap":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has gap at roundabout:"
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has gap at roundabout:"
                                       " {current_ref}\n{nodes}".format(currently_checked_ref=currently_checked_ref,
                                                                        current_ref=current_ref,
                                                                        nodes=nodes_and_other_information
                                                                        )))
                             case "Gap in forward series":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has gap at way: {current_ref}\n "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has gap at way: {current_ref}\n "
                                       "It's found in a series of ways with forward role.\n"
                                       "{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
@@ -154,7 +158,8 @@ class OSMErrorMessages:
                                 )
                             case "Only one forward way before closed roundabout":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has gap at way: {current_ref}\n "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has gap at way: {current_ref}\n "
                                       "There is only one connecting way into the closed "
                                       "(its start and end nodes are the same) roundabout instead of two.\n"
                                       "{nodes}".format(
@@ -164,8 +169,9 @@ class OSMErrorMessages:
                                 )
                             case "Wrong order of roundabout entries":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has the way {current_ref} "
-                                      "earlier\n than needed, it's a roundabout entry node and "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has the way {current_ref} "
+                                      "earlier than needed, it's a roundabout entry node and "
                                       "it should be swapped in order to maintain the continuity. \n"
                                       "{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
@@ -174,7 +180,8 @@ class OSMErrorMessages:
                                 )
                             case "Duplicated roundabout ways":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has the way {current_ref} "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has the way {current_ref} "
                                       "roundabout way duplicated, this is wrong, "
                                       "since the route only contains the roundabout once. \n"
                                       "{nodes}".format(
@@ -184,7 +191,8 @@ class OSMErrorMessages:
                                 )
                             case "Forward role missing at roundabout":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has a one-way road {current_ref}\n "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has a roundabout {current_ref} "
                                       " with forward role missing. \n"
                                       "{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
@@ -193,7 +201,8 @@ class OSMErrorMessages:
                                 )
                             case "Forward and non-oneway without ability to move backward":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has a one-way road {previous_ref}\n "
+                                    _("\n[ERROR] Relation with route number "
+                                      "{currently_checked_ref} has a one-way road {previous_ref} "
                                       " with forward role missing. \n"
                                       "{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
@@ -202,13 +211,14 @@ class OSMErrorMessages:
                                 )
                             case "Motorway not split":
                                 messages.append(
-                                    _("\n[ERROR]The motorway is continuous, however it reached back from start point to"
+                                    _("\n[WARNING] The motorway is continuous, however it reached back from start point to"
                                       " (almost) start point via other lane. It should be done that the motorway's right"
                                       " lane goes first to the end point, then left lane from first to end point.")
                                 )
                             case "Gap":
                                 messages.append(
-                                    _("\n[ERROR] Relation ref={currently_checked_ref} has gap at way: {current_ref}\n"
+                                    _("\n[ERROR] Relation with route number {currently_checked_ref} "
+                                      "has gap at way: {current_ref}\n"
                                       "{nodes}".format(
                                         currently_checked_ref=currently_checked_ref,
                                         current_ref=current_ref,
@@ -216,29 +226,48 @@ class OSMErrorMessages:
                                 )
                     else:
                         # type is ErrorMultipolygon
-                        previous_ref = self.remote_way(error.prev_curr.previous_ref, source)
                         current_ref = self.remote_way(error.prev_curr.current_ref, source)
                         nodes_and_other_information = self.previous_current_nodes_multi(error.prev_curr,
                                                                                       source,
                                                                                       _)
                         match error.error_type:
                             case "Gap in an area consisting of one way":
-                                messages.append(_("\n[ERROR] Multipolygon "
-                                                  " has an area consisting of one way unclosed: {current_ref}\n"
+                                messages.append(_("\n[ERROR] Multipolygon"
+                                                  " has an area consisting of one way unclosed,"
+                                                  " the way affected: {current_ref}\n"
                                                   "\n{nodes}"
                                                   .format(current_ref=current_ref,
                                                           nodes=nodes_and_other_information)))
                             case "Gap in an area consisting of one way at the end":
-                                pass
+                                messages.append(_("\n[ERROR] Multipolygon"
+                                                  " has an area consisting of one way unclosed at the end of the relation,"
+                                                  " the way affected: {current_ref}\n"
+                                                  "\n{nodes}"
+                                                  .format(current_ref=current_ref,
+                                                          nodes=nodes_and_other_information)))
                             case "Gap in multi way multipolygon at the end":
-                                pass
+                                messages.append(_("\n[ERROR] Multipolygon"
+                                                  " has an area consisting of multiple ways unclosed at the end of the relation,"
+                                                  " the way affected: {current_ref}\n"
+                                                  "\n{nodes}"
+                                                  .format(current_ref=current_ref,
+                                                          nodes=nodes_and_other_information)))
                             case "Gap in multi way multipolygon":
-                                pass
-                            case "Gap in multipolygon":
-                                pass
+                                messages.append(_("\n[ERROR] Multipolygon"
+                                                  " has an area consisting of multiple ways unclosed,"
+                                                  " the way affected: {current_ref}\n"
+                                                  "\n{nodes}"
+                                                  .format(current_ref=current_ref,
+                                                          nodes=nodes_and_other_information)))
                             case "No role":
+                                messages.append(_("\n[ERROR] Multipolygon"
+                                                  " has a way which doesn't have a role,"
+                                                  " the way affected: {current_ref}\n"
+                                                  "\n{nodes}"
+                                                  .format(current_ref=current_ref,
+                                                          nodes=nodes_and_other_information)))
                                 pass
         else:
-            messages.append(_("This relation has no errors at all."))
+            messages.append(_("This relation has no errors and gaps at all."))
             pass
         return messages
