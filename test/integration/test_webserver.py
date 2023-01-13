@@ -37,11 +37,6 @@ def test_analyze_file():
         response = client.post("/analyze_file", files=files)
         assert response.status_code == 200  # because we redirect the user so it should be correct
 
-def test_language_changer():
-    client = TestClient(app)
-    response = client.get("/language")
-    assert response.status_code == 200
-
 def test_debug_mode():
     client = TestClient(app)
     response = client.get("/debug_mode")

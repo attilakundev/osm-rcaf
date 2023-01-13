@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 import requests
 import xmltodict
 from string import Template
@@ -110,3 +112,9 @@ class OSMDataParser:
         return_value: dict = self.append_ways_to_search_with_useful_info(
             self.gather_way_and_relation_info(data, relation_id))
         return return_value
+
+    def convert_multiple_dataclasses_to_dicts(self,dataclasses):
+        dicts = []
+        for dataclass in dataclasses:
+            dicts.append(asdict(dataclass))
+        return dicts

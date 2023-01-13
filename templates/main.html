@@ -3,51 +3,25 @@
 {% block content %}
 <div style="flex-basis: 20%; background:#242;">
   <div> <!-- This is the area where you can give an OSM relation ID -->
-    {% if language == "EN" %}
     <p>If you want to retrieve a relation from OSM DB:</p>
-    {% else %}
-    <p>Ha szeretnél egy OSM-ben szereplő kapcsolatot megkapni:</p>
-    {% endif %}
     <form method="post" action="/analyze">
-        {% if language == "EN" %}
         <input type="number" name="relation_id" placeholder="Please enter the ID.">
         <input type="submit" value="Analyze">
-        {% else %}
-        <input type="number" name="relation_id" placeholder="Írd ide az azonosítót.">
-        <input type="submit" value="Elemzés">
-        {% endif %}
     </form>
   </div>
   <div> <!-- This is the area where you can upload a file and analyze that -->
-    {% if language == "EN" %}
     <p>If you want to analyze a file:</p>
-    {% else %}
-    <p>Ha szeretnél egy fájlt elemezni:</p>
-    {% endif %}
     <form method="post" enctype="multipart/form-data"  action="/analyze_file">
         <input type="file" name="relation_file">
-        {% if language == "EN" %}
         <input type="submit" name="relUpload" value="Analyze">
-        {% else %}
-       <input type="submit" name="relUpload" value="Elemzés">
-        {% endif %}
     </form>
   </div>
   <div> <!-- Debug mode's button -->
-    {%if language == "EN" %}
     <p>Debug mode:</p>
-        {% if debug_mode == "OFF" %}
-        <a href="/debug_mode">Turn on</a>
-        {% elif debug_mode == "ON" %}
-        <a href="/debug_mode">Turn off</a>
-        {% endif %}
-    {% else %}
-    <p>Részletes kiíratás:</p>
-        {% if debug_mode == "OFF" %}
-        <a href="/debug_mode">Bekapcsolás</a>
-        {% elif debug_mode == "ON" %}
-        <a href="/debug_mode">Kikapcsolás</a>
-        {% endif %}
+    {% if debug_mode == "OFF" %}
+    <a href="/debug_mode">Turn on</a>
+    {% elif debug_mode == "ON" %}
+    <a href="/debug_mode">Turn off</a>
     {% endif %}
   </div>
 </div>

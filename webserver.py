@@ -1,7 +1,12 @@
 import sys
+from dataclasses import asdict
 from pathlib import Path
+
+import xmltodict
+
 project_path = Path(__file__).resolve().parent.absolute()
 sys.path.append(f"{project_path}")
+sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/analyzer")
 
 import uvicorn
@@ -38,15 +43,12 @@ app.add_middleware(SessionMiddleware, secret_key="someSecretKey")
 
 
 def check_session_variables(request):
-    if request.session.get("language") is None:
-        request.session["language"] = "EN"
-        request.session["title"] = "OpenStreetMap Relation Continuity Analyzer and Fixer"
     if request.session.get("debug_mode") is None:
         request.session["debug_mode"] = "OFF"
     if request.session.get("loaded_relation") is None:
         request.session["loaded_relation"] = []
     if request.session.get("errors") is None:
-        request.session["errors"] = [] # will contain ErrorModel classes or similar to this
+        request.session["errors"] = [] # contains errors about the classes
     if request.session.get("relationData") is None:
         request.session["relationData"] = {} #Dictionary, like: relation = 23099, number_of_ways = 1009 etc.
     return request
@@ -54,7 +56,7 @@ def check_session_variables(request):
 @app.get("/", response_class=HTMLResponse)
 async def analyzer_page(request: Request):
     request = check_session_variables(request)
-    context = {"request": request, "title": request.session["title"], "language": request.session["language"],
+    context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "loaded_relation": request.session["loaded_relation"],
                "errors": request.session["errors"], "relationData": request.session["relationData"]}
@@ -64,30 +66,20 @@ async def analyzer_page(request: Request):
 @app.post("/analyze")
 async def analyze_url(request: Request, relation_id: str = Form(...)):
     request = check_session_variables(request)
-    #request.session["loaded_relation"] = OSMXMLParser.retrieve_XML_from_API(relation_id)
-    #request.session["errors"], relation_length = analyzer.relation_checking(request.session["loaded_relation"])
+    request.session["loaded_relation"] = OSMXMLParser.retrieve_XML_from_API(relation_id)
+    request.session["errors"], correct_ways_count = analyzer.relation_checking(request.session["loaded_relation"],relation_id)
+    request.session["errors"] = OSMXMLParser.convert_multiple_dataclasses_to_dicts(request.session["errors"])
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 
 @app.post("/analyze_file")
 async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
     request = check_session_variables(request)
-    xml_content = await relation_file.read()
-    #request.session["loaded_relation"] = OSMXMLParser.parse_XML(xml_content)
-    # request.session["errors"] = analyzer.analyze(request.session["loaded_relation"])
+    xml_data = await relation_file.read()
+    request.session["loaded_relation"] = xmltodict.parse(xml_data)
+    request.session["errors"], correct_ways_count = analyzer.relation_checking(request.session["loaded_relation"])
+    request.session["errors"] = OSMXMLParser.convert_multiple_dataclasses_to_dicts(request.session["errors"])
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
-
-
-@app.get("/language", response_class=RedirectResponse)
-async def change_language(request: Request):
-    request = check_session_variables(request)
-    request.session["language"] = "EN" if request.session["language"] != "EN" else "HU"
-    if request.session["language"] == "EN":
-        request.session["title"] = "OpenStreetMap Relation Continuity Analyzer and Fixer"
-    else:
-        request.session["title"] = "OpenStreetMap Kapcsolat Folytonosság Elemző és Javító"
-    return "/"
-
 
 @app.get("/debug_mode", response_class=RedirectResponse)
 async def debug_mode_switch(request: Request):

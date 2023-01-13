@@ -517,7 +517,7 @@ class HighwayAnalyzer:
                                                        error_information: ErrorHighway,
                                                        previous_current: PreviousCurrentHighway):
         if index_of_current_way == 0:
-            if (current_role == "" and ((current_oneway or current_roundabout
+            if (current_role == "" and ((current_oneway or (current_roundabout and previous_current.first_node_current != previous_current.last_node_current)
                                          or (current_oneway and current_highway == "motorway"))
                                         )):
                 error_information.append(ErrorHighway(previous_current, "Wrong role setup"))

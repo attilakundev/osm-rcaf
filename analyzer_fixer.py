@@ -1,6 +1,5 @@
 import sys
 import click
-import gettext
 from pathlib import Path
 
 project_path = Path(__file__).resolve().parent.absolute()
@@ -22,8 +21,8 @@ from osm_error_messages import OSMErrorMessages
 @click.option("--output", show_default=True, default=".",
               help="The output folder where you want the logs and xml files.")
 @click.option("--verbose", is_flag=True, show_default=False, default=False, help="Get detailed log results.")
-@click.option("--language", show_default=True, default="en", help="Available languages: en, hu")
-def program(relation: str, email: str, source: str, relationcfg: str, output: str, verbose: str, language: str):
+#@click.option("--language", show_default=True, default="en", help="Available languages: en, hu")
+def program(relation: str, email: str, source: str, relationcfg: str, output: str, verbose: str):
     analyzer = Analyzer()
     osm_data_parser = OSMDataParser()
     osm_error_messages = OSMErrorMessages()
@@ -33,7 +32,7 @@ def program(relation: str, email: str, source: str, relationcfg: str, output: st
         data = osm_data_parser.retrieve_XML_from_API(relation_id)
         error_information, correct_ways_count = analyzer.relation_checking(data, relation_id)
         error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id, source,
-                                                            language, verbose)
+                                                            verbose)
         for message in error_messages:
             print(message)
 
