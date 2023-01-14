@@ -18,14 +18,29 @@
   </div>
   <div> <!-- Debug mode's button -->
     <p>Debug mode:</p>
-    {% if debug_mode == "OFF" %}
+    {% if debug_mode == False %}
     <a href="/debug_mode">Turn on</a>
-    {% elif debug_mode == "ON" %}
+    {% elif debug_mode == True %}
     <a href="/debug_mode">Turn off</a>
     {% endif %}
   </div>
 </div>
 <div style="flex-basis: 70%;">
-    This will be the place for the program itself.
+    {% for message in error_messages %}
+        {% for word in message %}
+            {% if "[ERROR]" in word %}
+                <p class="error"><b>{{word}}</b>
+            {% elif "https://" in word %}
+                <a href="{{word}}">{{word}}</a>
+            {% elif "Previous" in word %}
+                <br/><br/>{{word}}
+            {% elif "One" in word or "Roundabout" in word or "Role" in word %}
+                 <br/>{{word}}
+            {% else %}
+                {{word}}
+            {% endif %}
+        {% endfor %}
+                </p>
+    {% endfor %}
 </div>
 {% endblock %}

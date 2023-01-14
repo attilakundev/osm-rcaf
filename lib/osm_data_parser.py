@@ -13,7 +13,7 @@ class OSMDataParser:
         url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
         relation_file = requests.get(url).content
         if "osm" not in str(relation_file):
-            raise FileNotFoundError("This file doesn't exist")
+            return {}
         else:
             dictionary = xmltodict.parse(relation_file)
         return dictionary
