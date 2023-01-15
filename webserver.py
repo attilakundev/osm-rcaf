@@ -67,8 +67,7 @@ def check_session_variables(request):
 @app.get("/", response_class=HTMLResponse)
 async def analyzer_page(request: Request):
     request = check_session_variables(request)
-    print("/")
-    print(request.session["errors"])
+    request.session["error_messages"] = [] #empty it because we're not supposed to have results on the main route
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "error_messages": request.session["error_messages"]}
@@ -84,9 +83,11 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         error_information, correct_ways_count = analyzer.relation_checking(relation_data, relation_id)
         error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id, "",
                                                             request.session["debug_mode"])
-        error_messages = webserver_utils.split_messages_between_spaces(error_messages)
+        error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+        error_messages = [[len(message), message] for message in error_messages]
     else:
-        error_messages = "This relation doesn't exist."
+        not_existing = [[0, "This relation doesn't exist."]]
+        error_messages = [[len(not_existing),not_existing]]
     request.session["error_messages"] = error_messages
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
@@ -101,9 +102,9 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
     request.session["loaded_relation"] = xmltodict.parse(xml_data)
     error_information, correct_ways_count = analyzer.relation_checking(request.session["loaded_relation"])
     error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, "",
-                                                                           "dummy_source",
-                                                                           request.session["debug_mode"])
-    error_messages = webserver_utils.split_messages_between_spaces(error_messages)
+                                                        "dummy_source",
+                                                        request.session["debug_mode"])
+    error_messages = webserver_utils.split_messages_between_newlines(error_messages)
     request.session["error_messages"] = error_messages
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],

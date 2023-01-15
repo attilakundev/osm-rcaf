@@ -2,45 +2,56 @@
 
 {% block content %}
 <div style="flex-basis: 20%; background:#242;">
-  <div> <!-- This is the area where you can give an OSM relation ID -->
-    <p>If you want to retrieve a relation from OSM DB:</p>
-    <form method="post" action="/analyze">
-        <input type="number" name="relation_id" placeholder="Please enter the ID.">
-        <input type="submit" value="Analyze">
-    </form>
-  </div>
-  <div> <!-- This is the area where you can upload a file and analyze that -->
-    <p>If you want to analyze a file:</p>
-    <form method="post" enctype="multipart/form-data"  action="/analyze_file">
-        <input type="file" name="relation_file">
-        <input type="submit" name="relUpload" value="Analyze">
-    </form>
-  </div>
-  <div> <!-- Debug mode's button -->
-    <p>Debug mode:</p>
-    {% if debug_mode == False %}
-    <a href="/debug_mode">Turn on</a>
-    {% elif debug_mode == True %}
-    <a href="/debug_mode">Turn off</a>
-    {% endif %}
-  </div>
+    <div> <!-- This is the area where you can give an OSM relation ID -->
+        <p>If you want to retrieve a relation from OSM DB:</p>
+        <form method="post" action="/analyze">
+            <input type="number" name="relation_id" placeholder="Please enter the ID.">
+            <input type="submit" value="Analyze">
+        </form>
+    </div>
+    <div> <!-- This is the area where you can upload a file and analyze that -->
+        <p>If you want to analyze a file:</p>
+        <form method="post" enctype="multipart/form-data" action="/analyze_file">
+            <input type="file" name="relation_file">
+            <input type="submit" name="relUpload" value="Analyze">
+        </form>
+    </div>
+    <div> <!-- Debug mode's button -->
+        <p>Debug mode:</p>
+        {% if debug_mode == False %}
+        <a href="/debug_mode">Turn on</a>
+        {% elif debug_mode == True %}
+        <a href="/debug_mode">Turn off</a>
+        {% endif %}
+    </div>
 </div>
 <div style="flex-basis: 70%;">
-    {% for message in error_messages %}
-        {% for word in message %}
-            {% if "[ERROR]" in word %}
-                <p class="error"><b>{{word}}</b>
-            {% elif "https://" in word %}
-                <a href="{{word}}">{{word}}</a>
-            {% elif "Previous" in word %}
-                <br/><br/>{{word}}
-            {% elif "One" in word or "Roundabout" in word or "Role" in word %}
-                 <br/>{{word}}
-            {% else %}
-                {{word}}
-            {% endif %}
+    {% for length_of_array, error in error_messages %}
+    {% for index, line in error %}
+
+    {% if "ERROR" in line and index == 1 %}
+    {% autoescape false %}
+    <p class="error">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
+        {% endautoescape %}
+        {% elif index == 1 %}
+    {% autoescape false %}
+        <p>{{line}}
+    {% endautoescape %}
+        {% elif "Previous way's" in line %}
+    {% autoescape false %}
+        <br><br>{{line}}
+    {% endautoescape %}
+        {% elif index == length_of_array - 1 %}
+    {% autoescape false %}
+        {{line}}
+    {% endautoescape %}
+        {% else %}
+    {% autoescape false %}
+        <br>{{line }}
+     {% endautoescape %}
+        {% endif %}
         {% endfor %}
-                </p>
+    </p>
     {% endfor %}
 </div>
 {% endblock %}
