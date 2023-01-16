@@ -1,7 +1,10 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-omit = test/*
+omit =
+    test/*
+    webserver.py
+    analyzer_fixer.py
 
 [report]
 exclude_lines =

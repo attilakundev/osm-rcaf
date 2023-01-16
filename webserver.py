@@ -45,15 +45,6 @@ app.add_middleware(SessionMiddleware, secret_key="someSecretKey")
 # The secret key is just a dummy key, we don't use any user information
 # But the session is used for storing the current user's language, title(based on it),
 # the stored relation, corrected relation
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
-
-
 def check_session_variables(request):
     if request.session.get("debug_mode") is None:
         request.session["debug_mode"] = False
@@ -105,6 +96,7 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
                                                         "dummy_source",
                                                         request.session["debug_mode"])
     error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+    error_messages = [[len(message), message] for message in error_messages]
     request.session["error_messages"] = error_messages
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],

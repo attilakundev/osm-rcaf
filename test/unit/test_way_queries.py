@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import pytest
 import sys
 
 from pathlib import Path
