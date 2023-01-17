@@ -22,6 +22,8 @@ class OSMErrorMessages:
     def remote_last_forward_way_before_backward_direction(self, array, source):
         if not source and len(array) > 0:
             return ("https://osm.org/way/{}").format(array[0])
+        elif len(array) >0:
+            return array[0]
         return ""
 
     def remote_node(self, way_id, source):
@@ -51,7 +53,7 @@ class OSMErrorMessages:
                             )
         return string_to_return
 
-    def previous_current_nodes_multi(self, prev_curr: PreviousCurrentHighway, source: str):
+    def previous_current_nodes_multi(self, prev_curr: PreviousCurrentMultipolygon, source: str):
         # _ = translation string
         string_to_return = ("Previous way's first and last nodes: {first_node_previous} and {last_node_previous} \n"
                             "Role: {previous_role} \n"
@@ -118,7 +120,7 @@ class OSMErrorMessages:
                                                 "{currently_checked_ref} has a road segment which "
                                                 "has forward role, but not oneway and the following road segment "
                                                 "is a normal road segment, way number where this was found: {current_ref} \n"
-                                                "Previous way:{previous_ref}\n{nodes}".format(
+                                                "Previous way: {previous_ref}\n{nodes}".format(
                                     currently_checked_ref=currently_checked_ref,
                                     current_ref=current_ref,
                                     previous_ref=previous_ref,
