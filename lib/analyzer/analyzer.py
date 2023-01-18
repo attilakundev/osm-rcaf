@@ -11,6 +11,8 @@ from railway_analyzer import RailwayAnalyzer
 from highway_analyzer import HighwayAnalyzer
 from multipolygon_analyzer import MultipolygonAnalyzer
 import way_queries
+from previous_current import PreviousCurrentHighway
+from error_hwy import ErrorHighway
 
 railway_analyzer = RailwayAnalyzer()
 highway_analyzer = HighwayAnalyzer()
@@ -46,4 +48,6 @@ class Analyzer:
                 return highway_analyzer.highway_checking(relation_info, error_information, role_of_first_way)
             else:
                 return multipolygon_analyzer.multipolygon_checking(relation_info, error_information)
-        return "OutOfScope"
+        else:
+            error_information.append(ErrorHighway(PreviousCurrentHighway(), "Not supported"))
+            return error_information, 0

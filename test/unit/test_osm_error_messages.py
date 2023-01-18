@@ -162,7 +162,7 @@ def test_return_messages_verbose_all_errors_hwy():
                                  ErrorHighway(prev_curr_hwy,
                                               "Forward and non-oneway without ability to move backward"),
                                  ErrorHighway(prev_curr_hwy, "Motorway not split"),
-                                 ]
+                                 ErrorHighway(prev_curr_hwy, "Not supported")]
     result_all_hwy = error_messages.return_messages(error_messages_all_errors, correct_ways_count, relation_id, source,
                                                     verbose)
     assert result_all_hwy[2] == (f"\n[ERROR] Relation with route number {prev_curr_hwy.currently_checked_ref} "
@@ -220,6 +220,7 @@ def test_return_messages_verbose_all_errors_hwy():
     assert result_all_hwy[14] == ("\n[WARNING] The motorway is continuous, however it reached back from start point to"
                                   " (almost) start point via other lane. It should be done that the motorway's right"
                                   " lane goes first to the end point, then left lane from first to end point.")
+    assert result_all_hwy[15] == "This public transportation relation type is not supported."
     # continue with the rest of the strings
 
 
@@ -259,3 +260,8 @@ def test_return_messages_verbose_all_errors_multi():
                                    " has a way which doesn't have a role,"
                                    f" the way affected: https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
+
+
+def test_return_message_no_error():
+    results_no_error = error_messages.return_messages([], 1, "23099", "", False)
+    assert results_no_error[2] == "This relation has no errors and gaps at all."

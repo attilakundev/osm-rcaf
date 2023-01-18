@@ -203,6 +203,8 @@ class OSMErrorMessages:
                                     currently_checked_ref=currently_checked_ref,
                                     current_ref=current_ref,
                                     nodes=nodes_and_other_information))
+                            case "Not supported":
+                                messages.append("This public transportation relation type is not supported.")
                     else:
                         # type is ErrorMultipolygon
                         current_ref = self.remote_way(error["prev_curr"]["current_ref"], source)
@@ -244,7 +246,6 @@ class OSMErrorMessages:
                                                 "\n{nodes}"
                                                 .format(current_ref=current_ref,
                                                         nodes=nodes_and_other_information))
-                                pass
         else:
             messages.append("This relation has no errors and gaps at all.")
             pass
