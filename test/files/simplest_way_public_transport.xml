@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' editor='Attila Kun'>
+    <node id='-1'/>
+    <node id='-2'/>
+    <way id='-1'>
+        <nd ref='-1'/>
+        <nd ref='-2'/>
+        <tag k="oneway" v="yes"/>
+    </way>
+    <relation id='-99775'>
+        <member type='way' ref='-1' role=''/>
+        <tag k='ref' v='999'/>
+        <tag k='type' v='public_transport'/>
+    </relation>
+</osm>

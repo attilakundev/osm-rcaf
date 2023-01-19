@@ -164,8 +164,15 @@ def test_route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry
     file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
-    assert 1 == 1
     error_information, correct_ways_count = analyzer.relation_checking(data)
     assert len(error_information) == 1
     assert error_information[0].error_type == "Wrong order of roundabout entries"
     assert correct_ways_count == 6
+
+def test_relation_is_public_transport(): #for this test only I won't create a new file
+    file_path = f"{project_path}/test/files/simplest_way_public_transport.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count = analyzer.relation_checking(data)
+    assert len(error_information) == 1
+    assert error_information[0].error_type == "Not supported"
