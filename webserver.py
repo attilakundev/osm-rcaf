@@ -58,7 +58,7 @@ def check_session_variables(request):
 @app.get("/", response_class=HTMLResponse)
 async def analyzer_page(request: Request):
     request = check_session_variables(request)
-    request.session["error_messages"] = [] #empty it because we're not supposed to have results on the main route
+    request.session["error_messages"] = []  # empty it because we're not supposed to have results on the main route
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "error_messages": request.session["error_messages"]}
@@ -78,7 +78,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         error_messages = [[len(message), message] for message in error_messages]
     else:
         not_existing = [[0, "This relation doesn't exist."]]
-        error_messages = [[len(not_existing),not_existing]]
+        error_messages = [[len(not_existing), not_existing]]
     request.session["error_messages"] = error_messages
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
@@ -90,14 +90,29 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
 async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
     request = check_session_variables(request)
     xml_data = await relation_file.read()
-    request.session["loaded_relation"] = xmltodict.parse(xml_data)
-    error_information, correct_ways_count = analyzer.relation_checking(request.session["loaded_relation"])
-    error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, "",
-                                                        "dummy_source",
-                                                        request.session["debug_mode"])
-    error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-    error_messages = [[len(message), message] for message in error_messages]
-    request.session["error_messages"] = error_messages
+
+    relation_data = xmltodict.parse(xml_data)
+    relation_ids = data_parser.get_relation_ids(relation_data)
+    all_messages = []
+    if type(relation_ids) == list:
+        for relation_id in relation_ids:
+            error_information, correct_ways_count = analyzer.relation_checking(relation_data)
+            error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
+                                                                "dummy_source",
+                                                                request.session["debug_mode"])
+            error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+            for message in error_messages:
+                all_messages.append([len(message), message])
+    else:
+        error_information, correct_ways_count = analyzer.relation_checking(relation_data)
+        error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_ids,
+                                                            "dummy_source",
+                                                            request.session["debug_mode"])
+        error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+        all_messages = [[len(message), message] for message in error_messages]
+
+    request.session["error_messages"] = all_messages
+    request.session["xml_data"] = xml_data.decode("utf-8")
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "error_messages": request.session["error_messages"]}

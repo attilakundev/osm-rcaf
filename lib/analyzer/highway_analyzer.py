@@ -505,7 +505,7 @@ class HighwayAnalyzer:
                                     current_highway: str,
                                     route_number: str, network: str, current_role: str,
                                     error_information: list, previous_current: PreviousCurrentHighway):
-        if motorway_split_way is False and index_of_current_way == length_of_ways_to_search - 1 and (
+        if motorway_split_way is False and index_of_current_way == length_of_ways_to_search and (
                 (current_highway == "motorway" or current_highway == "trunk") or (
                 route_number.startswith("M") and network.startswith("HU"))) and current_role == "forward":
             error_information.append(ErrorHighway(previous_current, "Motorway not split"))

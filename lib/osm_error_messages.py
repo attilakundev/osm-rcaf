@@ -185,8 +185,10 @@ class OSMErrorMessages:
                                     nodes=nodes_and_other_information))
                             case "Forward and non-oneway without ability to move backward":
                                 messages.append("\n[ERROR] Relation with route number "
-                                                "{currently_checked_ref} has a one-way road {previous_ref} "
-                                                " with forward role missing. \n"
+                                                "{currently_checked_ref} has a forward road piece or series,"
+                                                "previous ref which is one of the affected: {previous_ref} \n"
+                                                "This is not good, because in some cases like 2x1 lane trunk/motorways "
+                                                "the traffic can't traverse in the backwards direction."
                                                 "{nodes}".format(
                                     currently_checked_ref=currently_checked_ref,
                                     previous_ref=previous_ref,

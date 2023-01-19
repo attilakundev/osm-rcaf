@@ -820,12 +820,12 @@ def test_check_if_motorway_not_split():
     relation = analyzer_dicts.relation_info_motorway_not_split
     ways = relation["ways_to_search"]
     motorway_split_way = False
-    index_of_current_way = len(ways) - 1
-    length_of_ways_to_search = len(ways)
-    current_highway = way_queries.get_highway(ways[index_of_current_way])
+    index_of_current_way = len(ways)
+    length_of_ways_to_search = index_of_current_way
+    current_highway = way_queries.get_highway(ways[index_of_current_way-1]) #index-1, since this method runs after the addition of index
     route_number = way_queries.get_ref_of_the_route(relation)
     network = way_queries.get_network(relation)
-    current_role = way_queries.get_role(ways[index_of_current_way])
+    current_role = way_queries.get_role(ways[index_of_current_way-1])
     error_information = []
     previous_current = PreviousCurrentHighway()
     # Act
@@ -835,7 +835,7 @@ def test_check_if_motorway_not_split():
                                                                      network, current_role, error_information,
                                                                      previous_current)
     assert motorway_split_way is False
-    assert index_of_current_way == length_of_ways_to_search - 1
+    assert index_of_current_way == length_of_ways_to_search
     assert current_highway == "motorway"
     assert len(error_information) == 1
     assert error_information[0].error_type == "Motorway not split"

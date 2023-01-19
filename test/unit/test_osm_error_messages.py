@@ -214,8 +214,10 @@ def test_return_messages_verbose_all_errors_hwy():
                                   " with forward role missing. \n"
                                   f"{nodes_with_link}")
     assert result_all_hwy[13] == ("\n[ERROR] Relation with route number "
-                                  f"{prev_curr_hwy.currently_checked_ref} has a one-way road https://osm.org/way/{prev_curr_hwy.previous_ref} "
-                                  " with forward role missing. \n"
+                                  f"{prev_curr_hwy.currently_checked_ref} has a forward road piece or series,"
+                                  f"previous ref which is one of the affected: https://osm.org/way/{prev_curr_hwy.previous_ref} \n"
+                                  "This is not good, because in some cases like 2x1 lane trunk/motorways "
+                                  "the traffic can't traverse in the backwards direction."
                                   f"{nodes_with_link}")
     assert result_all_hwy[14] == ("\n[WARNING] The motorway is continuous, however it reached back from start point to"
                                   " (almost) start point via other lane. It should be done that the motorway's right"

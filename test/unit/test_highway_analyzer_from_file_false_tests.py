@@ -22,10 +22,9 @@ def test_route_forward_not_split_nooneway_multiple_fwd():
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
     error_information, correct_ways_count = analyzer.relation_checking(data)
-    assert len(error_information) == 2
-    assert error_information[0].error_type == "Motorway not split"
-    assert error_information[1].error_type == "Forward and non-oneway without ability to move backward"
-    assert correct_ways_count == 2
+    assert len(error_information) == 1
+    assert error_information[0].error_type == "Forward and non-oneway without ability to move backward"
+    assert correct_ways_count == 3
 
 
 def test_route_forward_not_split_nooneway_only_one_fwd():
@@ -33,10 +32,9 @@ def test_route_forward_not_split_nooneway_only_one_fwd():
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
     error_information, correct_ways_count = analyzer.relation_checking(data)
-    assert len(error_information) == 2
-    assert error_information[0].error_type == "Motorway not split"
-    assert error_information[1].error_type == "Forward and non-oneway without ability to move backward"
-    assert correct_ways_count == 1
+    assert len(error_information) == 1
+    assert error_information[0].error_type == "Forward and non-oneway without ability to move backward"
+    assert correct_ways_count == 2
 
 
 def test_route_simple_gap_in_road():
