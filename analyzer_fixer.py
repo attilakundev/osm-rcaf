@@ -1,7 +1,6 @@
 import multiprocessing
 import sys
 import os
-from multiprocessing import Pool, Process
 
 import click
 from pathlib import Path
@@ -14,7 +13,7 @@ from osm_data_parser import OSMDataParser
 from osm_error_messages import OSMErrorMessages
 
 
-def get_result_of_one_multipolygon(relation_id, outdir, source, verbose):
+def get_result_of_one_relation(relation_id, outdir, source, verbose):
     analyzer = Analyzer()
     osm_data_parser = OSMDataParser()
     osm_error_messages = OSMErrorMessages()
@@ -23,8 +22,6 @@ def get_result_of_one_multipolygon(relation_id, outdir, source, verbose):
     error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
                                                         source,
                                                         verbose)
-    for message in error_messages:
-        print(message)
     if outdir != "":
         try:
             os.mkdir(f"{project_path}/{outdir}")
@@ -55,7 +52,7 @@ def program(relation: str, source: str, relationcfg: str, outdir: str, verbose: 
         pool =multiprocessing.Pool(multiprocessing.cpu_count())
         results = []
         for relation_id in relation_ids:
-            pool.apply_async(func=get_result_of_one_multipolygon, args=(relation_id, outdir, source, verbose,),
+            pool.apply_async(func=get_result_of_one_relation, args=(relation_id, outdir, source, verbose,),
                              callback=results.append)
         pool.close()
         pool.join()
@@ -64,12 +61,16 @@ def program(relation: str, source: str, relationcfg: str, outdir: str, verbose: 
         file = open(relationcfg, "r")
         relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in file.readlines()]
         pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        results = []
+        relations = []
         for relation_id in relation_ids:
-            pool.apply_async(func=get_result_of_one_multipolygon, args=(relation_id, outdir, source, verbose,),
-                             callback=results.append)
+            pool.apply_async(func=get_result_of_one_relation, args=(relation_id, outdir, source, verbose,),
+                             callback=relations.append)
         pool.close()
         pool.join()
+
+        for messages in relations:
+            for message in messages:
+                print(message)
 
     elif relation == "" and relationcfg == "" and source != "":
         print("To be implemented")

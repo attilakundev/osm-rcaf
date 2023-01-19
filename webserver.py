@@ -96,7 +96,7 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
     all_messages = []
     if type(relation_ids) == list:
         for relation_id in relation_ids:
-            error_information, correct_ways_count = analyzer.relation_checking(relation_data)
+            error_information, correct_ways_count = analyzer.relation_checking(relation_data,relation_id)
             error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
                                                                 "dummy_source",
                                                                 request.session["debug_mode"])
@@ -104,6 +104,7 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
             for message in error_messages:
                 all_messages.append([len(message), message])
     else:
+        print("AAA")
         error_information, correct_ways_count = analyzer.relation_checking(relation_data)
         error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_ids,
                                                             "dummy_source",

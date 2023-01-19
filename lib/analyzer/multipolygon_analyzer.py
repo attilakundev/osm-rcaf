@@ -209,7 +209,8 @@ class MultipolygonAnalyzer:
         return ((first_node_current == last_node_previous and first_node_previous == last_node_current) or
                 (first_node_previous == last_node_previous and first_node_current == last_node_current) or
                 (first_node_current == last_node_current and first_node_previous == last_node_previous) or
-                (first_node_previous == last_node_current and first_node_current == last_node_previous))
+                (first_node_previous == last_node_current and first_node_current == last_node_previous)
+                or (first_node_previous == first_node_current and last_node_previous == last_node_current))
 
     def check_way_closedness_for_more_than_two_ways(self, first_node_previous: str, last_node_previous: str,
                                                     first_node_current: str,
