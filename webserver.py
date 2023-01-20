@@ -1,3 +1,5 @@
+import json
+import os
 import sys
 from dataclasses import asdict
 import time
@@ -52,6 +54,8 @@ def check_session_variables(request):
         request.session["loaded_relation"] = []
     if request.session.get("error_messages") is None:
         request.session["error_messages"] = []  # contains errors about the classes
+    if request.session.get("uploaded_files") is None:
+        request.session["uploaded_files"] = []  # contains errors about the classes
     return request
 
 
@@ -104,7 +108,6 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
             for message in error_messages:
                 all_messages.append([len(message), message])
     else:
-        print("AAA")
         error_information, correct_ways_count = analyzer.relation_checking(relation_data)
         error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_ids,
                                                             "dummy_source",
@@ -113,7 +116,14 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
         all_messages = [[len(message), message] for message in error_messages]
 
     request.session["error_messages"] = all_messages
-    request.session["xml_data"] = xml_data.decode("utf-8")
+    upload_file_location = f"{project_path}/uploads/{relation_file.filename.split('.')[0]}.json"
+    parent_of_upload_file = Path(upload_file_location).resolve().parent
+    if not Path.exists(parent_of_upload_file):
+        os.mkdir(f"{project_path}/uploads")
+    with open(upload_file_location, "w+") as file:
+        file.write(json.dumps(relation_data, indent=4))
+    request.session["uploaded_files"].append(upload_file_location)
+
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "error_messages": request.session["error_messages"]}
