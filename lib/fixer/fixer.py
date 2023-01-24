@@ -23,7 +23,7 @@ class Fixer:
         :param relation_id: this will be fed from front-end application or console, if you don't supply value, it
          assumes you want the first relation to be fixed.
         :param first_way: the first way from which the relation gets assembled. If no value is supplied, the first member is taken as first.
-        :return: corrected_xml_file: xml file
+        :return: corrected_relation: dict
         """
 
         if relation_info["type"] != "public_transport":

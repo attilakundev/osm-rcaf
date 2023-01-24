@@ -4,7 +4,7 @@ from pathlib import Path
 
 import xmltodict
 
-project_path = Path(__file__).parents[2].absolute()
+project_path = Path(__file__).parents[3].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/analyzer")
