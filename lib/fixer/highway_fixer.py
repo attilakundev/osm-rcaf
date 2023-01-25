@@ -14,33 +14,34 @@ class HighwayFixer:
     def search_for_connection_exiting_from_closed_roundabout(self,
                                                              roundabout_nodes, corrected_ways_to_search,
                                                              already_added_members, ways_to_search):
-
         count_found_ways = 0
-        for node in roundabout_nodes:
-            for way in ways_to_search:
-                way_ref = way_queries.get_way_ref(way)
-                # unfortunately we have to look through every way. of course, there's a big cliffhanger.
-                # We need to apply this twice, because we need two connections to the roundabout. (of course it happens we only have one connection :-) )
-                # the if statement should contain way_queries.get_role(way) == "forward", but I realized this is not needed,
-                # there are cases when there is a single way going from the roundabout out, if it has no role of course, and it's not oneway.
-                if (way_queries.get_start_node(way) == node or
-                    way_queries.get_end_node == node) \
-                        and way_ref not in already_added_members and count_found_ways < 1:
-                    corrected_ways_to_search.append(way)
+        index = 0
+        while index < len(roundabout_nodes):
+            way_index = 0
+            while way_index < len(ways_to_search):
+                node = roundabout_nodes[index]
+                way_ref = way_queries.get_way_ref(ways_to_search[way_index])
+                start_node = way_queries.get_start_node(ways_to_search[way_index])
+                end_node = way_queries.get_end_node(ways_to_search[way_index])
+                is_oneway = way_queries.is_oneway(ways_to_search[way_index])
+                is_forward = way_queries.get_role(ways_to_search[way_index]) == "forward"
+                # It's important to note the order: the exit way's connecting node should be the start node to
+                # the roundabout, so we know that's the direct exit and not the entry from the other way around
+                if ((start_node == node and count_found_ways == 0 and (is_forward or is_oneway))
+                    or (end_node == node and (is_forward or is_oneway) and count_found_ways == 1)
+                    or ((start_node == node or end_node == node) and not is_forward and not is_oneway)) \
+                        and way_ref not in already_added_members and count_found_ways < 2:
+                    corrected_ways_to_search.append(ways_to_search[way_index])
                     already_added_members.append(way_ref)
                     count_found_ways += 1
-                    if way_queries.get_role(way) == "" and way_queries.is_oneway(way):
+                    index = 0
+                    way_index = 0
+                    if not is_forward and not is_oneway and count_found_ways == 1:
                         return corrected_ways_to_search, already_added_members
-        while count_found_ways < 2:
-            for way in ways_to_search:
-                way_ref = way_queries.get_way_ref(way)
-                if way_queries.get_role(way) == "forward" and way_queries.check_connectivity(
-                        way_queries.get_start_node(way), way_queries.get_end_node(way),
-                        way_queries.get_start_node(corrected_ways_to_search[-1]),
-                        way_queries.get_end_node(corrected_ways_to_search[-1])) \
-                        and way_ref not in already_added_members:
-                    corrected_ways_to_search.append(way)
-                    already_added_members.append(way_ref)
+                    if count_found_ways == 2:
+                        return corrected_ways_to_search, already_added_members
+                way_index += 1
+            index += 1
         return corrected_ways_to_search, already_added_members
 
     def search_for_connection_in_open_roundabout(self, ways_to_search, corrected_ways_to_search,
