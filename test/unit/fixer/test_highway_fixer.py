@@ -86,6 +86,40 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_
 
 
 def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
+    file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    index = 1
+    first_node_previous = way_queries.get_start_node(ways_to_search[0])
+    last_node_previous = way_queries.get_end_node(ways_to_search[0])
+    already_added_members = ["-1"]
+    corrected_ways_to_search = [ways_to_search[0]]
+    number_of_members_of_this_forward_series = 0
+    connecting_to_3rd_way_index = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
+                                                                      ways_to_search, already_added_members,
+                                                                      corrected_ways_to_search,
+                                                                      number_of_members_of_this_forward_series)
+    assert connecting_to_3rd_way_index == 2
+
+
+def test_search_for_connection_wrong_order_road_connecting_to_a_roundabout():
+    file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    index = 0
+    first_node_previous = way_queries.get_start_node(ways_to_search[2])
+    last_node_previous = way_queries.get_end_node(ways_to_search[2])
+    already_added_members = ["-1", "-3"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[2]]
+    number_of_members_of_this_forward_series = 1
+    connecting_to_3rd_way_index = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
+                                                                      ways_to_search, already_added_members,
+                                                                      corrected_ways_to_search,
+                                                                      number_of_members_of_this_forward_series)
+    assert connecting_to_3rd_way_index == 1
+
+
+def test_search_for_connection_wrong_order_road_connecting_searching_for_the_entry_after_exit():
     # Scenario 1st way connects to 3rd way
     # 3rd way connects to a roundabout piece on 2th place
     # 5th way exists, but the 6th way would be a roundabout piece, that would cause a loop, instead search for a oneway piece
@@ -93,15 +127,103 @@ def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
     file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
     relation_info = get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
-    index = 1
-    first_node_previous = way_queries.get_start_node(ways_to_search[0])
-    last_node_previous = way_queries.get_start_node(ways_to_search[0])
-    already_added_members = ["-1"]
-    corrected_ways_to_search = [ways_to_search[0]]
-    number_of_members_of_this_forward_series = 0
+    index = 0
+    first_node_previous = way_queries.get_start_node(ways_to_search[3])
+    last_node_previous = way_queries.get_end_node(ways_to_search[3])
+    already_added_members = ["-1", "-3", "-2", "-4"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[1], ways_to_search[3]]
+    number_of_members_of_this_forward_series = 1
     connecting_to_3rd_way_index = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
-                                                                      ways_to_search, already_added_members, corrected_ways_to_search,
+                                                                      ways_to_search, already_added_members,
+                                                                      corrected_ways_to_search,
                                                                       number_of_members_of_this_forward_series)
-    assert connecting_to_3rd_way_index == 2
-    pass
-# note: create a system test for correcting
+    assert connecting_to_3rd_way_index == 5
+
+
+def test_search_for_tag():
+    tags_only_dict = {
+        "tag": {
+            '@k': "oneway",
+            '@v': "yes"
+        }
+    }
+    tags_list = {
+        "tag": [
+            {
+                '@k': "oneway",
+                '@v': "yes"
+            },
+            {
+                '@k': "junction",
+                '@v': "roundabout"
+            }
+        ]
+    }
+    assert highway_fixer.search_for_tag(tags_only_dict, "oneway", "yes") is True
+    assert highway_fixer.search_for_tag(tags_only_dict, "a", "b") is False
+    assert highway_fixer.search_for_tag(tags_list, "oneway", "yes") is True
+    assert highway_fixer.search_for_tag(tags_list, "a", "b") is False
+
+
+def test_add_tag_to_item():
+    tags_only_dict = {
+        "tag": {
+            '@k': "oneway",
+            '@v': "yes"
+        }
+    }
+    tags_list = {
+        "tag": [
+            {
+                '@k': "oneway",
+                '@v': "yes"
+            },
+            {
+                '@k': "junction",
+                '@v': "roundabout"
+            }
+        ]
+    }
+
+    result_tags_only_dict = {
+        "tag": [
+            {
+                '@k': "oneway",
+                '@v': "yes"
+            },
+            {
+                '@k': "a",
+                '@v': "b"
+            }
+        ]
+    }
+    result_tags_list = {
+        "tag": [
+            {
+                '@k': "oneway",
+                '@v': "yes"
+            },
+            {
+                '@k': "junction",
+                '@v': "roundabout"
+            },
+            {
+                '@k': "a",
+                '@v': "b"
+            }
+        ]
+    }
+    add_item_to_dict = highway_fixer.add_tag_to_item("a", "b", tags_only_dict)
+    add_item_to_list = highway_fixer.add_tag_to_item("a", "b", tags_list)
+
+    assert add_item_to_dict == result_tags_only_dict
+    assert add_item_to_list == result_tags_list
+
+def test_insert_array_items_to_a_specific_position():
+    where = ["-1", "-2", "-3", "-4"]
+    from_array = ["-5", "-6", "-7"]
+    to_position = 2
+    how_many = 2
+    result_assert = ["-1", "-2", "-3", "-5", "-6", "-4"]
+    result = highway_fixer.insert_array_items_to_a_specific_position(where,from_array,to_position,how_many)
+    assert result == result_assert

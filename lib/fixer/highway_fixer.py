@@ -141,14 +141,13 @@ class HighwayFixer:
         return checking_condition, index, corrected_ways_to_search, already_added_members, banned_roundabout_ways
 
     def search_for_tag(self, array, key, value):
-        for tags in array["tag"]:
-            if type(tags) is dict:
-                if tags["@k"] == key and tags["@v"] == value:
+        if type(array["tag"]) is dict:
+            if array["tag"]["@k"] == key and array["tag"]["@v"] == value:
+                return True
+        else:
+            for tag in array["tag"]:
+                if tag["@k"] == key and tag["@v"] == value:
                     return True
-            else:
-                for tag in tags:
-                    if tag["@k"] == key and tag["@v"] == value:
-                        return True
         return False
 
     def check_relation_item_if_connected_then_add_it_to_the_corrected_relation(self, first_node_previous,
@@ -167,11 +166,13 @@ class HighwayFixer:
             corrected_ways_to_search.append(ways_to_search[index])
         return corrected_ways_to_search, already_added_members
 
-    def add_tag_to_item(self, key, value, array: dict):
+    def add_tag_to_item(self, key, value, array:dict):
         tag = {
             "@k": key,
             "@v": value
         }
+        if type(array["tag"]) is dict:
+            array["tag"] = [array["tag"]]
         array["tag"].append(tag)
         return array
 
@@ -238,9 +239,9 @@ class HighwayFixer:
 
     def insert_array_items_to_a_specific_position(self, where: list, from_array: list, to_position: int, how_many: int):
         for index in range(len(where)):
-            if index == to_position:
-                beginning_of_where = where[0:to_position]
-                rest_of_where = where[to_position:]
+            if index == to_position+1:
+                beginning_of_where = where[0:to_position+1]
+                rest_of_where = where[to_position+1:]
                 to_be_returned = beginning_of_where
                 for index in range(how_many):
                     to_be_returned.append(from_array[index])

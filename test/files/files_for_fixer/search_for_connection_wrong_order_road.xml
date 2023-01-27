@@ -56,7 +56,7 @@
         <nd ref='-11'/>
         <nd ref='-9'/>
         <tag k='highway' v='primary'/>
-        <tag k='junction' v='roundabout'/>
+        <tag k='oneway' v='yes'/>
     </way>
     <way id='-6'>
         <nd ref='-10'/>
