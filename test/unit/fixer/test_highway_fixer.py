@@ -85,15 +85,23 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_
     pass
 
 
-def test_search_for_connection_exiting_from_open_roundabout_exit_split_wrong_order_with_extra_members():
-    file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_entry_divided_exit_divided_wrong_order_extra_members.xml"
-    # as manually discovered, the correction for this would be:
-    # 1,2,4,8,9,6,3 (before reversing the other side) -> 1,2,4,8,3,6,9,10 (5,7 are extra members)
+def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
+    # Scenario 1st way connects to 3rd way
+    # 3rd way connects to a roundabout piece on 2th place
+    # 5th way exists, but the 6th way would be a roundabout piece, that would cause a loop, instead search for a oneway piece
+    # 7th way
+    file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
     relation_info = get_relation_info(file_path)
-    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
-    assert already_added_members == ["-1", "-2", "-4", "-8", "-3", "-6", "-9", "-10"]
+    ways_to_search = relation_info["ways_to_search"]
+    index = 1
+    first_node_previous = way_queries.get_start_node(ways_to_search[0])
+    last_node_previous = way_queries.get_start_node(ways_to_search[0])
+    already_added_members = ["-1"]
+    corrected_ways_to_search = [ways_to_search[0]]
+    number_of_members_of_this_forward_series = 0
+    connecting_to_3rd_way_index = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
+                                                                      ways_to_search, already_added_members, corrected_ways_to_search,
+                                                                      number_of_members_of_this_forward_series)
+    assert connecting_to_3rd_way_index == 2
     pass
-
-
-def test_search_for_connection_exiting_from_open_roundabout_exit_not_split_wrong_order():
-    pass
+# note: create a system test for correcting
