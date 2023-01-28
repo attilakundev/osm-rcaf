@@ -281,11 +281,6 @@ class HighwayFixer:
                 # BUT. It may happen that there won't be any of those case, so save it.
                 temp_forward_way = index
                 index += 1
-            elif number_of_members_of_this_forward_series == 1 and way_queries.is_roundabout(
-                    ways_to_search[index]) and way_queries.get_start_node(
-                ways_to_search[index]) == way_queries.get_end_node(ways_to_search[index]):
-                # it's a roundabout, but I want two sides of that roundabout... (since that roundabout is closed!)
-                index += 1
             else:
                 return index
         if temp_forward_way != -1:
@@ -300,7 +295,10 @@ class HighwayFixer:
             corrected_ways_to_search[index] = way_queries.remove_tag(corrected_ways_to_search[index], "oneway",
                                                                      "yes")
             corrected_ways_to_search[index] = way_queries.modify_role(corrected_ways_to_search[index], "")
-        return corrected_ways_to_search
+            return corrected_ways_to_search
+        else:
+            return corrected_ways_to_search
+
 
     def remove_oneway_tag_from_non_roundabout_members_if_needed(self, corrected_ways_to_search, current_forward,
                                                                 current_oneway, index, oneway_series_ending_way_index,
@@ -379,6 +377,8 @@ class HighwayFixer:
         banned_roundabout_ways = []
         number_of_members_of_this_forward_series = 0
         index = 1
+        roundabout_entry_first_node = "0"
+        roundabout_entry_first_node_index = -1
         while index < len(ways_to_search) and len(corrected_ways_to_search) < len(ways_to_search):
             first_node_previous = way_queries.get_start_node(corrected_ways_to_search[index - 1])
             last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])

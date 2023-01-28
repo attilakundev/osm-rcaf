@@ -140,6 +140,24 @@ def test_search_for_connection_wrong_order_road_connecting_searching_for_the_ent
     assert connecting_to_3rd_way_index == 5
 
 
+def test_search_for_connection_wrong_order_road_closed_roundabout_return_forward_way_instead_of_roundabout():
+    # So we're dealing with a section with a closed roundabout, with two entry ways
+    file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_divided_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    index = 0
+    first_node_previous = way_queries.get_start_node(ways_to_search[2])
+    last_node_previous = way_queries.get_end_node(ways_to_search[2])
+    already_added_members = ["-1", "-3"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[2]]
+    number_of_members_of_this_forward_series = 1
+    result = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
+                                                 ways_to_search, already_added_members,
+                                                 corrected_ways_to_search,
+                                                 number_of_members_of_this_forward_series)
+    assert result == 1
+
+
 def test_search_for_tag():
     tags_only_dict = {
         "tag": {
@@ -219,11 +237,50 @@ def test_add_tag_to_item():
     assert add_item_to_dict == result_tags_only_dict
     assert add_item_to_list == result_tags_list
 
+
 def test_insert_array_items_to_a_specific_position():
     where = ["-1", "-2", "-3", "-4"]
     from_array = ["-5", "-6", "-7"]
     to_position = 2
     how_many = 2
     result_assert = ["-1", "-2", "-3", "-5", "-6", "-4"]
-    result = highway_fixer.insert_array_items_to_a_specific_position(where,from_array,to_position,how_many)
+    result = highway_fixer.insert_array_items_to_a_specific_position(where, from_array, to_position, how_many)
     assert result == result_assert
+
+
+def test_remove_oneway_and_forward_tag_from_certain_members_remove_true():
+    # We delete the oneway/forward tag from those which shouldn't be in the relation, since the route doesn't split.
+    file_path = f"{project_path}/test/files/files_for_fixer/route_correct_bad_tags_roles.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    index = 7
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
+                                ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7]]
+    current_forward = way_queries.get_role(ways_to_search[index])  # should give true
+    current_oneway = way_queries.is_oneway(ways_to_search[index])  # should give true,
+    current_roundabout = way_queries.is_roundabout(ways_to_search[index])  # should give false
+    remove_oneway_true = True
+    remove_oneway_false = False
+    corrected_ways_to_search_removed = highway_fixer.remove_oneway_and_forward_tag_from_certain_members(
+        corrected_ways_to_search, current_forward, current_oneway, current_roundabout, index, remove_oneway_true
+    )
+    assert way_queries.get_role(corrected_ways_to_search_removed[index]) == ""
+    assert way_queries.is_oneway(corrected_ways_to_search_removed[index]) is False
+
+def test_remove_oneway_and_forward_tag_from_certain_members_remove_false():
+    # We delete the oneway/forward tag from those which shouldn't be in the relation, since the route doesn't split.
+    file_path = f"{project_path}/test/files/files_for_fixer/route_correct_bad_tags_roles.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    index = 7
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
+                                ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7]]
+    current_forward = way_queries.get_role(ways_to_search[index])  # should give true
+    current_oneway = way_queries.is_oneway(ways_to_search[index])  # should give true,
+    current_roundabout = way_queries.is_roundabout(ways_to_search[index])  # should give false
+    remove_oneway_false = False
+    corrected_ways_to_search = highway_fixer.remove_oneway_and_forward_tag_from_certain_members(
+        corrected_ways_to_search, current_forward, current_oneway, current_roundabout, index, remove_oneway_false
+    )
+    assert way_queries.get_role(corrected_ways_to_search[index]) == "forward"
+    assert way_queries.is_oneway(corrected_ways_to_search[index]) is True
