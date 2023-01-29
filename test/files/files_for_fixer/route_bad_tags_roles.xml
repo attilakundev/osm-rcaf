@@ -81,17 +81,24 @@
         <nd ref='-18'/>
         <nd ref='-19'/>
         <tag k='highway' v='primary'/>
-        <tag k='oneway' v='yes'/>
+        <tag k='junction' v='roundabout'/>
+    </way>
+    <way id='-9' action='modify' visible='true'>
+        <nd ref='-18'/>
+        <nd ref='-19'/>
+        <tag k='highway' v='primary'/>
+        <tag k='junction' v='roundabout'/>
     </way>
     <relation id='-99846' action='modify' visible='true'>
         <member type='way' ref='-1' role=''/>
-        <member type='way' ref='-2' role='forward'/>
-        <member type='way' ref='-3' role='forward'/>
+        <member type='way' ref='-2' role=''/>
+        <member type='way' ref='-3' role=''/>
         <member type='way' ref='-4' role=''/>
         <member type='way' ref='-5' role='forward'/>
         <member type='way' ref='-6' role='forward'/>
         <member type='way' ref='-7' role=''/>
-        <member type='way' ref='-8' role='forward'/>
+        <member type='way' ref='-8' role=''/>
+        <member type='way' ref='-9' role=''/>
         <tag k='ref' v='222'/>
         <tag k='route' v='road'/>
         <tag k='type' v='route'/>

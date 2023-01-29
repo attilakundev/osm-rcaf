@@ -166,7 +166,7 @@ class HighwayFixer:
             corrected_ways_to_search.append(ways_to_search[index])
         return corrected_ways_to_search, already_added_members
 
-    def add_tag_to_item(self, key, value, array:dict):
+    def add_tag_to_item(self, key, value, array: dict):
         tag = {
             "@k": key,
             "@v": value
@@ -239,9 +239,9 @@ class HighwayFixer:
 
     def insert_array_items_to_a_specific_position(self, where: list, from_array: list, to_position: int, how_many: int):
         for index in range(len(where)):
-            if index == to_position+1:
-                beginning_of_where = where[0:to_position+1]
-                rest_of_where = where[to_position+1:]
+            if index == to_position + 1:
+                beginning_of_where = where[0:to_position + 1]
+                rest_of_where = where[to_position + 1:]
                 to_be_returned = beginning_of_where
                 for index in range(how_many):
                     to_be_returned.append(from_array[index])
@@ -250,7 +250,7 @@ class HighwayFixer:
 
     def search_for_connection(self, index, first_node_previous, last_node_previous,
                               ways_to_search, already_added_members, corrected_ways_to_search,
-                               number_of_members_of_this_forward_series):
+                              number_of_members_of_this_forward_series):
         temp_forward_way = -1
         while index < len(ways_to_search):
             first_node_sought_way = way_queries.get_start_node(ways_to_search[index])
@@ -285,7 +285,7 @@ class HighwayFixer:
                 return index
         if temp_forward_way != -1:
             return temp_forward_way
-        return -1 # This means we reached the end of the relation, no further connections can be made.
+        return -1  # This means we reached the end of the relation, no further connections can be made.
 
     def remove_oneway_and_forward_tag_from_certain_members(self, corrected_ways_to_search, current_forward,
                                                            current_oneway, current_roundabout, index,
@@ -299,27 +299,33 @@ class HighwayFixer:
         else:
             return corrected_ways_to_search
 
-
     def remove_oneway_tag_from_non_roundabout_members_if_needed(self, corrected_ways_to_search, current_forward,
                                                                 current_oneway, index, oneway_series_ending_way_index,
                                                                 oneway_series_starting_node_detected,
                                                                 oneway_series_starting_way_index, previous_forward,
-                                                                previous_oneway, remove_one_way_tag):
-        if (previous_oneway and not current_oneway) or previous_oneway and previous_forward and not current_forward:
+                                                                previous_oneway, remove_one_way_tag,
+                                                                current_roundabout):
+        if ((previous_oneway and not current_oneway) or (
+                not previous_oneway and (previous_forward and not current_forward))) and not current_roundabout:
             # save the position where it needs to stop searching for other members for resetting
-            oneway_series_ending_way_index = index
+            oneway_series_ending_way_index = index - 1  # Let's say we're on a non-oneway, so we want the last one which is one way before
             if not oneway_series_starting_node_detected and not remove_one_way_tag:
-                index = oneway_series_starting_way_index - 1  # why? since we'll have an i++, let's say we have i=4 but our series starts at 5..
+                index = oneway_series_starting_way_index
                 remove_one_way_tag = True
             # prepare for the case though when this ends, so it won't mess up bigger relations
             if oneway_series_starting_node_detected:
                 oneway_series_starting_node_detected = False
         elif (previous_oneway and not current_oneway) or (
-                not previous_oneway and previous_forward and not current_forward) and way_queries.is_roundabout(
-            corrected_ways_to_search[index]):
-            # for those which have roundabout after the thing: skip it, because this is correct..
+                not previous_oneway and previous_forward and not current_forward) and (way_queries.is_roundabout(
+            corrected_ways_to_search[index]) and way_queries.get_start_node(
+            corrected_ways_to_search[index]) == way_queries.get_end_node(corrected_ways_to_search[index])):
+            # for those which have roundabout after the thing: skip it, because this is correct.. (closed roundabouts have no roles)
             oneway_series_starting_node_detected = False
-        return index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag
+        if index == oneway_series_ending_way_index and remove_one_way_tag:
+            remove_one_way_tag = False
+            oneway_series_starting_way_index = -1
+            oneway_series_ending_way_index = -1
+        return index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag
 
     def detect_if_oneway_road_is_split_or_not(self, corrected_first_node_current, corrected_last_node_current,
                                               corrected_ways_to_search, index, oneway_series_starting_node_detected,
@@ -329,36 +335,27 @@ class HighwayFixer:
                 and corrected_first_node_current == way_queries.get_start_node(corrected_ways_to_search[
                                                                                    oneway_series_starting_way_index]) \
                 or corrected_last_node_current == way_queries.get_start_node(
-            corrected_ways_to_search[oneway_series_starting_way_index]):
-            if way_queries.is_oneway(corrected_ways_to_search[index]):
-                oneway_series_starting_node_detected = True
-        return oneway_series_starting_node_detected
+            corrected_ways_to_search[oneway_series_starting_way_index]) and way_queries.is_oneway(
+            corrected_ways_to_search[index]):
+            return True
+        else:
+            return oneway_series_starting_node_detected
 
     def add_forward_role_where_needed(self, corrected_first_node_current, corrected_first_node_previous,
                                       corrected_last_node_current, corrected_last_node_previous,
                                       corrected_ways_to_search, current_oneway, index, previous_oneway):
         if previous_oneway:
-            corrected_ways_to_search[index - 1]["role"] = "forward"
+            way_queries.modify_role(corrected_ways_to_search[index - 1], "forward")
         if current_oneway:
-            corrected_ways_to_search[index]["role"] = "forward"
+            way_queries.modify_role(corrected_ways_to_search[index], "forward")
         if way_queries.is_roundabout(corrected_ways_to_search[
                                          index - 1]) and corrected_first_node_previous != corrected_last_node_previous \
                 and way_queries.get_role(corrected_ways_to_search[index - 1]) == "":
-            corrected_ways_to_search[index - 1]["role"] = "forward"
+            way_queries.modify_role(corrected_ways_to_search[index - 1], "forward")
         if way_queries.is_roundabout(corrected_ways_to_search[
                                          index]) and corrected_first_node_current != corrected_last_node_current and way_queries.get_role(
             corrected_ways_to_search[index]) == "":
-            corrected_ways_to_search[index]["role"] = "forward"
-        return corrected_ways_to_search
-
-    def add_oneway_tag_where_needed(self, corrected_ways_to_search, current_forward, index, previous_forward):
-        if previous_forward and current_forward:
-            if not self.search_for_tag(corrected_ways_to_search[index - 1], "oneway", "yes"):
-                corrected_ways_to_search[index - 1] = self.add_tag_to_item("oneway", "yes",
-                                                                           corrected_ways_to_search[index - 1])
-            if not self.search_for_tag(corrected_ways_to_search[index], "oneway", "yes"):
-                corrected_ways_to_search[index] = self.add_tag_to_item("oneway", "yes",
-                                                                       corrected_ways_to_search[index])
+            way_queries.modify_role(corrected_ways_to_search[index], "forward")
         return corrected_ways_to_search
 
     def highway_correction(self, relation_info: dict, first_way: str = ""):
@@ -426,7 +423,7 @@ class HighwayFixer:
         corrected_ways_to_search = self.correct_way_roles_tags(corrected_ways_to_search)
         return corrected_ways_to_search, already_added_members
 
-    def correct_way_roles_tags(self,corrected_ways_to_search):
+    def correct_way_roles_tags(self, corrected_ways_to_search):
         # post operations on the corrected relation, since they can't be done on-the-go
         oneway_series_starting_way_index = -1
         oneway_series_ending_way_index = -1
@@ -449,28 +446,22 @@ class HighwayFixer:
                                                                           corrected_last_node_previous,
                                                                           corrected_ways_to_search, current_oneway,
                                                                           index, previous_oneway)
-            corrected_ways_to_search = self.add_oneway_tag_where_needed(corrected_ways_to_search, current_forward,
-                                                                        index, previous_forward)
 
             oneway_series_starting_node_detected = self.detect_if_oneway_road_is_split_or_not(
                 corrected_first_node_current, corrected_last_node_current, corrected_ways_to_search, index,
                 oneway_series_starting_node_detected, oneway_series_starting_way_index)
             # For forwards, we only remove oneway tags for those which aren't roundabout members.
-            index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = self.remove_oneway_tag_from_non_roundabout_members_if_needed(
+            index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = self.remove_oneway_tag_from_non_roundabout_members_if_needed(
                 corrected_ways_to_search, current_forward, current_oneway, index, oneway_series_ending_way_index,
                 oneway_series_starting_node_detected, oneway_series_starting_way_index, previous_forward,
-                previous_oneway, remove_one_way_tag)
-            if index == oneway_series_ending_way_index and remove_one_way_tag:
-                remove_one_way_tag = False
-                oneway_series_starting_way_index = -1
-                oneway_series_ending_way_index = -1
+                previous_oneway, remove_one_way_tag, current_roundabout)
             corrected_ways_to_search = self.remove_oneway_and_forward_tag_from_certain_members(corrected_ways_to_search,
                                                                                                current_forward,
                                                                                                current_oneway,
                                                                                                current_roundabout,
                                                                                                index,
                                                                                                remove_one_way_tag)
-            if index > 0 and (not previous_oneway and current_oneway or not previous_forward and current_forward):
+            if index >= 0 and (not previous_oneway and current_oneway or not previous_forward and current_forward):
                 oneway_series_starting_way_index = index
             index += 1
         return corrected_ways_to_search
