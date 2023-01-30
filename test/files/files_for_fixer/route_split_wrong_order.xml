@@ -17,89 +17,59 @@
     <node id='-15'/>
     <node id='-16'/>
     <node id='-17'/>
-    <node id='-18'/>
-    <node id='-19'/>
-    <node id='-20'/>
-    <node id='-21'/>
-    <node id='-22'/>
-    <node id='-23'/>
-    <node id='-24'/>
     <way id='-1' action='modify' visible='true'>
         <nd ref='-1'/>
         <nd ref='-2'/>
+        <nd ref='-3'/>
+        <nd ref='-4'/>
+        <nd ref='-5'/>
+        <nd ref='-6'/>
+        <nd ref='-7'/>
         <tag k='highway' v='primary'/>
     </way>
     <way id='-2' action='modify' visible='true'>
-        <nd ref='-2'/>
-        <nd ref='-3'/>
+        <nd ref='-11'/>
+        <nd ref='-14'/>
+        <nd ref='-13'/>
+        <nd ref='-12'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
     <way id='-3' action='modify' visible='true'>
-        <nd ref='-4'/>
-        <nd ref='-2'/>
+        <nd ref='-11'/>
+        <nd ref='-15'/>
+        <nd ref='-16'/>
+        <nd ref='-17'/>
+        <tag k='highway' v='primary'/>
+    </way>
+    <way id='-4' action='modify' visible='true'>
+        <nd ref='-7'/>
+        <nd ref='-8'/>
+        <nd ref='-9'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
-    <way id='-4' action='modify' visible='true'>
-        <nd ref='-5'/>
-        <nd ref='-6'/>
-        <nd ref='-7'/>
-        <nd ref='-4'/>
-        <nd ref='-6'/>
-        <nd ref='-2'/>
-        <nd ref='-8'/>
-        <nd ref='-9'/>
-        <nd ref='-10'/>
-        <nd ref='-11'/>
-        <nd ref='-5'/>
-        <tag k='highway' v='primary'/>
-        <tag k='junction' v='roundabout'/>
-    </way>
     <way id='-5' action='modify' visible='true'>
-        <nd ref='-9'/>
         <nd ref='-12'/>
-        <nd ref='-13'/>
-        <nd ref='-14'/>
+        <nd ref='-7'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
     <way id='-6' action='modify' visible='true'>
-        <nd ref='-14'/>
-        <nd ref='-15'/>
-        <nd ref='-16'/>
+        <nd ref='-9'/>
+        <nd ref='-10'/>
         <nd ref='-11'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
-    <way id='-7' action='modify' visible='true'>
-        <nd ref='-17'/>
-        <nd ref='-18'/>
-        <tag k='highway' v='primary'/>
-    </way>
-    <way id='-8' action='modify' visible='true'>
-        <nd ref='-18'/>
-        <nd ref='-19'/>
-        <tag k='highway' v='primary'/>
-        <tag k='junction' v='roundabout'/>
-    </way>
-    <way id='-9' action='modify' visible='true'>
-        <nd ref='-19'/>
-        <nd ref='-20'/>
-        <tag k='highway' v='primary'/>
-        <tag k='junction' v='roundabout'/>
-    </way>
-    <relation id='-99846' action='modify' visible='true'>
+    <relation id='-99802' action='modify' visible='true'>
         <member type='way' ref='-1' role=''/>
-        <member type='way' ref='-2' role=''/>
+        <member type='way' ref='-2' role='forward'/>
         <member type='way' ref='-3' role=''/>
-        <member type='way' ref='-4' role=''/>
+        <member type='way' ref='-4' role='forward'/>
         <member type='way' ref='-5' role='forward'/>
         <member type='way' ref='-6' role='forward'/>
-        <member type='way' ref='-7' role=''/>
-        <member type='way' ref='-8' role=''/>
-        <member type='way' ref='-9' role=''/>
-        <tag k='ref' v='222'/>
+        <tag k='ref' v='CR 999'/>
         <tag k='route' v='road'/>
         <tag k='type' v='route'/>
     </relation>

@@ -203,13 +203,15 @@ class HighwayFixer:
             # To fix this, we need to check if we can insert a way to another way which has no role, but it's not included in the split_highway_members array of course.
             if connecting_way_last_node == way_queries.get_start_node(split_highway_members[0]):
                 # loop detected (so we got back to the beginning of the split highway)
-                i = 0
+                index_of_the_way_where_relation_would_continue = 0
                 found = False
-                while i < len(ways_to_search) and not found:
+                while index_of_the_way_where_relation_would_continue < len(ways_to_search) and not found:
                     j = 0
                     while j < len(split_highway_members) and not found:
-                        if way_queries.get_start_node(ways_to_search[i]) == way_queries.get_end_node(
-                                ways_to_search[i]) and way_queries.get_way_ref(ways_to_search[i]) \
+                        if way_queries.get_start_node(ways_to_search[
+                                                          index_of_the_way_where_relation_would_continue]) == way_queries.get_end_node(
+                                split_highway_members[j]) and way_queries.get_way_ref(
+                            ways_to_search[index_of_the_way_where_relation_would_continue]) \
                                 not in map(lambda x: x["@ref"], split_highway_members):
                             found = True
                             # get the index of the member already contained in the corrected relation
@@ -230,7 +232,7 @@ class HighwayFixer:
                                 to_position=index_of_first_side_of_roads_last_way,
                                 how_many=len(split_highway_members) - j)
                         j += 1
-                    i += 1
+                    index_of_the_way_where_relation_would_continue += 1
         elif previous_role == "forward" and connecting_way_role == "":
             # we reached the end of the forward series.
             split_highway_members.append(ways_to_search[index_of_the_connecting_way])
@@ -304,14 +306,19 @@ class HighwayFixer:
                                                                 oneway_series_starting_node_detected,
                                                                 oneway_series_starting_way_index, previous_forward,
                                                                 previous_oneway, remove_one_way_tag,
-                                                                current_roundabout):
+                                                                current_roundabout, closed_roundabout_detected):
         if ((previous_oneway and not current_oneway) or (
                 not previous_oneway and (previous_forward and not current_forward))) and not current_roundabout:
             # save the position where it needs to stop searching for other members for resetting
             oneway_series_ending_way_index = index - 1  # Let's say we're on a non-oneway, so we want the last one which is one way before
             if not oneway_series_starting_node_detected and not remove_one_way_tag:
-                index = oneway_series_starting_way_index
-                remove_one_way_tag = True
+                if not closed_roundabout_detected:
+                    index = oneway_series_starting_way_index
+                    remove_one_way_tag = True
+                else:
+                    closed_roundabout_detected = False
+                    oneway_series_starting_way_index = -1
+                    oneway_series_ending_way_index = -1
             # prepare for the case though when this ends, so it won't mess up bigger relations
             if oneway_series_starting_node_detected:
                 oneway_series_starting_node_detected = False
@@ -325,7 +332,7 @@ class HighwayFixer:
             remove_one_way_tag = False
             oneway_series_starting_way_index = -1
             oneway_series_ending_way_index = -1
-        return index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag
+        return index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected
 
     def detect_if_oneway_road_is_split_or_not(self, corrected_first_node_current, corrected_last_node_current,
                                               corrected_ways_to_search, index, oneway_series_starting_node_detected,
@@ -344,9 +351,9 @@ class HighwayFixer:
     def add_forward_role_where_needed(self, corrected_first_node_current, corrected_first_node_previous,
                                       corrected_last_node_current, corrected_last_node_previous,
                                       corrected_ways_to_search, current_oneway, index, previous_oneway):
-        if previous_oneway:
+        if previous_oneway and way_queries.get_role(corrected_ways_to_search[index - 1]) != "forward":
             way_queries.modify_role(corrected_ways_to_search[index - 1], "forward")
-        if current_oneway:
+        if current_oneway and way_queries.get_role(corrected_ways_to_search[index]) != "forward":
             way_queries.modify_role(corrected_ways_to_search[index], "forward")
         if way_queries.is_roundabout(corrected_ways_to_search[
                                          index - 1]) and corrected_first_node_previous != corrected_last_node_previous \
@@ -429,6 +436,7 @@ class HighwayFixer:
         oneway_series_ending_way_index = -1
         oneway_series_starting_node_detected = False  # if false, we have to go back to the index where it started
         remove_one_way_tag = False
+        closed_roundabout_detected = False
         index = 1
         while index < len(corrected_ways_to_search):
             corrected_first_node_previous = way_queries.get_start_node(corrected_ways_to_search[index - 1])
@@ -436,7 +444,7 @@ class HighwayFixer:
             corrected_first_node_current = way_queries.get_start_node(corrected_ways_to_search[index])
             corrected_last_node_current = way_queries.get_end_node(corrected_ways_to_search[index])
             previous_oneway = way_queries.is_oneway(corrected_ways_to_search[index - 1])
-            current_oneway = way_queries.is_oneway(corrected_ways_to_search[index - 1])
+            current_oneway = way_queries.is_oneway(corrected_ways_to_search[index])
             previous_forward = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
             current_forward = way_queries.get_role(corrected_ways_to_search[index]) == "forward"
             current_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index])
@@ -450,11 +458,13 @@ class HighwayFixer:
             oneway_series_starting_node_detected = self.detect_if_oneway_road_is_split_or_not(
                 corrected_first_node_current, corrected_last_node_current, corrected_ways_to_search, index,
                 oneway_series_starting_node_detected, oneway_series_starting_way_index)
+            closed_roundabout_detected = self.detect_closed_roundabout(corrected_ways_to_search, index,
+                                                                       closed_roundabout_detected)
             # For forwards, we only remove oneway tags for those which aren't roundabout members.
-            index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = self.remove_oneway_tag_from_non_roundabout_members_if_needed(
+            index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = self.remove_oneway_tag_from_non_roundabout_members_if_needed(
                 corrected_ways_to_search, current_forward, current_oneway, index, oneway_series_ending_way_index,
                 oneway_series_starting_node_detected, oneway_series_starting_way_index, previous_forward,
-                previous_oneway, remove_one_way_tag, current_roundabout)
+                previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
             corrected_ways_to_search = self.remove_oneway_and_forward_tag_from_certain_members(corrected_ways_to_search,
                                                                                                current_forward,
                                                                                                current_oneway,
@@ -495,3 +505,8 @@ class HighwayFixer:
         if first_node_exists_already and last_node_exists_already:
             return True  # BAN IT
         return False
+
+    def detect_closed_roundabout(self, corrected_ways_to_search, index, closed_roundabout_detected):
+        return True if way_queries.is_roundabout(corrected_ways_to_search[index]) and way_queries.get_start_node(
+            corrected_ways_to_search[index]) == way_queries.get_end_node(
+            corrected_ways_to_search[index]) and closed_roundabout_detected is False else closed_roundabout_detected

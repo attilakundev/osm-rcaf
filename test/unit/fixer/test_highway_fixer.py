@@ -297,6 +297,7 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     oneway_series_starting_way_index = 1
     oneway_series_ending_way_index = 5
     oneway_series_starting_node_detected = False
+    closed_roundabout_detected = False
     previous_oneway = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"  # should give false
     current_oneway = way_queries.is_oneway(corrected_ways_to_search[index])  # should give false,
     current_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index])  # should give false
@@ -304,12 +305,12 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     current_forward = way_queries.get_role(corrected_ways_to_search[index]) == "forward"
     remove_one_way_tag = False
 
-    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
+    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout)
+        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
     assert index == 1
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 5
@@ -318,30 +319,30 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     # Determine if the oneway series starting node is detected
     oneway_series_starting_node_detected = True
     index = 6
-    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
+    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout)
+        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
     assert index == 6  # since we didn't change the index variable...
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 5
     assert oneway_series_starting_node_detected is False
     assert remove_one_way_tag is True
-    #Determine at the end of the oneway series that we are at the end of it or not
+    # Determine at the end of the oneway series that we are at the end of it or not
     index = 5
     previous_oneway = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"  # should give true
     current_oneway = way_queries.is_oneway(corrected_ways_to_search[index])  # should give true,
     current_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index])
     previous_forward = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
     current_forward = way_queries.get_role(corrected_ways_to_search[index]) == "forward"
-    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
+    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout)
+        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
     assert index == 5  # since we didn't change the index variable...
     assert oneway_series_starting_way_index == -1
     assert oneway_series_ending_way_index == -1
@@ -359,6 +360,7 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     oneway_series_starting_way_index = 1
     oneway_series_ending_way_index = 2
     oneway_series_starting_node_detected = True
+    closed_roundabout_detected = True
     previous_oneway = way_queries.get_role(ways_to_search[index - 1]) == "forward"  # should give true
     current_oneway = way_queries.is_oneway(ways_to_search[index])  # should give false,
     current_roundabout = way_queries.is_roundabout(ways_to_search[index])  # should give true
@@ -366,12 +368,12 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     current_forward = way_queries.get_role(ways_to_search[index]) == "forward"
     remove_one_way_tag = False
 
-    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
+    index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout)
+        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
     assert index == 3
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 2
@@ -425,7 +427,8 @@ def test_add_forward_role_where_needed():
                                                                            ways_to_search, current_oneway,
                                                                            index, previous_oneway)
     assert way_queries.get_role(corrected_ways_to_search[index]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[index-1]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
+
 
 def test_add_forward_role_where_needed_roundabout_edition():
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
@@ -446,3 +449,42 @@ def test_add_forward_role_where_needed_roundabout_edition():
                                                                            index, previous_oneway)
     assert way_queries.get_role(corrected_ways_to_search[index]) == "forward"
     assert way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
+
+
+def test_correct_way_roles_tags():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
+                                ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7],
+                                ways_to_search[8]]
+    corrected_ways_to_search = highway_fixer.correct_way_roles_tags(corrected_ways_to_search)
+    assert way_queries.get_role(corrected_ways_to_search[1]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[2]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[3]) == ""
+    assert way_queries.get_role(corrected_ways_to_search[7]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[8]) == "forward"
+
+
+def test_check_for_forward_ways():
+    # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
+    file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[3], ways_to_search[5], ways_to_search[1]]
+    already_added_members = ["-1", "-4", "-6", "-2"]
+    index = 4
+    index_of_the_connecting_way = 4  # since it's in order "luckily"
+    number_of_members_of_this_forward_series = 3
+    previous_role = way_queries.get_role(corrected_ways_to_search[index - 1])
+    first_node_previous = way_queries.get_start_node(corrected_ways_to_search[index - 1])
+    last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])
+    split_highway_members = [ways_to_search[3], ways_to_search[5], ways_to_search[1]]
+    banned_roundabout_ways = []
+    already_added_members, corrected_ways_to_search, split_highway_members = highway_fixer.check_for_forward_ways(already_added_members, corrected_ways_to_search,
+                                                                    first_node_previous,
+                                                                    index_of_the_connecting_way, last_node_previous,
+                                                                    number_of_members_of_this_forward_series,
+                                                                    previous_role, split_highway_members,
+                                                                    ways_to_search, banned_roundabout_ways)
+    assert already_added_members == ["-1", "-4", "-6", "-5", "-2"]
