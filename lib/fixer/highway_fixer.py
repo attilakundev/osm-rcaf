@@ -210,27 +210,28 @@ class HighwayFixer:
                     while j < len(split_highway_members) and not found:
                         if way_queries.get_start_node(ways_to_search[
                                                           index_of_the_way_where_relation_would_continue]) == way_queries.get_end_node(
-                                split_highway_members[j]) and way_queries.get_way_ref(
+                            split_highway_members[j]) and way_queries.get_way_ref(
                             ways_to_search[index_of_the_way_where_relation_would_continue]) \
                                 not in map(lambda x: x["@ref"], split_highway_members):
                             found = True
                             # get the index of the member already contained in the corrected relation
                             try:
-                                index_of_first_side_of_roads_last_way = corrected_ways_to_search.index(
-                                    split_highway_members[j])
+                                index_of_second_side_of_roads_first_way = corrected_ways_to_search.index(
+                                split_highway_members[j]) + 1 #the j marks the last item of the first side of the road (eg. right side)
                             except ValueError:
-                                index_of_first_side_of_roads_last_way = -1
+                                index_of_second_side_of_roads_first_way = -1
                             # reverse the ways after it
                             returned_temp_array = list(reversed(
-                                corrected_ways_to_search[
-                                index_of_first_side_of_roads_last_way + 1::]))
+                                corrected_ways_to_search[index_of_second_side_of_roads_first_way::]))
                             # insert it into the array, the length is the difference between
-                            # the length of the split highway's(or carriageway, etc) members
+                            # the length of the split highway's(or carriageway, etc.) members
                             # and the position where the already contained member is in.
                             corrected_ways_to_search = self.insert_array_items_to_a_specific_position(
                                 where=corrected_ways_to_search, from_array=returned_temp_array,
-                                to_position=index_of_first_side_of_roads_last_way,
-                                how_many=len(split_highway_members) - j)
+                                to_position=index_of_second_side_of_roads_first_way,
+                                how_many=len(returned_temp_array))
+                            already_added_members = list(map(lambda x: x["@ref"], corrected_ways_to_search))
+                            return already_added_members, corrected_ways_to_search, split_highway_members
                         j += 1
                     index_of_the_way_where_relation_would_continue += 1
         elif previous_role == "forward" and connecting_way_role == "":
@@ -240,15 +241,11 @@ class HighwayFixer:
         return already_added_members, corrected_ways_to_search, split_highway_members
 
     def insert_array_items_to_a_specific_position(self, where: list, from_array: list, to_position: int, how_many: int):
-        for index in range(len(where)):
-            if index == to_position + 1:
-                beginning_of_where = where[0:to_position + 1]
-                rest_of_where = where[to_position + 1:]
-                to_be_returned = beginning_of_where
-                for index in range(how_many):
-                    to_be_returned.append(from_array[index])
-                to_be_returned += rest_of_where
-                return to_be_returned
+        beginning_of_where = where[0:to_position]
+        to_be_returned = beginning_of_where
+        for index in range(how_many):
+            to_be_returned.append(from_array[index])
+        return to_be_returned
 
     def search_for_connection(self, index, first_node_previous, last_node_previous,
                               ways_to_search, already_added_members, corrected_ways_to_search,

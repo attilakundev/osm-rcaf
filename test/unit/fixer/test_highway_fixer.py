@@ -239,11 +239,11 @@ def test_add_tag_to_item():
 
 
 def test_insert_array_items_to_a_specific_position():
-    where = ["-1", "-2", "-3", "-4"]
+    where = ["-1", "-2", "-3", "-6","-5","-7"]
     from_array = ["-5", "-6", "-7"]
-    to_position = 2
-    how_many = 2
-    result_assert = ["-1", "-2", "-3", "-5", "-6", "-4"]
+    to_position = 3
+    how_many = len(from_array)
+    result_assert = ["-1", "-2", "-3", "-5", "-6", "-7"]
     result = highway_fixer.insert_array_items_to_a_specific_position(where, from_array, to_position, how_many)
     assert result == result_assert
 
