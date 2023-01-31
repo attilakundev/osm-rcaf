@@ -217,7 +217,8 @@ class HighwayFixer:
                             # get the index of the member already contained in the corrected relation
                             try:
                                 index_of_second_side_of_roads_first_way = corrected_ways_to_search.index(
-                                split_highway_members[j]) + 1 #the j marks the last item of the first side of the road (eg. right side)
+                                    split_highway_members[
+                                        j]) + 1  # the j marks the last item of the first side of the road (eg. right side)
                             except ValueError:
                                 index_of_second_side_of_roads_first_way = -1
                             # reverse the ways after it
@@ -231,14 +232,13 @@ class HighwayFixer:
                                 to_position=index_of_second_side_of_roads_first_way,
                                 how_many=len(returned_temp_array))
                             already_added_members = list(map(lambda x: x["@ref"], corrected_ways_to_search))
-                            return already_added_members, corrected_ways_to_search, split_highway_members
+                            return already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series
                         j += 1
                     index_of_the_way_where_relation_would_continue += 1
         elif previous_role == "forward" and connecting_way_role == "":
             # we reached the end of the forward series.
-            split_highway_members.append(ways_to_search[index_of_the_connecting_way])
-
-        return already_added_members, corrected_ways_to_search, split_highway_members
+            number_of_members_of_this_forward_series = 0
+        return already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series
 
     def insert_array_items_to_a_specific_position(self, where: list, from_array: list, to_position: int, how_many: int):
         beginning_of_where = where[0:to_position]
@@ -413,7 +413,7 @@ class HighwayFixer:
                 if index_of_the_connecting_way == -1:
                     return corrected_ways_to_search, already_added_members
                 else:
-                    already_added_members, corrected_ways_to_search, split_highway_members = self.check_for_forward_ways(
+                    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series = self.check_for_forward_ways(
                         already_added_members,
                         corrected_ways_to_search,
                         first_node_previous,

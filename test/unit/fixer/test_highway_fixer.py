@@ -239,7 +239,7 @@ def test_add_tag_to_item():
 
 
 def test_insert_array_items_to_a_specific_position():
-    where = ["-1", "-2", "-3", "-6","-5","-7"]
+    where = ["-1", "-2", "-3", "-6", "-5", "-7"]
     from_array = ["-5", "-6", "-7"]
     to_position = 3
     how_many = len(from_array)
@@ -466,7 +466,7 @@ def test_correct_way_roles_tags():
     assert way_queries.get_role(corrected_ways_to_search[8]) == "forward"
 
 
-def test_check_for_forward_ways():
+def test_check_for_forward_ways_end_of_split_highway():
     # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
     relation_info = get_relation_info(file_path)
@@ -481,10 +481,59 @@ def test_check_for_forward_ways():
     last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])
     split_highway_members = [ways_to_search[3], ways_to_search[5], ways_to_search[1]]
     banned_roundabout_ways = []
-    already_added_members, corrected_ways_to_search, split_highway_members = highway_fixer.check_for_forward_ways(already_added_members, corrected_ways_to_search,
-                                                                    first_node_previous,
-                                                                    index_of_the_connecting_way, last_node_previous,
-                                                                    number_of_members_of_this_forward_series,
-                                                                    previous_role, split_highway_members,
-                                                                    ways_to_search, banned_roundabout_ways)
+    already_added_members, corrected_ways_to_search, split_highway_members,number_of_members_of_this_forward_series = highway_fixer.check_for_forward_ways(
+        already_added_members, corrected_ways_to_search,
+        first_node_previous,
+        index_of_the_connecting_way, last_node_previous,
+        number_of_members_of_this_forward_series,
+        previous_role, split_highway_members,
+        ways_to_search, banned_roundabout_ways)
     assert already_added_members == ["-1", "-4", "-6", "-5", "-2"]
+    assert number_of_members_of_this_forward_series == 4
+
+def test_check_for_forward_ways_way_after_split_highway():
+    # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
+    file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[3], ways_to_search[5], ways_to_search[4], ways_to_search[1]]
+    already_added_members = ["-1", "-4", "-6", "-5", "-2"]
+    index = 5
+    index_of_the_connecting_way = 2
+    number_of_members_of_this_forward_series = 4
+    previous_role = way_queries.get_role(corrected_ways_to_search[index - 1])
+    first_node_previous = way_queries.get_start_node(corrected_ways_to_search[index - 1])
+    last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])
+    split_highway_members = [ways_to_search[3], ways_to_search[5], ways_to_search[1]]
+    banned_roundabout_ways = []
+    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series = highway_fixer.check_for_forward_ways(
+        already_added_members, corrected_ways_to_search,
+        first_node_previous,
+        index_of_the_connecting_way, last_node_previous,
+        number_of_members_of_this_forward_series,
+        previous_role, split_highway_members,
+        ways_to_search, banned_roundabout_ways)
+    assert already_added_members == ["-1", "-4", "-6", "-5", "-2","-3"]
+    assert number_of_members_of_this_forward_series == 0
+
+
+def test_remove_oneway_and_forward_tag_from_certain_members():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
+    relation_info = get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
+                                ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7],
+                                ways_to_search[8]]
+    corrected_ways_to_search = highway_fixer.correct_way_roles_tags(corrected_ways_to_search)
+    # remove now the oneway from member with index 1.
+    index = 1
+    remove_one_way_tag = True
+    corrected_ways_to_search = highway_fixer.remove_oneway_and_forward_tag_from_certain_members(
+        corrected_ways_to_search,
+        way_queries.get_role(corrected_ways_to_search[index]) == "forward",
+        way_queries.is_oneway(corrected_ways_to_search[index]),
+        way_queries.is_roundabout(corrected_ways_to_search[index]), index,
+        remove_one_way_tag
+    )
+    assert way_queries.get_role(corrected_ways_to_search[1]) == ""
+    assert way_queries.is_oneway(corrected_ways_to_search[1]) is False
