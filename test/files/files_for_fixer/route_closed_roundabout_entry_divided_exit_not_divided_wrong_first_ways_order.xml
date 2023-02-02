@@ -13,60 +13,53 @@
     <node id='-11'/>
     <node id='-12'/>
     <node id='-13'/>
+    <node id='-14'/>
+    <node id='-15'/>
     <way id='-1'>
         <nd ref='-1'/>
         <nd ref='-2'/>
-        <nd ref='-3'/>
         <tag k='highway' v='primary'/>
     </way>
     <way id='-2'>
+        <nd ref='-2'/>
         <nd ref='-3'/>
-        <nd ref='-4'/>
-        <nd ref='-5'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
     <way id='-3'>
-        <nd ref='-5'/>
-        <nd ref='-6'/>
-        <nd ref='-7'/>
+        <nd ref='-4'/>
+        <nd ref='-2'/>
         <tag k='highway' v='primary'/>
         <tag k='oneway' v='yes'/>
     </way>
     <way id='-4'>
-        <nd ref='-9'/>
-        <nd ref='-8'/>
+        <nd ref='-5'/>
+        <nd ref='-6'/>
+        <nd ref='-7'/>
         <nd ref='-3'/>
-        <tag k='highway' v='primary'/>
-        <tag k='oneway' v='yes'/>
-    </way>
-    <way id='-5'>
-        <nd ref='-7'/>
-        <nd ref='-11'/>
+        <nd ref='-8'/>
+        <nd ref='-4'/>
+        <nd ref='-9'/>
         <nd ref='-10'/>
-        <tag k='highway' v='primary'/>
-        <tag k='oneway' v='yes'/>
-    </way>
-    <way id='-6'>
-        <nd ref='-7'/>
+        <nd ref='-11'/>
         <nd ref='-12'/>
         <nd ref='-13'/>
+        <nd ref='-14'/>
+        <nd ref='-5'/>
         <tag k='highway' v='primary'/>
+        <tag k='junction' v='roundabout'/>
     </way>
-
-    <way id='-7'>
-        <nd ref='-10'/>
-        <nd ref='-9'/>
+    <way id='-5'>
+        <nd ref='-13'/>
+        <nd ref='-15'/>
         <tag k='highway' v='primary'/>
-        <tag k='oneway' v='yes'/>
     </way>
     <relation id='-1'>
+        <member type='way' ref='-3' role=''/>
+        <member type='way' ref='-2' role=''/>
         <member type='way' ref='-1' role=''/>
-        <member type='way' ref='-2' role='forward'/>
-        <member type='way' ref='-3' role='forward'/>
-        <member type='way' ref='-4' role='forward'/>
-        <member type='way' ref='-5' role='forward'/>
-        <member type='way' ref='-6' role=''/>
+        <member type='way' ref='-4' role=''/>
+        <member type='way' ref='-5' role=''/>
         <tag k='ref' v='3'/>
         <tag k='route' v='road'/>
         <tag k='type' v='route'/>
