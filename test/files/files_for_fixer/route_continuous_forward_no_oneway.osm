@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-1' action='modify' visible='true' lat='40.63281220586' lon='-79.19914663374' />
+  <node id='-2' action='modify' visible='true' lat='40.63407421906' lon='-79.19989228785' />
+  <node id='-3' action='modify' visible='true' lat='40.63575143839' lon='-79.20081496775' />
+  <node id='-4' action='modify' visible='true' lat='40.6372454308' lon='-79.20137286723' />
+  <node id='-5' action='modify' visible='true' lat='40.6390365493' lon='-79.20185030043' />
+  <node id='-6' action='modify' visible='true' lat='40.64022110354' lon='-79.20146942675' />
+  <way id='-1' action='modify' visible='true'>
+    <nd ref='-1' />
+    <nd ref='-2' />
+    <tag k='highway' v='motorway' />
+  </way>
+  <way id='-2' action='modify' visible='true'>
+    <nd ref='-2' />
+    <nd ref='-3' />
+    <tag k='highway' v='motorway' />
+  </way>
+  <way id='-3' action='modify' visible='true'>
+    <nd ref='-3' />
+    <nd ref='-4' />
+    <tag k='highway' v='motorway' />
+  </way>
+  <way id='-4' action='modify' visible='true'>
+    <nd ref='-4' />
+    <nd ref='-5' />
+    <tag k='highway' v='motorway' />
+  </way>
+  <way id='-5' action='modify' visible='true'>
+    <nd ref='-5' />
+    <nd ref='-6' />
+    <tag k='highway' v='motorway' />
+  </way>
+  <relation id='-99891' action='modify' visible='true'>
+    <member type='way' ref='-1' role='' />
+    <member type='way' ref='-2' role='forward' />
+    <member type='way' ref='-3' role='forward' />
+    <member type='way' ref='-4' role='' />
+    <member type='way' ref='-5' role='' />
+    <tag k='ref' v='3' />
+    <tag k='route' v='road' />
+    <tag k='type' v='route' />
+  </relation>
+</osm>
