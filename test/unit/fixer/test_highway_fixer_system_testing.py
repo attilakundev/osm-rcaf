@@ -121,22 +121,19 @@ def test_route_norole_split_nooneway():
     file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_norole_split_nooneway.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
-    assert already_added_members == ["-1", "-2", "-3", "-5",
-                                     "-6"]  # The reason for this is that the way how the ways are searched are in a lazy way so only follow what's continued...
+    assert already_added_members == ["-1", "-2", "-3", "-5", "-6"]
+    # The reason for this is that the way how the ways are searched are in a lazy way so only follow what's continued...
     # this is sorta a false postiive case(since it's correct but not exactly what we want), since we would want -1,-2,-3,-5,-4,-6
-    assert way_queries.get_role(corrected_ways_to_search[1]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[1]) == ""
+    assert way_queries.get_role(corrected_ways_to_search[4]) == ""
 
 
 def test_route_oneway_without_role():
-    file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_norole_split_nooneway.xml"
+    file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_oneway_without_role.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
-    assert already_added_members == ["-1", "-2", "-3", "-5",
-                                     "-6"]  # The reason for this is that the way how the ways are searched are in a lazy way so only follow what's continued...
-    # this is sorta a false postiive case(since it's correct but not exactly what we want), since we would want -1,-2,-3,-5,-4,-6
+    assert already_added_members == ["-1", "-2", "-3"]
     assert way_queries.get_role(corrected_ways_to_search[1]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
 
 
 def test_route_continuous_forward_no_oneway():
@@ -164,3 +161,58 @@ def test_route_continuous_no_role_no_oneway_wrong_order():
     assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"]
     assert way_queries.get_role(corrected_ways_to_search[1]) == ""
     assert way_queries.get_role(corrected_ways_to_search[2]) == ""
+
+
+def test_route_continuous_no_role_oneway():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_continuous_no_role_oneway.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
+    assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"]
+    assert way_queries.get_role(corrected_ways_to_search[4]) == ""
+    assert way_queries.is_oneway(corrected_ways_to_search[4]) is False
+
+
+def test_route_continuous_no_role_oneway_wrong_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_continuous_no_role_oneway_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
+    assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"]
+    assert way_queries.get_role(corrected_ways_to_search[4]) == ""
+    assert way_queries.is_oneway(corrected_ways_to_search[4]) is False
+
+
+def test_route_open_roundabout_correct_roles_and_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_correct_roles_and_order.osm"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
+    assert already_added_members == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
+    assert way_queries.get_role(corrected_ways_to_search[2]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[2]) is True
+    assert way_queries.get_role(corrected_ways_to_search[3]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[3]) is False
+    assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[4]) is False
+    assert way_queries.get_role(corrected_ways_to_search[5]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
+
+
+def test_route_open_roundabout_correct_roles_and_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_correct_roles_and_wrong_order.osm"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-6")
+    assert already_added_members == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
+    assert way_queries.get_role(corrected_ways_to_search[2]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[2]) is True
+    assert way_queries.get_role(corrected_ways_to_search[3]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[3]) is False
+    assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[4]) is False
+    assert way_queries.get_role(corrected_ways_to_search[5]) == "forward"
+    assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
+
+
+def test_route_split_oneway():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_split_oneway.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
+    assert already_added_members == ["-1", "-4", "-2", "-3"]
