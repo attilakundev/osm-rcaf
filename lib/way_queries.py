@@ -72,7 +72,13 @@ def get_highway_ref(array):
                 return key_value_pair["@v"]
     return ""  # if empty, it means that the ref is not set, which is a problem. We need to put that from the way of the relation
 
-
+def get_index_of_way(array, value):
+    index = 0
+    while index < len(array):
+        if "@ref" in array[index] and array[index]["@ref"] == value:
+            return index
+        index+=1
+    return -1
 def put_ref_from_relation_to_highway_way(array):  # this requires enumerate when for looping
     ref = get_ref_of_the_route(array)
     for index, element in enumerate(array["ways"]):

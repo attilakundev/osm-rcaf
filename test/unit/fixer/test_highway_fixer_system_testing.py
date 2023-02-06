@@ -216,3 +216,10 @@ def test_route_split_oneway():
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
     assert already_added_members == ["-1", "-4", "-2", "-3"]
+
+
+def test_route_split_wrong_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
+    assert already_added_members == ["-1", "-4", "-6", "-5", "-2", "-3"]
