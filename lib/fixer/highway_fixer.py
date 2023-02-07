@@ -600,6 +600,7 @@ class HighwayFixer:
             # remove the wrong way
             corrected_ways_to_search.remove(corrected_ways_to_search[-1])
             split_highway_members.remove(split_highway_members[-1])
+            already_added_members.remove(already_added_members[-1])
             number_of_members_of_this_forward_series -= 1
             # insert the correct way into place
             already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series = self.check_for_forward_ways(
