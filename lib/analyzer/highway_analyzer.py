@@ -330,7 +330,7 @@ class HighwayAnalyzer:
                                                                                                 last_forward_way_before_backward_direction,
                                                                                                 previous_nodes,
                                                                                                 error_information,
-                                                                                                previous_current)
+                                                                                                previous_current,count_of_forward_roled_way_series)
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # If the way is not continuous, because the end and starting nodes are different of the two ways, let's try it
         # at roundabouts, and find the node in it (this only works if the roundabout is coming right after
@@ -371,7 +371,7 @@ class HighwayAnalyzer:
                                             current_role: str, previous_oneway: bool, current_oneway: bool,
                                             is_mutcd_country: bool, role_of_first_way: str, has_directional_roles: bool,
                                             last_forward_way_before_backward_direction: list, previous_nodes: list,
-                                            error_information: list, previous_current: PreviousCurrentHighway):
+                                            error_information: list, previous_current: PreviousCurrentHighway,count_of_forward_roled_way_series):
         """This checks if the way has issues with the roles or determine if the way is in a country which uses
         NORTH / SOUTH / WEST / EAST on the signs (cardinal direction).
 
@@ -387,7 +387,7 @@ class HighwayAnalyzer:
                                                                           role_of_first_way, has_directional_roles,
                                                                           last_forward_way_before_backward_direction,
                                                                           previous_nodes,
-                                                                          error_information, previous_current)
+                                                                          error_information, previous_current,count_of_forward_roled_way_series)
         elif ((current_role == "forward" or (
                 is_mutcd_country and way_queries.check_if_directional(current_role)))) and current_oneway:
             # We know all oneways are forward
@@ -415,16 +415,18 @@ class HighwayAnalyzer:
                                                           last_forward_way_before_backward_direction: list,
                                                           previous_nodes: list,
                                                           error_information: list,
-                                                          previous_current: PreviousCurrentHighway):
+                                                          previous_current: PreviousCurrentHighway,
+                                                          count_of_forward_roled_way_series=int):
         """Case: NNFN - this is a bad case because in the case of 2x1 lane motorways there's no ability to go backwards
-        (or can be FFFN etc - since you can't traverse backwards then in the case of 2x1)
+        (or can be FFFN etc - since you can't traverse backwards then in the case of 2x1 - or if the forward series consists of only 1 members
+         - worst case! then it's an error for sure, no ability to return, this is for all types of roads)
 
         The roundabout checker shouldn't deceive you, I don't want to rename that method since it's used for roundabout connection from multiple nodes.
         F= Forward N = Not oneway
         """
         if index_of_current_way > 1 \
                 and ((previous_role == "forward" or
-                      (is_mutcd_country and way_queries.check_if_directional(previous_role))) and previous_highway == "motorway"
+                      (is_mutcd_country and way_queries.check_if_directional(previous_role))) and (previous_highway == "motorway" or count_of_forward_roled_way_series == 1)
                 and not previous_oneway and (len(last_forward_way_before_backward_direction)
                                              == 0 or (len(
                     last_forward_way_before_backward_direction) > 1 and not

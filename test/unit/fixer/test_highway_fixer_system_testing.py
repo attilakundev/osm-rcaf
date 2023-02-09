@@ -34,6 +34,15 @@ def test_search_for_connection_exiting_from_open_roundabout_exit_split_wrong_ord
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
     assert already_added_members == ["-1", "-2", "-4", "-8", "-3", "-6", "-9", "-10"]
 
+def test_route_open_roundabout_entry_divided_exit_divided_no_role():
+    file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_open_roundabout_entry_divided_exit_divided_no_role.xml"
+    # good order but road with way -1 has no role
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
+    assert already_added_members == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
+    assert way_queries.get_role(corrected_ways_to_search[3]) == "forward"
+    assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
+
 
 def test_search_for_connection_exiting_from_closed_roundabout_exit_not_split_wrong_order_no_role():
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_not_divided_wrong_first_ways_order.xml"
@@ -196,7 +205,7 @@ def test_route_open_roundabout_correct_roles_and_order():
     assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
 
 
-def test_route_open_roundabout_correct_roles_and_order():
+def test_route_open_roundabout_correct_roles_and_wrong_order():
     file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_correct_roles_and_wrong_order.osm"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-6")

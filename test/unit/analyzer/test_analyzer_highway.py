@@ -484,6 +484,7 @@ def test_check_role_issues_in_continuous_way_normal_way():
     last_forward_way_before_backward_direction = error_information = []
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
+    count_of_the_current_series_of_forward_ways = 2
     # Act
     has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
         index_of_current_way,
@@ -498,7 +499,7 @@ def test_check_role_issues_in_continuous_way_normal_way():
         last_forward_way_before_backward_direction,
         previous_nodes,
         error_information,
-        previous_current)
+        previous_current, count_of_the_current_series_of_forward_ways)
     assert has_directional_roles is False
     assert current_role == ""
     assert current_oneway is False
@@ -521,6 +522,7 @@ def test_check_role_issues_in_continuous_way_forward_in_a_non_forward_series():
     last_forward_way_before_backward_direction = error_information = []
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
+    count_of_the_current_series_of_forward_ways = 2
     # Act
     has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
         index_of_current_way,
@@ -535,11 +537,12 @@ def test_check_role_issues_in_continuous_way_forward_in_a_non_forward_series():
         last_forward_way_before_backward_direction,
         previous_nodes,
         error_information,
-        previous_current)
+        previous_current,
+        count_of_the_current_series_of_forward_ways)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
-    assert previous_highway =="motorway"
+    assert previous_highway == "motorway"
     assert len(error_information) == 1
     assert error_information[0].error_type == "Forward and non-oneway without ability to move backward"
 
@@ -560,6 +563,7 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series():
     last_forward_way_before_backward_direction = error_information = []
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
+    count_of_the_current_series_of_forward_ways = 2
     # Act
     has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
         index_of_current_way,
@@ -574,7 +578,8 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series():
         last_forward_way_before_backward_direction,
         previous_nodes,
         error_information,
-        previous_current)
+        previous_current,
+        count_of_the_current_series_of_forward_ways)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
@@ -598,6 +603,7 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series_no_oneway():
     last_forward_way_before_backward_direction = error_information = []
     previous_nodes = way_queries.get_nodes(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
+    count_of_the_current_series_of_forward_ways = 2
     # Act
     has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
         index_of_current_way,
@@ -612,7 +618,8 @@ def test_check_role_issues_in_forward_way_no_gap_oneway_series_no_oneway():
         last_forward_way_before_backward_direction,
         previous_nodes,
         error_information,
-        previous_current)
+        previous_current,
+        count_of_the_current_series_of_forward_ways)
     assert current_role == "forward"
     assert previous_role == "forward"
     assert current_oneway is False
@@ -635,6 +642,7 @@ def test_check_role_issues_in_wrong_role_setup():
     last_forward_way_before_backward_direction = error_information = []
     last_node_previous = way_queries.get_end_node(ways[index_of_current_way - 1])
     previous_current = PreviousCurrentHighway()
+    count_of_the_current_series_of_forward_ways = 2
     # Act
     has_directional_roles, error_information = highway_analyzer.check_role_issues_in_continuous_way(
         index_of_current_way,
@@ -649,7 +657,8 @@ def test_check_role_issues_in_wrong_role_setup():
         last_forward_way_before_backward_direction,
         last_node_previous,
         error_information,
-        previous_current)
+        previous_current,
+        count_of_the_current_series_of_forward_ways)
     assert has_directional_roles is False
     assert current_role == ""
     assert previous_role == "forward"
@@ -822,10 +831,11 @@ def test_check_if_motorway_not_split():
     motorway_split_way = False
     index_of_current_way = len(ways)
     length_of_ways_to_search = index_of_current_way
-    current_highway = way_queries.get_highway(ways[index_of_current_way-1]) #index-1, since this method runs after the addition of index
+    current_highway = way_queries.get_highway(
+        ways[index_of_current_way - 1])  # index-1, since this method runs after the addition of index
     route_number = way_queries.get_ref_of_the_route(relation)
     network = way_queries.get_network(relation)
-    current_role = way_queries.get_role(ways[index_of_current_way-1])
+    current_role = way_queries.get_role(ways[index_of_current_way - 1])
     error_information = []
     previous_current = PreviousCurrentHighway()
     # Act
@@ -871,7 +881,8 @@ def test_check_if_way_connects_continuously():
     first_node_previous = current_role = previous_oneway = current_oneway = previous_roundabout = current_roundabout = ""  # not needed now
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes,
+                                                                                current_nodes,
                                                                                 index_of_current_way,
                                                                                 first_node_previous,
                                                                                 last_node_previous, first_node_current,
@@ -927,7 +938,8 @@ def test_check_if_way_connects_continuously_checking_role_issues_wrong_role():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway,previous_nodes, current_nodes,
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes,
+                                                                                current_nodes,
                                                                                 index_of_current_way,
                                                                                 first_node_previous,
                                                                                 last_node_previous, first_node_current,
@@ -984,7 +996,8 @@ def test_check_if_way_connects_continuously_relation_info_one_piece_roundabout_g
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes,
+                                                                                current_nodes,
                                                                                 index_of_current_way,
                                                                                 first_node_previous,
                                                                                 last_node_previous, first_node_current,
@@ -1037,7 +1050,8 @@ def test_check_if_way_connects_continuously_relation_info_gap():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes,
+                                                                                current_nodes,
                                                                                 index_of_current_way,
                                                                                 first_node_previous,
                                                                                 last_node_previous, first_node_current,
@@ -1090,7 +1104,8 @@ def test_check_if_way_connects_continuously_relation_info_no_gap():
     current_oneway = way_queries.is_oneway(ways[index_of_current_way])
     # Act
     last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, \
-        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes, current_nodes,
+        error_information = highway_analyzer.check_if_way_connects_continuously(ways, previous_highway, previous_nodes,
+                                                                                current_nodes,
                                                                                 index_of_current_way,
                                                                                 first_node_previous,
                                                                                 last_node_previous, first_node_current,

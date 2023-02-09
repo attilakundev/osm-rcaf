@@ -315,13 +315,13 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     previous_forward = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
     current_forward = way_queries.get_role(corrected_ways_to_search[index]) == "forward"
     remove_one_way_tag = False
-
+    previous_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index - 1])
     index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
+        previous_oneway, remove_one_way_tag, previous_roundabout, current_roundabout, closed_roundabout_detected)
     assert index == 1
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 5
@@ -330,12 +330,13 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     # Determine if the oneway series starting node is detected
     oneway_series_starting_node_detected = True
     index = 6
+    previous_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index - 1])
     index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
+        previous_oneway, remove_one_way_tag, previous_roundabout, current_roundabout, closed_roundabout_detected)
     assert index == 6  # since we didn't change the index variable...
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 5
@@ -348,12 +349,13 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     current_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index])
     previous_forward = way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
     current_forward = way_queries.get_role(corrected_ways_to_search[index]) == "forward"
+    previous_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index - 1])
     index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
+        previous_oneway, remove_one_way_tag, previous_roundabout, current_roundabout, closed_roundabout_detected)
     assert index == 5  # since we didn't change the index variable...
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 5
@@ -378,13 +380,13 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
     previous_forward = way_queries.get_role(ways_to_search[index - 1]) == "forward"
     current_forward = way_queries.get_role(ways_to_search[index]) == "forward"
     remove_one_way_tag = False
-
+    previous_roundabout = way_queries.is_roundabout(corrected_ways_to_search[index - 1])
     index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected = highway_fixer.remove_oneway_tag_from_non_roundabout_members_if_needed(
         corrected_ways_to_search, current_forward,
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag, current_roundabout, closed_roundabout_detected)
+        previous_oneway, remove_one_way_tag,previous_roundabout, current_roundabout, closed_roundabout_detected)
     assert index == 3
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 2
