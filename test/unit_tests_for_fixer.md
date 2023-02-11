@@ -18,15 +18,13 @@ Unit tests:
 ---
 - ☑ Open roundabout correct roles wrong order
 - ☑ Open roundabout correct roles correct order
-- [?] Open roundabout wrong roles wrong order // is this even possible ? Like , it may detect wrong roundabout pieces so it's likely to have either false negative or false positive cases...
 - ☑ Open roundabout wrong roles correct order 
 - ☑ Open roundabout correct roles wrong order, extra members in roundabout
-- ☐ Open roundabout correct roles correct order, extra members in roundabout
-- ☐ Open roundabout wrong roles wrong order, extra members in roundabout
+- ☑ Open roundabout wrong roles wrong order
 
 - ☐ Open roundabout: ways that go in it but not merging back, going split and merging back at another roundabout. FYI: Road nr. 67 north of Kaposvár
 ---
 - ☑ It's an expressway but has no roles, which is wrong
 
 - ☐ Get the missing route piece from the map itself. For local files though the <way> </way> list should contain it , but from Overpass the list can be queried too
-15/23 (21) is done.
+16/21 (20) is done.
