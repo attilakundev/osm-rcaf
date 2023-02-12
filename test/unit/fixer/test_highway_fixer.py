@@ -12,7 +12,7 @@ sys.path.append(f"{project_path}/lib/model")
 sys.path.append(f"{project_path}/test/files")
 from analyzer import Analyzer
 from highway_fixer import HighwayFixer
-import analyzer_dicts
+import fixer_utils
 import way_queries
 
 highway_fixer = HighwayFixer()
@@ -177,10 +177,10 @@ def test_search_for_tag():
             }
         ]
     }
-    assert highway_fixer.search_for_tag(tags_only_dict, "oneway", "yes") is True
-    assert highway_fixer.search_for_tag(tags_only_dict, "a", "b") is False
-    assert highway_fixer.search_for_tag(tags_list, "oneway", "yes") is True
-    assert highway_fixer.search_for_tag(tags_list, "a", "b") is False
+    assert fixer_utils.search_for_tag(tags_only_dict, "oneway", "yes") is True
+    assert fixer_utils.search_for_tag(tags_only_dict, "a", "b") is False
+    assert fixer_utils.search_for_tag(tags_list, "oneway", "yes") is True
+    assert fixer_utils.search_for_tag(tags_list, "a", "b") is False
 
 
 def test_add_tag_to_item():
@@ -231,8 +231,8 @@ def test_add_tag_to_item():
             }
         ]
     }
-    add_item_to_dict = highway_fixer.add_tag_to_item("a", "b", tags_only_dict)
-    add_item_to_list = highway_fixer.add_tag_to_item("a", "b", tags_list)
+    add_item_to_dict = fixer_utils.add_tag_to_item("a", "b", tags_only_dict)
+    add_item_to_list = fixer_utils.add_tag_to_item("a", "b", tags_list)
 
     assert add_item_to_dict == result_tags_only_dict
     assert add_item_to_list == result_tags_list
