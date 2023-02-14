@@ -15,7 +15,7 @@ Unit tests:
 - ☑ Closed roundabout correct roles correct order
 - ☑ Closed roundabout wrong roles wrong order
 - ☑ Closed roundabout wrong roles correct order
-- ☐ Closed roundabout: ways that go in it but not merging back, going split and merging back at another roundabout. FYI: Road nr. 67 north of Kaposvár but closed (so it's like double roundaboutish thing)
+- ☑ Closed roundabout: ways that go in it but not merging back, going split and merging back at another roundabout. FYI: Road nr. 67 north of Kaposvár but closed (so it's like double roundaboutish thing)
 ---
 - ☑ Open roundabout correct roles wrong order
 - ☑ Open roundabout correct roles correct order
@@ -30,4 +30,4 @@ Unit tests:
 - ☐ Get the missing route piece from the map itself. For local files though the <way> </way> list should contain it , but from Overpass the list can be queried too
 
  
-17/21 (20) is done.
+18/21 (20) is done.

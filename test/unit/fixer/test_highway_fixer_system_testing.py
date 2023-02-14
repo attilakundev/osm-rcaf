@@ -211,6 +211,7 @@ def test_route_open_roundabout_correct_roles_and_wrong_order():  # open roundabo
     assert way_queries.get_role(corrected_ways_to_search[5]) == "forward"
     assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
 
+
 def test_open_roundabout_exit_split_wrong_order_with_extra_members():  # Open roundabout correct roles wrong order, extra members in roundabout
     file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_entry_divided_exit_divided_wrong_order_extra_members.xml"
     # as manually discovered, the correction for this would be:
@@ -219,8 +220,9 @@ def test_open_roundabout_exit_split_wrong_order_with_extra_members():  # Open ro
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
     assert already_added_members == ["-1", "-2", "-4", "-8", "-3", "-6", "-9", "-10"]
 
-def test_route_open_roundabout_wrong_roles_correct_order(): # open roundabout: correct order wrong roles
-    file_path =f"{project_path}/test/files/files_for_fixer/route_open_roundabout_correct_order_and_wrong_roles.xml"
+
+def test_route_open_roundabout_wrong_roles_correct_order():  # open roundabout: correct order wrong roles
+    file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_correct_order_and_wrong_roles.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-6")
     assert already_added_members == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
@@ -234,8 +236,8 @@ def test_route_open_roundabout_wrong_roles_correct_order(): # open roundabout: c
     assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
 
 
-def test_route_open_roundabout_wrong_roles_wrong_order(): # open roundabout: correct order wrong roles
-    file_path =f"{project_path}/test/files/files_for_fixer/route_open_roundabout_wrong_order_and_wrong_roles.xml"
+def test_route_open_roundabout_wrong_roles_wrong_order():  # open roundabout: correct order wrong roles
+    file_path = f"{project_path}/test/files/files_for_fixer/route_open_roundabout_wrong_order_and_wrong_roles.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-6")
     assert already_added_members == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
@@ -247,6 +249,8 @@ def test_route_open_roundabout_wrong_roles_wrong_order(): # open roundabout: cor
     assert way_queries.is_roundabout(corrected_ways_to_search[4]) is False
     assert way_queries.get_role(corrected_ways_to_search[5]) == "forward"
     assert way_queries.is_roundabout(corrected_ways_to_search[5]) is True
+
+
 def test_route_split_oneway():
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_oneway.xml"
     relation_info = get_relation_info(file_path)
@@ -260,6 +264,7 @@ def test_route_split_wrong_order():
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
     assert already_added_members == ["-1", "-4", "-6", "-5", "-2", "-3"]
 
+
 def test_route_split_wrong_order_backward():
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
     relation_info = get_relation_info(file_path)
@@ -269,3 +274,10 @@ def test_route_split_wrong_order_backward():
     assert way_queries.get_role(corrected_ways_to_search[2]) == "forward"
     assert way_queries.get_role(corrected_ways_to_search[3]) == "forward"
     assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
+
+
+def test_route_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
+    assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10", "-11", "-12"]
