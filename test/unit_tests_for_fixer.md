@@ -9,7 +9,7 @@ Unit tests:
 - ☑ Split one way road, order is swapped, has some backward roled road pieces
   (handling of these: if it's not a biking path, then make the backward member forward, and reverse its nodes. According to OSM wiki, reverse role is used at bike paths if they're going the opposite direction than what the road originally heads to, especially if it's one-way)
 - ☑ Split one way road, order and the starting way is swapped
-- [?] Split road but it doesn't have the forward roles given and not one-way. It's a good question if this can be fixed, depending the order of the relation. if the continuation and not the other side comes, that side will be literally neglected.
+- [?] Split road, but it doesn't have the forward roles given and not one-way. It's a good question if this can be fixed, depending the order of the relation. if the continuation and not the other side comes, that side will be literally neglected.
 ---
 - ☑ Closed roundabout correct roles wrong order
 - ☑ Closed roundabout correct roles correct order
@@ -23,11 +23,11 @@ Unit tests:
 - ☑ Open roundabout correct roles wrong order, extra members in roundabout
 - ☑ Open roundabout wrong roles wrong order
 
-- ☐ Open roundabout: ways that go in it but not merging back, going split and merging back at another roundabout. FYI: Road nr. 67 north of Kaposvár
+- ☑ Open roundabout: ways that go in it but not merging back, going split and merging back at another roundabout. FYI: Road nr. 67 north of Kaposvár
 ---
 - ☑ It's an expressway but has no roles, which is wrong
 
 - ☐ Get the missing route piece from the map itself. For local files though the <way> </way> list should contain it , but from Overpass the list can be queried too
 
  
-18/21 (20) is done.
+19/20 is done. (not 21, since one of it is complex marked with [?] )

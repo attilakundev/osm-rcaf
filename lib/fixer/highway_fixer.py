@@ -137,9 +137,6 @@ class HighwayFixer:
             # condition: if we reached the beginning of the roundabout: RETURN.
             # (don't return but go back to the point where you find a normal way)
             index = 0
-            if roundabout_entry_first_node == way_queries.get_end_node(ways_to_search[index]):
-                checking_condition = "normal_road"
-                index = -1
         elif checking_condition == "roundabout" and connected and not_in_array and is_roundabout:
             is_banned = self.determine_if_roundabout_way_should_be_banned_from_relation(ways_to_search,
                                                                                         corrected_ways_to_search, index)
@@ -175,14 +172,6 @@ class HighwayFixer:
                 is_motorway and not connecting):
             already_added_members.append(way_ref)
             corrected_ways_to_search.append(ways_to_search[index])
-            if is_roundabout and is_closed_roundabout and does_the_way_connect_into_roundabout and index > 1 and way_queries.get_end_node(
-                    corrected_ways_to_search[-3]) == way_queries.get_start_node(corrected_ways_to_search[-2]):
-                # swap them, because their order is bad.
-                corrected_ways_to_search = fixer_utils.swap_items(corrected_ways_to_search,
-                                                                  len(corrected_ways_to_search) - 2,
-                                                                  len(corrected_ways_to_search) - 3)
-                already_added_members = fixer_utils.swap_items(already_added_members, len(already_added_members) - 2,
-                                                               len(already_added_members) - 3)
         return corrected_ways_to_search, already_added_members
 
     def find_first_non_roundabout_backwards(self, index, corrected_relation):
@@ -307,9 +296,6 @@ class HighwayFixer:
             elif is_roundabout and (
                     not is_previous_roundabout and way_queries.is_roundabout(corrected_ways_to_search[-2])):
                 index += 1
-                if index == len(ways_to_search) and (retries == 0 or retries == 2):
-                    index = 0
-                    retries += 1
             elif way_queries.is_oneway(ways_to_search[index]) and way_queries.get_start_node(
                     corrected_ways_to_search[-1]) == way_queries.get_end_node(ways_to_search[index]):
                 # We don't want the other side of the roundabout entry, so we search for roundabouts.
@@ -324,9 +310,6 @@ class HighwayFixer:
                     corrected_ways_to_search[-1]) == way_queries.get_end_node(ways_to_search[index]) \
                     and not way_queries.is_oneway(corrected_ways_to_search[-1]):
                 index += 1
-                if index == len(ways_to_search) and (retries == 0 or retries == 2):
-                    index = 0
-                    retries += 1
             elif number_of_members_of_this_forward_series == 1 and not way_queries.is_oneway(
                     ways_to_search[index]) and not way_queries.is_roundabout(
                 ways_to_search[index]) and not way_queries.get_highway(ways_to_search[index]) == "motorway":
@@ -440,10 +423,9 @@ class HighwayFixer:
         roundabout_entry_first_node_index = -1
         roundabouts_nodes = []
         is_common_point = False
+        #change all backward roles to forward if necessary
+        ways_to_search = self.get_nodes_roles_and_change_if_necessary(ways_to_search,relation_info)
         while index < len(ways_to_search) and len(corrected_ways_to_search) < len(ways_to_search):
-            corrected_ways_to_search[-1] = self.get_nodes_roles_and_change_if_necessary(relation_info,
-                                                                                        corrected_ways_to_search,
-                                                                                        len(corrected_ways_to_search) - 1)
             first_node_previous = way_queries.get_start_node(corrected_ways_to_search[-1])
             last_node_previous = way_queries.get_end_node(corrected_ways_to_search[-1])
             previous_role = way_queries.get_role(corrected_ways_to_search[-1])
@@ -485,8 +467,6 @@ class HighwayFixer:
                     roundabouts_nodes = way_queries.get_nodes(items_to_be_added[-1])
                     index = len(corrected_ways_to_search) - 1
                 else:
-                    ways_to_search[index_of_the_connecting_way] = self.get_nodes_roles_and_change_if_necessary(
-                        relation_info, ways_to_search, index_of_the_connecting_way)
                     if index_of_the_connecting_way != -1 and number_of_members_of_this_forward_series == 2 and way_queries.get_role(
                             ways_to_search[index_of_the_connecting_way]) == "forward" and way_queries.is_oneway(
                         ways_to_search[index_of_the_connecting_way]):
@@ -663,13 +643,12 @@ class HighwayFixer:
                                                                      number_of_members_of_this_forward_series,is_common_point, previous_roundabouts_nodes)
             return split_highway_members, corrected_ways_to_search, index_of_the_connecting_way
 
-    def get_nodes_roles_and_change_if_necessary(self, relation_info, array_where_get_the_role, index):
-        if relation_info["route"] != "bicycle" and way_queries.get_role(array_where_get_the_role[index]) == "backward":
-            way = way_queries.modify_role(array_where_get_the_role[index], "forward")
-            way = list(reversed(way["nd"]))
-            return way
-        else:
-            return array_where_get_the_role[index]
+    def get_nodes_roles_and_change_if_necessary(self, ways_to_search,relation_info):
+        for way in ways_to_search:
+            if relation_info["route"] != "bicycle" and way_queries.get_role(way) == "backward":
+                way = way_queries.modify_role(way, "forward")
+                way["nd"] = list(reversed(way["nd"]))
+        return ways_to_search
 
     def check_whether_there_are_missing_items_between_two_closed_roundabouts(self, is_common_point, ways_to_search,
                                                                              previous_roundabouts_nodes, items_to_add,
@@ -686,25 +665,21 @@ class HighwayFixer:
         """
         current_roundabouts_nodes = way_queries.get_nodes(items_to_add[0])
         index = 0
-        if is_common_point is False:
-            while index < len(ways_to_search):
-                current_ways_nodes = way_queries.get_nodes(ways_to_search[index])
-                way_ref = way_queries.get_way_ref(ways_to_search[index])
-                if len(items_to_add) == 1 and way_queries.roundabout_checker(previous_roundabouts_nodes,
-                                                                             current_ways_nodes) and way_ref not in already_added_members:
-                    items_to_add = [ways_to_search[index]] + items_to_add
-                elif len(items_to_add) >= 2 and way_queries.check_connectivity(
-                        way_queries.get_start_node(items_to_add[len(items_to_add) - 2]),
-                        way_queries.get_end_node(items_to_add[len(items_to_add) - 2]),
-                        way_queries.get_start_node(ways_to_search[index]),
-                        way_queries.get_end_node(
-                            ways_to_search[index])) and way_ref not in already_added_members and way_ref not in map(
-                    lambda x: x["@ref"], items_to_add):
-                    items_to_add = items_to_add[0:-1] + [ways_to_search[index]] + [items_to_add[-1]]
-                    if way_queries.roundabout_checker(current_roundabouts_nodes,
-                                                      way_queries.get_nodes(ways_to_search[index])):
-                        return items_to_add
-                index += 1
-            pass
-        else:
-            return items_to_add
+        while index < len(ways_to_search):
+            current_ways_nodes = way_queries.get_nodes(ways_to_search[index])
+            way_ref = way_queries.get_way_ref(ways_to_search[index])
+            if len(items_to_add) == 1 and way_queries.roundabout_checker(previous_roundabouts_nodes,
+                                                                         current_ways_nodes) and way_ref not in already_added_members:
+                items_to_add = [ways_to_search[index]] + items_to_add
+            elif len(items_to_add) >= 2 and way_queries.check_connectivity(
+                    way_queries.get_start_node(items_to_add[len(items_to_add) - 2]),
+                    way_queries.get_end_node(items_to_add[len(items_to_add) - 2]),
+                    way_queries.get_start_node(ways_to_search[index]),
+                    way_queries.get_end_node(
+                        ways_to_search[index])) and way_ref not in already_added_members and way_ref not in map(
+                lambda x: x["@ref"], items_to_add):
+                items_to_add = items_to_add[0:-1] + [ways_to_search[index]] + [items_to_add[-1]]
+                if way_queries.roundabout_checker(current_roundabouts_nodes,
+                                                  way_queries.get_nodes(ways_to_search[index])):
+                    return items_to_add
+            index += 1

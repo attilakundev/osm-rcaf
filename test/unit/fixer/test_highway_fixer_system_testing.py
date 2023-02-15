@@ -266,7 +266,7 @@ def test_route_split_wrong_order():
 
 
 def test_route_split_wrong_order_backward():
-    file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
+    file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order_backward.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info, "-1")
     assert already_added_members == ["-1", "-4", "-6", "-5", "-2", "-3"]
@@ -276,8 +276,16 @@ def test_route_split_wrong_order_backward():
     assert way_queries.get_role(corrected_ways_to_search[4]) == "forward"
 
 
-def test_route_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order():
+def test_route_closed_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order():
     file_path = f"{project_path}/test/files/files_for_fixer/route_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order.xml"
     relation_info = get_relation_info(file_path)
     corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
     assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10", "-11", "-12"]
+    assert list(map(lambda x: x["@ref"], corrected_ways_to_search)) == already_added_members # this has to be ensured, otherwise we get error
+
+def test_route_open_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_open_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order.xml"
+    relation_info = get_relation_info(file_path)
+    corrected_ways_to_search, already_added_members = highway_fixer.highway_correction(relation_info)
+    assert already_added_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-15", "-14", "-13", "-12", "-11","-10","-9", "-16"]
+    assert list(map(lambda x: x["@ref"], corrected_ways_to_search)) == already_added_members # this has to be ensured, otherwise we get error
