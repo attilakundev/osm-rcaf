@@ -10,15 +10,17 @@ sys.path.append(f"{project_path}/lib/model")
 from railway_fixer import RailwayFixer
 from highway_fixer import HighwayFixer
 from multipolygon_fixer import MultipolygonFixer
+from fixer_base import FixerBase
 
 railway_fixer = RailwayFixer()
 highway_fixer = HighwayFixer()
 multipolygon_fixer = MultipolygonFixer()
 
-class Fixer:
-    def correct_relation(self, relation_info: dict, relation_id: str = "", first_way: str = ""):
+class RelationFixer(FixerBase):
+    def fixing(self, relation_info: dict,  first_way: str = "", is_from_api: bool = True):
         """
 
+        :param is_from_api:
         :param relation_info: relation info from the analyzer
         :param relation_id: this will be fed from front-end application or console, if you don't supply value, it
          assumes you want the first relation to be fixed.
@@ -28,10 +30,10 @@ class Fixer:
 
         if relation_info["type"] != "public_transport":
             if relation_info["type"] == "route" and (relation_info["route"] == "railway" or relation_info["route"] == "train"):
-                railway_fixer.correction_of_railway_route(relation_info,relation_id,first_way)
+                return {"Error": "Not implemented yet."}
             elif relation_info["type"] == "route" and relation_info["route"] == "road":
-                pass
-            else:
-                pass
+                highway_fixer.fixing(relation_info,first_way,is_from_api)
+            else: # Multipolygon fixing
+                return {"Error": "Not implemented yet."}
         else:
             return {"Error": "This relation type is not supported."}

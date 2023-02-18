@@ -27,7 +27,8 @@ Unit tests:
 ---
 - ☑ It's an expressway but has no roles, which is wrong
 
-- ☐ Get the missing route piece from the map itself. For local files though the <way> </way> list should contain it , but from Overpass the list can be queried too
+- ☑ Get the missing route piece from the map itself. For local files though the <way> </way> list should contain it , but from Overpass the list can be queried too
 
  
-19/20 is done. (not 21, since one of it is complex marked with [?] )
+20/20 is done. (not 21, since one of it is complex marked with [?] )
+Technically it can be considered as complete.

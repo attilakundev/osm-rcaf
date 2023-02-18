@@ -105,8 +105,8 @@ class OSMDataParser:
                                f" this is mostly a unit-testing issue, please fix it.")
         return result
 
-    def __copy_attributes__(self, attributes):
-        attributes = {key: value for key, value in attributes.items() if "@" in key}
+    def __copy_attributes__(self, way):
+        attributes = {key: value for key, value in way.items() if "@" in key}
         return attributes
 
     def collect_information_about_the_relation(self, data, relation_id):

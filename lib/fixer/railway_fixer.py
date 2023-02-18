@@ -8,8 +8,10 @@ sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/model")
 
 import way_queries
+from fixer_base import FixerBase
 
 
-class RailwayFixer:
-    def correction_of_railway_route(self,relation_info,relation_id,first_way):
+class RailwayFixer(FixerBase):
+
+    def fixing(self, relation_info: dict, first_way: str = "", is_from_api: bool = True):
         pass
