@@ -13,7 +13,6 @@ sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/analyzer")
 sys.path.append(f"{project_path}/lib/model")
 sys.path.append(f"{project_path}/test/files")
-from osm_data_parser import OSMDataParser
 from analyzer import Analyzer
 from railway_analyzer import RailwayAnalyzer
 import analyzer_dicts
@@ -54,7 +53,7 @@ def test_check_rails_if_the_ways_are_not_connected():
 def test_railway_checking():
     # Arrange - it's the relation_info_appended relation_info_result_appended
     error_information = []
-    error_information, correct_ways_count = railway_analyzer.railway_checking(
+    error_information, correct_ways_count = railway_analyzer.checking(
         analyzer_dicts.relation_info_railway_result_appended, error_information)
     assert len(error_information) == 1
     assert correct_ways_count == 2

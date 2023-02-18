@@ -40,14 +40,14 @@ class Analyzer:
         relation_info = self.get_relation_info(loaded_relation_file, relation_id)
         # so it'll take whatever relation it is except if it's public transport because that can't be analyzed.
         if way_queries.get_relation_type(relation_info) != "public_transport":
-            role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
+
             if "route" in relation_info and (
                     relation_info.get("route") == "railway" or relation_info.get("route") == "train"):
-                return railway_analyzer.railway_checking(relation_info, error_information)
+                return railway_analyzer.checking(relation_info, error_information)
             elif "route" in relation_info:
-                return highway_analyzer.highway_checking(relation_info, error_information, role_of_first_way)
+                return highway_analyzer.checking(relation_info, error_information)
             else:
-                return multipolygon_analyzer.multipolygon_checking(relation_info, error_information)
+                return multipolygon_analyzer.checking(relation_info, error_information)
         else:
             error_information.append(ErrorHighway(PreviousCurrentHighway(), "Not supported"))
             return error_information, 0

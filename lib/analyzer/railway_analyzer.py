@@ -9,10 +9,10 @@ sys.path.append(f"{project_path}/lib/model")
 
 import way_queries
 from previous_current import PreviousCurrentHighway
+from analyzer_base import AnalyzerBase
 
-
-class RailwayAnalyzer:
-    def railway_checking(self, relation_info, error_information):
+class RailwayAnalyzer(AnalyzerBase):
+    def checking(self, relation_info, error_information):
         first_node_previous = ""
         last_node_previous = ""
         previous_ref = ""

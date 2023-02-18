@@ -9,14 +9,16 @@ sys.path.append(f"{project_path}/lib/model")
 
 from previous_current import PreviousCurrentHighway
 from error_hwy import ErrorHighway
+from analyzer_base import AnalyzerBase
 import way_queries
 
 
-class HighwayAnalyzer:
+class HighwayAnalyzer(AnalyzerBase):
     # good for highway=* tags (primary, secondary, etc. and even trails and cycle routes)
-    def highway_checking(self, relation_info: dict, error_information: list, role_of_first_way: str):
+    def checking(self, relation_info: dict, error_information: list):
         """Highway checking. This is where the gaps for a highway is checked. For unit tests, this should be only
         used if a complete relation is about to be tested."""
+        role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
         route_number = way_queries.get_ref_of_the_route(relation_info)
         network = way_queries.get_network(relation_info)
         index_of_current_way = 0
@@ -286,7 +288,8 @@ class HighwayAnalyzer:
         return pieces_of_roundabout, error_information
 
     # This is a massive method. You should test it only whenever the methods in it had been thoroughly tested.
-    def check_if_way_connects_continuously(self, ways_to_search: list, previous_highway: str, previous_nodes: list, current_nodes: list,
+    def check_if_way_connects_continuously(self, ways_to_search: list, previous_highway: str, previous_nodes: list,
+                                           current_nodes: list,
                                            index_of_current_way: int, first_node_previous: str, last_node_previous: str,
                                            first_node_current: str, last_node_current: str, previous_role: str,
                                            current_role: str, previous_oneway: bool, previous_roundabout: bool,
@@ -310,7 +313,7 @@ class HighwayAnalyzer:
         # Check if the roundabout's entry way is in wrong order.
         if 0 < index_of_current_way < len(
                 ways_to_search) - 2 and last_node_previous == last_node_current and way_queries.is_roundabout(
-            ways_to_search[index_of_current_way+2]):
+            ways_to_search[index_of_current_way + 2]):
             error_information.append(ErrorHighway(previous_current, "Wrong order of roundabout entries"))
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         if index_of_current_way > 0 and (
@@ -330,7 +333,8 @@ class HighwayAnalyzer:
                                                                                                 last_forward_way_before_backward_direction,
                                                                                                 previous_nodes,
                                                                                                 error_information,
-                                                                                                previous_current,count_of_forward_roled_way_series)
+                                                                                                previous_current,
+                                                                                                count_of_forward_roled_way_series)
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # If the way is not continuous, because the end and starting nodes are different of the two ways, let's try it
         # at roundabouts, and find the node in it (this only works if the roundabout is coming right after
@@ -367,11 +371,12 @@ class HighwayAnalyzer:
             # default case, when we are at the first way.. we don't change anything
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
 
-    def check_role_issues_in_continuous_way(self, index_of_current_way: int, previous_highway:str, previous_role: str,
+    def check_role_issues_in_continuous_way(self, index_of_current_way: int, previous_highway: str, previous_role: str,
                                             current_role: str, previous_oneway: bool, current_oneway: bool,
                                             is_mutcd_country: bool, role_of_first_way: str, has_directional_roles: bool,
                                             last_forward_way_before_backward_direction: list, previous_nodes: list,
-                                            error_information: list, previous_current: PreviousCurrentHighway,count_of_forward_roled_way_series):
+                                            error_information: list, previous_current: PreviousCurrentHighway,
+                                            count_of_forward_roled_way_series):
         """This checks if the way has issues with the roles or determine if the way is in a country which uses
         NORTH / SOUTH / WEST / EAST on the signs (cardinal direction).
 
@@ -387,7 +392,8 @@ class HighwayAnalyzer:
                                                                           role_of_first_way, has_directional_roles,
                                                                           last_forward_way_before_backward_direction,
                                                                           previous_nodes,
-                                                                          error_information, previous_current,count_of_forward_roled_way_series)
+                                                                          error_information, previous_current,
+                                                                          count_of_forward_roled_way_series)
         elif ((current_role == "forward" or (
                 is_mutcd_country and way_queries.check_if_directional(current_role)))) and current_oneway:
             # We know all oneways are forward
@@ -426,13 +432,14 @@ class HighwayAnalyzer:
         """
         if index_of_current_way > 1 \
                 and ((previous_role == "forward" or
-                      (is_mutcd_country and way_queries.check_if_directional(previous_role))) and (previous_highway == "motorway" or count_of_forward_roled_way_series == 1)
-                and not previous_oneway and (len(last_forward_way_before_backward_direction)
-                                             == 0 or (len(
-                    last_forward_way_before_backward_direction) > 1 and not
-                                                      way_queries.roundabout_checker(
-                                                          last_forward_way_before_backward_direction[-1],
-                                                          previous_nodes)))):
+                      (is_mutcd_country and way_queries.check_if_directional(previous_role))) and (
+                             previous_highway == "motorway" or count_of_forward_roled_way_series == 1)
+                     and not previous_oneway and (len(last_forward_way_before_backward_direction)
+                                                  == 0 or (len(
+                            last_forward_way_before_backward_direction) > 1 and not
+                                                           way_queries.roundabout_checker(
+                                                               last_forward_way_before_backward_direction[-1],
+                                                               previous_nodes)))):
             has_directional_roles = self.check_if_mutcd_country_and_directional(has_directional_roles,
                                                                                 is_mutcd_country, role_of_first_way,
                                                                                 previous_role)
@@ -519,8 +526,9 @@ class HighwayAnalyzer:
                                                        error_information: ErrorHighway,
                                                        previous_current: PreviousCurrentHighway):
         if index_of_current_way == 0:
-            if (current_role == "" and ((current_oneway or (current_roundabout and previous_current.first_node_current != previous_current.last_node_current)
+            if (current_role == "" and ((current_oneway or (
+                    current_roundabout and previous_current.first_node_current != previous_current.last_node_current)
                                          or (current_oneway and current_highway == "motorway"))
-                                        )):
+            )):
                 error_information.append(ErrorHighway(previous_current, "Wrong role setup"))
         return error_information
