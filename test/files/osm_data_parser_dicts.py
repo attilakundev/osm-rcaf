@@ -490,3 +490,81 @@ relation_info_way_has_multiple_tags_result_appended = {
     "isMUTCDcountry": True,
     "network": "US:WV"
 }
+
+corrected_relation_data = {'osm': {
+    '@version': '0.6',
+    '@editor': 'Attila Kun',
+    'node': [
+        {'@id': '-1'},
+        {'@id': '-2'},
+        {'@id': '-3'},
+        {'@id': '-4'},
+        {'@id': '-5'},
+        {'@id': '-6'},
+        {'@id': '-7'},
+        {'@id': '-8'},
+        {'@id': '-9'},
+        {'@id': '-10'},
+        {'@id': '-11'},
+        {'@id': '-12'},
+        {'@id': '-13'},
+        {'@id': '-14'},
+        {'@id': '-15'},
+        {'@id': '-16'},
+        {'@id': '-17'},
+    ],
+    'way': [
+        {'@id': '-1', 'nd': [
+            {'@ref': '-1'},
+            {'@ref': '-2'},
+            {'@ref': '-3'},
+            {'@ref': '-4'},
+            {'@ref': '-5'},
+            {'@ref': '-6'},
+            {'@ref': '-7'},
+        ], 'tag': [{'@k': 'highway', '@v': 'primary'}]},
+        {
+            '@id': '-2',
+            '@action': 'modify',
+            'nd': [{'@ref': '-11'}, {'@ref': '-14'}, {'@ref': '-13'},
+                   {'@ref': '-12'}],
+            'tag': [{'@k': 'highway', '@v': 'primary'}, {'@k': 'oneway'
+                , '@v': 'yes'}],
+        },
+        {'@id': '-3', 'nd': [{'@ref': '-11'}, {'@ref': '-15'},
+                             {'@ref': '-16'}, {'@ref': '-17'}], 'tag': [{'@k': 'highway',
+                                                                         '@v': 'primary'}]},
+        {'@id': '-4', 'nd': [{'@ref': '-7'}, {'@ref': '-8'},
+                             {'@ref': '-9'}], 'tag': [{'@k': 'highway', '@v': 'primary'},
+                                                      {'@k': 'oneway', '@v': 'yes'}]},
+        {
+            '@id': '-5',
+            '@action': 'modify',
+            'nd': [{'@ref': '-12'}, {'@ref': '-7'}],
+            'tag': [{'@k': 'highway', '@v': 'primary'}, {'@k': 'oneway'
+                , '@v': 'yes'}],
+        },
+        {
+            '@id': '-6',
+            '@action': 'modify',
+            'nd': [{'@ref': '-9'}, {'@ref': '-10'}, {'@ref': '-11'}],
+            'tag': [{'@k': 'highway', '@v': 'primary'}, {'@k': 'oneway'
+                , '@v': 'yes'}],
+        },
+    ],
+    'relation': {
+        '@id': '-99802',
+        '@visible': 'true',
+        'member': [
+            {'@type': 'way', '@ref': '-1', '@role': ''},
+            {'@type': 'way', '@ref': '-4', '@role': 'forward'},
+            {'@type': 'way', '@ref': '-6', '@role': 'forward'},
+            {'@type': 'way', '@ref': '-5', '@role': 'forward'},
+            {'@type': 'way', '@ref': '-2', '@role': 'forward'},
+            {'@type': 'way', '@ref': '-3', '@role': ''},
+        ],
+        'tag': [{'@k': 'ref', '@v': 'CR 999'}, {'@k': 'route',
+                                                '@v': 'road'}, {'@k': 'type', '@v': 'route'}],
+        '@action': 'modify',
+    },
+}}

@@ -32,7 +32,7 @@ class RelationFixer(FixerBase):
             if relation_info["type"] == "route" and (relation_info["route"] == "railway" or relation_info["route"] == "train"):
                 return {"Error": "Not implemented yet."}
             elif relation_info["type"] == "route" and relation_info["route"] == "road":
-                highway_fixer.fixing(relation_info,first_way,is_from_api)
+                return highway_fixer.fixing(relation_info,first_way,is_from_api)
             else: # Multipolygon fixing
                 return {"Error": "Not implemented yet."}
         else:

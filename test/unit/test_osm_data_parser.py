@@ -83,3 +83,8 @@ def test_helper_copy_attributes():
     assert attributes == {
         '@id': '-1'
     }
+
+def test_unparse_data_to_xml_prettified():
+    xml = data_parser.unparse_data_to_xml_prettified(osm_data_parser_dicts.corrected_relation_data)
+    final_result_xml_file_to_expect = open(f"{project_path}/test/files/final_result.xml").read()
+    assert xml == final_result_xml_file_to_expect

@@ -1,3 +1,14 @@
+import sys
+from pathlib import Path
+
+import xmltodict
+project_path = Path(__file__).parents[2].absolute()
+sys.path.append(f"{project_path}")
+sys.path.append(f"{project_path}/lib")
+sys.path.append(f"{project_path}/lib/analyzer")
+from analyzer import Analyzer
+
+analyzer = Analyzer()
 def add_tag_to_item(key, value, array: dict):
     tag = {
         "@k": key,
@@ -25,3 +36,9 @@ def search_for_tag(array, key, value):
             if tag["@k"] == key and tag["@v"] == value:
                 return True
     return False
+
+def get_relation_info(file_path):
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    relation_info = analyzer.get_relation_info(loaded_relation_file=data)
+    return relation_info

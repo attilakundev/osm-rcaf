@@ -6,30 +6,19 @@ from pathlib import Path
 project_path = Path(__file__).parents[3].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/analyzer")
 sys.path.append(f"{project_path}/lib/fixer")
 sys.path.append(f"{project_path}/lib/model")
 sys.path.append(f"{project_path}/test/files")
-from analyzer import Analyzer
 from highway_fixer import HighwayFixer
 import fixer_utils
 import way_queries
 
 highway_fixer = HighwayFixer()
-analyzer = Analyzer()
-
-
-def get_relation_info(file_path):
-    file = open(file_path, "r").read()
-    data = xmltodict.parse(file)
-    relation_info = analyzer.get_relation_info(loaded_relation_file=data)
-    return relation_info
-
 
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_split_entry_wrong_order():
     # Arrange
     file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[3]]
     already_added_members = ["-6", "-5", "-2"]
@@ -51,7 +40,7 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_spli
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_wrong_order_exit_wrong_order_both_split():
     # Arrange
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_divided_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[3]]
     already_added_members = ["-6", "-5", "-2"]
@@ -71,7 +60,7 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_wrong_ord
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_split():
     # Arrange
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_not_divided_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     already_added_members = ["-6", "-5", "-2"]
     roundabout_nodes = ["-20", "-21", "-22", "-8", "-7", "-6", "-5", "-24", "-23", "-15", "-16", "-17", "-18", "-19",
@@ -91,7 +80,7 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_
 
 def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
     file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 1
     first_node_previous = way_queries.get_start_node(ways_to_search[0])
@@ -112,7 +101,7 @@ def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
 
 def test_search_for_connection_wrong_order_road_connecting_to_a_roundabout():
     file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 0
     first_node_previous = way_queries.get_start_node(ways_to_search[2])
@@ -137,7 +126,7 @@ def test_search_for_connection_wrong_order_road_connecting_searching_for_the_ent
     # 5th way exists, but the 6th way would be a roundabout piece, that would cause a loop, instead search for a oneway piece
     # 7th way
     file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 0
     first_node_previous = way_queries.get_start_node(ways_to_search[3])
@@ -158,7 +147,7 @@ def test_search_for_connection_wrong_order_road_connecting_searching_for_the_ent
 def test_search_for_connection_wrong_order_road_closed_roundabout_return_forward_way_instead_of_roundabout():
     # So we're dealing with a section with a closed roundabout, with two entry ways
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_divided_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 0
     first_node_previous = way_queries.get_start_node(ways_to_search[2])
@@ -269,7 +258,7 @@ def test_insert_array_items_to_a_specific_position():
 def test_remove_oneway_and_forward_tag_from_certain_members_remove_true():
     # We delete the oneway/forward tag from those which shouldn't be in the relation, since the route doesn't split.
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 5
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
@@ -294,7 +283,7 @@ def test_remove_oneway_and_forward_tag_from_certain_members_remove_true():
 def test_remove_oneway_and_forward_tag_from_certain_members_remove_false():
     # We delete the oneway/forward tag from those which shouldn't be in the relation, since the route doesn't split.
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 4
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
@@ -318,7 +307,7 @@ def test_remove_oneway_and_forward_tag_from_certain_members_remove_false():
 
 def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_tag_is_false():
     file_path = f"{project_path}/test/files/files_for_fixer/search_for_connection_wrong_order_road_non_roundabout.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
                                 ways_to_search[5], ways_to_search[4], ways_to_search[6]]
@@ -383,7 +372,7 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
 
 def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_tag_is_false_closed_roundabout():
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_divided_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[1], ways_to_search[3],
                                 ways_to_search[5], ways_to_search[4], ways_to_search[6]]
@@ -414,7 +403,7 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
 
 def test_detect_if_oneway_road_is_split_or_not():
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_divided_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[1], ways_to_search[3],
                                 ways_to_search[5], ways_to_search[4], ways_to_search[6]]
@@ -441,7 +430,7 @@ def test_detect_if_oneway_road_is_split_or_not():
 
 def test_add_forward_role_where_needed():
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     # here the order doesn't matter since it's a unit test.
     index = 2
@@ -463,7 +452,7 @@ def test_add_forward_role_where_needed():
 
 def test_add_forward_role_where_needed_roundabout_edition():
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 8
     corrected_first_node_current = way_queries.get_start_node(ways_to_search[index])
@@ -484,7 +473,7 @@ def test_add_forward_role_where_needed_roundabout_edition():
 
 def test_correct_way_roles_tags():
     file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
                                 ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7],
@@ -500,7 +489,7 @@ def test_correct_way_roles_tags():
 def test_check_for_forward_ways_end_of_split_highway():
     # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[3], ways_to_search[5], ways_to_search[1]]
     already_added_members = ["-1", "-4", "-6", "-2"]
@@ -526,7 +515,7 @@ def test_check_for_forward_ways_end_of_split_highway():
 def test_check_for_forward_ways_way_after_split_highway():
     # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
-    relation_info = get_relation_info(file_path)
+    relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[3], ways_to_search[5], ways_to_search[4],
                                 ways_to_search[1]]

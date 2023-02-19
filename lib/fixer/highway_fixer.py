@@ -427,7 +427,8 @@ class HighwayFixer(FixerBase):
 
     def fixing(self, relation_info: dict, first_way: str = "", is_from_api: bool = True):
         idx = 0
-        ways_to_search = relation_info["ways_to_search"]
+        ways_to_search = copy.deepcopy(
+            relation_info["ways_to_search"])  # deepcopy, since we wanna compare the original with the modified one...
         first_way = way_queries.get_way_ref(ways_to_search[0]) if first_way == "" else first_way
         while (idx < len(ways_to_search) and way_queries.get_way_ref(ways_to_search[idx]) != first_way):
             idx += 1
@@ -504,7 +505,7 @@ class HighwayFixer(FixerBase):
                                                                                                       ways_to_search_original_roles,
                                                                                                       number_of_members_of_this_forward_series,
                                                                                                       is_common_point,
-                                                                                                      roundabouts_nodes)
+                                                                                                      roundabouts_nodes,ways_to_search)
                         if index_of_the_connecting_way == -1:
                             return corrected_ways_to_search, already_added_members
                     elif index_of_the_connecting_way == -1 and is_from_api:
@@ -735,10 +736,9 @@ class HighwayFixer(FixerBase):
 
     def get_item_from_local_way_db(self, relation_info, corrected_ways_to_search, way_to_search_original_roles,
                                    number_of_members_of_this_forward_series, is_common_point,
-                                   previous_roundabout_nodes):
+                                   previous_roundabout_nodes, ways_to_search):
         # We try to find the item from the ways array, hoping we can find the item we wanted.
         ways = relation_info["ways"]
-        ways_to_search = relation_info["ways_to_search"]
         for way in ways:
             way_ref = way["@id"]
             way_tags = way["tag"]
