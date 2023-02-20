@@ -6,18 +6,20 @@ import time
 from pathlib import Path
 
 import xmltodict
+import datetime
 
 project_path = Path(__file__).resolve().parent.absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
 sys.path.append(f"{project_path}/lib/models")
 sys.path.append(f"{project_path}/lib/analyzer")
+sys.path.append(f"{project_path}/lib/fixer")
 
 import webserver_utils
 import uvicorn
 import logging
 
-from fastapi import FastAPI, Request, Form, File, UploadFile
+from fastapi import FastAPI, Request, Response, Form, File, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -25,6 +27,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from osm_data_parser import OSMDataParser
 from osm_error_messages import OSMErrorMessages
 from analyzer import Analyzer
+from fixer import RelationFixer
 
 project_path = Path(__file__).resolve().parent
 
@@ -35,6 +38,7 @@ app = FastAPI()
 data_parser = OSMDataParser()
 osm_error_messages = OSMErrorMessages()
 analyzer = Analyzer()
+fixer = RelationFixer()
 
 app.mount(
     "/static",
@@ -84,6 +88,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         not_existing = [[0, "This relation doesn't exist."]]
         error_messages = [[len(not_existing), not_existing]]
     request.session["error_messages"] = error_messages
+    # do something here to store the relation
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
                "error_messages": request.session["error_messages"]}
@@ -91,49 +96,61 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
 
 
 @app.post("/analyze_file", response_class=HTMLResponse)
-async def analyze_file(request: Request, relation_file: UploadFile = File(...)):
+async def analyze_file(request: Request, relation_file: UploadFile = File(...), relation_id: str = Form(...)):
     request = check_session_variables(request)
     xml_data = await relation_file.read()
-
     relation_data = xmltodict.parse(xml_data)
-    relation_ids = data_parser.get_relation_ids(relation_data)
-    all_messages = []
-    if type(relation_ids) == list:
-        for relation_id in relation_ids:
-            error_information, correct_ways_count = analyzer.relation_checking(relation_data,relation_id)
-            error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
-                                                                "dummy_source",
-                                                                request.session["debug_mode"])
-            error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-            for message in error_messages:
-                all_messages.append([len(message), message])
-    else:
-        error_information, correct_ways_count = analyzer.relation_checking(relation_data)
-        error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_ids,
-                                                            "dummy_source",
-                                                            request.session["debug_mode"])
-        error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-        all_messages = [[len(message), message] for message in error_messages]
 
+    current_time = datetime.datetime.now()
+    formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
+    upload_file_location = f"{project_path}/uploads/{relation_file.filename.split('.')[0]}_{formatted_date}.json"
+
+    # Analyzing
+    error_information, correct_ways_count = analyzer.relation_checking(relation_data, relation_id)
+    relation_info = analyzer.get_relation_info(relation_data, relation_id)
+    error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
+                                                        upload_file_location,
+                                                        request.session["debug_mode"])
+    error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+    all_messages = [[len(message), message] for message in error_messages]
+
+    if not (len(error_messages) == 1 and error_messages[0][0][1] == "This relation has no errors and gaps at all."):
+        ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
+        sorted_list = list(sorted(ways_to_choose_from))
+    else:
+        sorted_list = []
     request.session["error_messages"] = all_messages
-    upload_file_location = f"{project_path}/uploads/{relation_file.filename.split('.')[0]}.json"
+
     parent_of_upload_file = Path(upload_file_location).resolve().parent
     if not Path.exists(parent_of_upload_file):
         os.mkdir(f"{project_path}/uploads")
     with open(upload_file_location, "w+") as file:
         file.write(json.dumps(relation_data, indent=4))
     request.session["uploaded_files"].append(upload_file_location)
-
     context = {"request": request,
                "css_path": "style.css", "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"]}
+                "error_messages": request.session["error_messages"], "sorted_ways_list": sorted_list}
     return templates.TemplateResponse("main.html", context=context)
 
 
-@app.get("/fix")
-async def analyze_file(request: Request):
+@app.post("/fix")
+async def fix_relation(request: Request, first_way: str = Form(...)):
     request = check_session_variables(request)
-    return "/"
+    if request.session["uploaded_files"]:
+        file = open(request.session["uploaded_files"][0]).read()
+        data = json.loads(file)
+        relation_info = analyzer.get_relation_info(loaded_relation_file=data)
+        corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way, is_from_api=False)
+        data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(
+            data, relation_info, corrected_ways_to_search)
+        xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
+        request.session["uploaded_files"] = []
+    else:
+        xml_to_return = """
+        <?xml version="1.0" encoding="utf-8"?>
+        <error>No files found to fix.</error>
+        """
+    return Response(content=xml_to_return, media_type="application/xml")
 
 
 @app.get("/debug_mode", response_class=RedirectResponse)

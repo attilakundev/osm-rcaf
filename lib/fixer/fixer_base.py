@@ -15,7 +15,6 @@ class FixerBase(ABC):
     def fixing(self, relation_info: dict, first_way: str = "", is_from_api: bool = True):
         pass
 
-    @abstractmethod
     def detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(self,
                                                                                                         relation_data: dict,
                                                                                                         relation_info: dict,

@@ -3,16 +3,19 @@
 {% block content %}
 <div style="flex-basis: 20%; background:#242;">
     <div> <!-- This is the area where you can give an OSM relation ID -->
-        <p>If you want to retrieve a relation from OSM DB:</p>
+        <p><u>If you want to retrieve a relation from OSM DB:</u></p>
         <form method="post" action="/analyze">
-            <input type="number" name="relation_id" placeholder="Please enter the ID.">
+            <p>Relation ID</p>
+            <input type="number" name="relation_id" placeholder="Please enter the rel. ID.">
             <input type="submit" value="Analyze">
         </form>
     </div>
     <div> <!-- This is the area where you can upload a file and analyze that -->
-        <p>If you want to analyze a file:</p>
+        <p><u>If you want to analyze a file:</u></p>
         <form method="post" enctype="multipart/form-data" action="/analyze_file">
             <input type="file" name="relation_file">
+            <p>Relation ID</p>
+            <input type="number" name="relation_id" placeholder="Please enter the ID.">
             <input type="submit" name="relUpload" value="Analyze">
         </form>
     </div>
@@ -26,31 +29,35 @@
     </div>
 </div>
 <div style="flex-basis: 70%;">
+    <!-- Link for the fixing and choosing the starting way from it -->
+    {% if sorted_ways_list|length > 1 %}
+        <p>Errors have been found, please choose a starting way, and the relation will be fixed:</p>
+        <form method="post" action="/fix">
+            <select name="first_way">
+                {% for way in sorted_ways_list %}
+                <option>{{way}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Fix">
+        </form>
+    {% endif %}
+    <!-- Printing error messages -->
     {% for length_of_array, error in error_messages %}
     {% for index, line in error %}
-
-    {% if "ERROR" in line and index == 1 %}
-    {% autoescape false %}
-    <p class="error">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
+        {% if "ERROR" in line and index == 1 %}
+        {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
+            <p class="error">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
         {% endautoescape %}
         {% elif index == 1 %}
-    {% autoescape false %}
-        <p>{{line}}
-    {% endautoescape %}
+            <p>{{ line }}
         {% elif "Previous way's" in line %}
-    {% autoescape false %}
-        <br><br>{{line}}
-    {% endautoescape %}
+            <br><br>{{ line }}
         {% elif index == length_of_array - 1 %}
-    {% autoescape false %}
-        {{line}}
-    {% endautoescape %}
+            {{ line }}
         {% else %}
-    {% autoescape false %}
-        <br>{{line }}
-     {% endautoescape %}
+        <br>{{ line }}
         {% endif %}
-        {% endfor %}
+    {% endfor %}
     </p>
     {% endfor %}
 </div>

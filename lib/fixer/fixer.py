@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+from abc import ABC
 from pathlib import Path
 
 project_path = Path(__file__).parents[2].absolute()
@@ -12,11 +13,8 @@ from highway_fixer import HighwayFixer
 from multipolygon_fixer import MultipolygonFixer
 from fixer_base import FixerBase
 
-railway_fixer = RailwayFixer()
-highway_fixer = HighwayFixer()
-multipolygon_fixer = MultipolygonFixer()
 
-class RelationFixer(FixerBase):
+class RelationFixer(FixerBase, ABC):
     def fixing(self, relation_info: dict,  first_way: str = "", is_from_api: bool = True):
         """
 
@@ -32,7 +30,7 @@ class RelationFixer(FixerBase):
             if relation_info["type"] == "route" and (relation_info["route"] == "railway" or relation_info["route"] == "train"):
                 return {"Error": "Not implemented yet."}
             elif relation_info["type"] == "route" and relation_info["route"] == "road":
-                return highway_fixer.fixing(relation_info,first_way,is_from_api)
+                return HighwayFixer().fixing(relation_info,first_way,is_from_api)
             else: # Multipolygon fixing
                 return {"Error": "Not implemented yet."}
         else:
