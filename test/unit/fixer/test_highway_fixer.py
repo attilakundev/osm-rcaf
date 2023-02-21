@@ -434,20 +434,9 @@ def test_add_forward_role_where_needed():
     ways_to_search = relation_info["ways_to_search"]
     # here the order doesn't matter since it's a unit test.
     index = 2
-    corrected_first_node_current = way_queries.get_start_node(ways_to_search[index])
-    corrected_first_node_previous = way_queries.get_start_node(ways_to_search[index - 1])
-    corrected_last_node_current = way_queries.get_end_node(ways_to_search[index])
-    corrected_last_node_previous = way_queries.get_end_node(ways_to_search[index - 1])
-    current_oneway = way_queries.is_oneway(ways_to_search[index])
-    previous_oneway = way_queries.is_oneway(ways_to_search[index])
-    corrected_ways_to_search = highway_fixer.add_forward_role_where_needed(corrected_first_node_current,
-                                                                           corrected_first_node_previous,
-                                                                           corrected_last_node_current,
-                                                                           corrected_last_node_previous,
-                                                                           ways_to_search, current_oneway,
-                                                                           index, previous_oneway)
-    assert way_queries.get_role(corrected_ways_to_search[index]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
+    ways_to_search = highway_fixer.add_forward_roles_for_ways_before_correction(ways_to_search)
+    assert way_queries.get_role(ways_to_search[index]) == "forward"
+    assert way_queries.get_role(ways_to_search[index - 1]) == "forward"
 
 
 def test_add_forward_role_where_needed_roundabout_edition():
@@ -455,36 +444,9 @@ def test_add_forward_role_where_needed_roundabout_edition():
     relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 8
-    corrected_first_node_current = way_queries.get_start_node(ways_to_search[index])
-    corrected_first_node_previous = way_queries.get_start_node(ways_to_search[index - 1])
-    corrected_last_node_current = way_queries.get_end_node(ways_to_search[index])
-    corrected_last_node_previous = way_queries.get_end_node(ways_to_search[index - 1])
-    current_oneway = way_queries.is_oneway(ways_to_search[index])
-    previous_oneway = way_queries.is_oneway(ways_to_search[index])
-    corrected_ways_to_search = highway_fixer.add_forward_role_where_needed(corrected_first_node_current,
-                                                                           corrected_first_node_previous,
-                                                                           corrected_last_node_current,
-                                                                           corrected_last_node_previous,
-                                                                           ways_to_search, current_oneway,
-                                                                           index, previous_oneway)
-    assert way_queries.get_role(corrected_ways_to_search[index]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[index - 1]) == "forward"
-
-
-def test_correct_way_roles_tags():
-    file_path = f"{project_path}/test/files/files_for_fixer/route_bad_tags_roles.xml"
-    relation_info = fixer_utils.get_relation_info(file_path)
-    ways_to_search = relation_info["ways_to_search"]
-    corrected_ways_to_search = [ways_to_search[0], ways_to_search[1], ways_to_search[2], ways_to_search[3],
-                                ways_to_search[4], ways_to_search[5], ways_to_search[6], ways_to_search[7],
-                                ways_to_search[8]]
-    corrected_ways_to_search = highway_fixer.correct_way_roles_tags(corrected_ways_to_search)
-    assert way_queries.get_role(corrected_ways_to_search[1]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[2]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[3]) == ""
-    assert way_queries.get_role(corrected_ways_to_search[7]) == "forward"
-    assert way_queries.get_role(corrected_ways_to_search[8]) == "forward"
-
+    ways_to_search = highway_fixer.add_forward_roles_for_ways_before_correction(ways_to_search)
+    assert way_queries.get_role(ways_to_search[index]) == "forward"
+    assert way_queries.get_role(ways_to_search[index - 1]) == "forward"
 
 def test_check_for_forward_ways_end_of_split_highway():
     # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.

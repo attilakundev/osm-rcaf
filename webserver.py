@@ -146,10 +146,8 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
         xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
         request.session["uploaded_files"] = []
     else:
-        xml_to_return = """
-        <?xml version="1.0" encoding="utf-8"?>
-        <error>No files found to fix.</error>
-        """
+        xml_to_return = '<?xml version="1.0" encoding="utf-8"?>' \
+                        '   <error>No files found to fix.</error>'
     return Response(content=xml_to_return, media_type="application/xml")
 
 
