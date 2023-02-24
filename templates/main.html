@@ -1,36 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="flex-basis: 20%; background:#242;">
-    <div> <!-- This is the area where you can give an OSM relation ID -->
-        <p><u>If you want to retrieve a relation from OSM DB:</u></p>
-        <form method="post" action="/analyze">
-            <p>Relation ID</p>
-            <input type="number" name="relation_id" placeholder="Please enter the rel. ID.">
-            <input type="submit" value="Analyze">
-        </form>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3">
+            <!-- This is the area where you can give an OSM relation ID -->
+            <p><b>If you want to retrieve a relation from OSM DB:</b></p>
+            <form method="post" action="/analyze">
+                <p>Relation ID</p>
+                <input type="number" class="form-control" name="relation_id"
+                       placeholder="Please enter the relation ID.">
+                <br>
+                <input type="submit" class="form-control form-control-dark" value="Analyze">
+            </form>
+        </div>
+        <p></p>
+        <div class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3">
+            <!-- This is the area where you can upload a file and analyze that -->
+            <p><b>If you want to analyze a file:</b></p>
+            <form method="post" enctype="multipart/form-data" action="/analyze_file">
+                <input type="file" class="form-control" name="relation_file">
+                <br>
+                <p>Relation ID</p>
+                <input type="number" class="form-control" name="relation_id" placeholder="Please enter the relation ID.">
+                <br>
+                <input type="submit" class="form-control" name="relUpload" value="Analyze">
+            </form>
+        </div>
+        <p></p>
+        <div class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3">
+            <!-- Debug mode's button -->
+            <p>Debug mode:</p>
+            <form action="/debug_mode">
+                {% if debug_mode == False %}
+                <input type="submit" class="form-control" name="relUpload" value="Turn on">
+                {% elif debug_mode == True %}
+                <input type="submit" class="form-control" name="relUpload" value="Turn off">
+            </form>
+            {% endif %}
+        </div>
+        <br>
     </div>
-    <div> <!-- This is the area where you can upload a file and analyze that -->
-        <p><u>If you want to analyze a file:</u></p>
-        <form method="post" enctype="multipart/form-data" action="/analyze_file">
-            <input type="file" name="relation_file">
-            <p>Relation ID</p>
-            <input type="number" name="relation_id" placeholder="Please enter the ID.">
-            <input type="submit" name="relUpload" value="Analyze">
-        </form>
-    </div>
-    <div> <!-- Debug mode's button -->
-        <p>Debug mode:</p>
-        {% if debug_mode == False %}
-        <a href="/debug_mode">Turn on</a>
-        {% elif debug_mode == True %}
-        <a href="/debug_mode">Turn off</a>
-        {% endif %}
-    </div>
-</div>
-<div style="flex-basis: 70%;">
-    <!-- Link for the fixing and choosing the starting way from it -->
-    {% if sorted_ways_list|length > 1 %}
+    <div class="col-lg-8">
+        <br>
+        <!-- Link for the fixing and choosing the starting way from it -->
+        {% if sorted_ways_list|length > 1 %}
         <p>Errors have been found, please choose a starting way, and the relation will be fixed:</p>
         <form method="post" action="/fix">
             <select name="first_way">
@@ -40,25 +55,40 @@
             </select>
             <input type="submit" value="Fix">
         </form>
-    {% endif %}
-    <!-- Printing error messages -->
-    {% for length_of_array, error in error_messages %}
-    {% for index, line in error %}
-        {% if "ERROR" in line and index == 1 %}
-        {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
-            <p class="error">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
-        {% endautoescape %}
-        {% elif index == 1 %}
-            <p>{{ line }}
-        {% elif "Previous way's" in line %}
-            <br><br>{{ line }}
-        {% elif index == length_of_array - 1 %}
-            {{ line }}
-        {% else %}
-        <br>{{ line }}
         {% endif %}
-    {% endfor %}
-    </p>
-    {% endfor %}
+        <!-- Printing error messages -->
+        {% for length_of_array, error in error_messages %}
+        {% for index, line in error %}
+        {% if "This relation has no errors and gaps at all." in line %}
+         <p class="alert alert-success">{{line}}
+        {% elif "ERROR" in line and index == 1 or "This relation has" in line %}
+        {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
+        <p class="alert alert-danger">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
+            {% endautoescape %}
+            {% elif "Link of the relation" in line or "[Relation #" in line %}
+            {% autoescape false %}
+        <p class="alert alert-info">{{line}}
+            {% endautoescape %}
+            {% elif index == 1 %}
+            {% autoescape false %}
+        <p>{{ line }}
+            {% endautoescape %}
+            {% elif "Previous way's" in line %}
+            {% autoescape false %}
+            <br><br>{{ line }}
+            {% endautoescape %}
+            {% elif index == length_of_array - 1 %}
+            {% autoescape false %}
+            {{ line }}
+            {% endautoescape %}
+            {% else %}
+            {% autoescape false %}
+            <br>{{ line }}
+            {% endautoescape %}
+            {% endif %}
+            {% endfor %}
+        </p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

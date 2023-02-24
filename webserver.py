@@ -64,13 +64,18 @@ def check_session_variables(request):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def analyzer_page(request: Request):
+async def main_page(request: Request):
     request = check_session_variables(request)
     request.session["error_messages"] = []  # empty it because we're not supposed to have results on the main route
-    context = {"request": request,
-               "css_path": "style.css", "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"]}
+    context = {"request": request, "debug_mode": request.session["debug_mode"],
+               "error_messages": request.session["error_messages"], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
+
+
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    context = {"request": request, "active_page": "about"}
+    return templates.TemplateResponse("about.html", context=context)
 
 
 @app.post("/analyze", response_class=HTMLResponse)
@@ -89,9 +94,8 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         error_messages = [[len(not_existing), not_existing]]
     request.session["error_messages"] = error_messages
     # do something here to store the relation
-    context = {"request": request,
-               "css_path": "style.css", "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"]}
+    context = {"request": request, "debug_mode": request.session["debug_mode"],
+               "error_messages": request.session["error_messages"], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
 
@@ -127,9 +131,8 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...), 
     with open(upload_file_location, "w+") as file:
         file.write(json.dumps(relation_data, indent=4))
     request.session["uploaded_files"].append(upload_file_location)
-    context = {"request": request,
-               "css_path": "style.css", "debug_mode": request.session["debug_mode"],
-                "error_messages": request.session["error_messages"], "sorted_ways_list": sorted_list}
+    context = {"request": request, "debug_mode": request.session["debug_mode"],
+               "error_messages": request.session["error_messages"], "sorted_ways_list": sorted_list, "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
 
@@ -140,14 +143,17 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
         file = open(request.session["uploaded_files"][-1]).read()
         data = json.loads(file)
         relation_info = analyzer.get_relation_info(loaded_relation_file=data)
-        corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way, is_from_api=False)
+        corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way,
+                                                                       is_from_api=False)
         data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(
             data, relation_info, corrected_ways_to_search)
         xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
+        for file in request.session["uploaded_files"]:
+            os.remove(file)
         request.session["uploaded_files"] = []
     else:
         xml_to_return = '<?xml version="1.0" encoding="utf-8"?>' \
-                        '   <error>No files found to fix.</error>'
+                        '<error>No files found to fix.</error>'
     return Response(content=xml_to_return, media_type="application/xml")
 
 
