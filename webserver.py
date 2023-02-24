@@ -137,7 +137,7 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...), 
 async def fix_relation(request: Request, first_way: str = Form(...)):
     request = check_session_variables(request)
     if request.session["uploaded_files"]:
-        file = open(request.session["uploaded_files"][0]).read()
+        file = open(request.session["uploaded_files"][-1]).read()
         data = json.loads(file)
         relation_info = analyzer.get_relation_info(loaded_relation_file=data)
         corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way, is_from_api=False)
