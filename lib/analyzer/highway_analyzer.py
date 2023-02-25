@@ -34,106 +34,107 @@ class HighwayAnalyzer(AnalyzerBase):
         first_node_previous = last_node_previous = previous_role = previous_ref = previous_highway \
             = first_node_of_first_forward_way_in_the_series = last_node_of_first_forward_way_in_the_series = ""
         for elem_val in relation_info["ways_to_search"]:
-            length_of_error_information_at_the_beginning_of_iteration = len(error_information)
-            # current = current way, previous = previous way
-            first_node_current = way_queries.get_start_node(elem_val)
-            last_node_current = way_queries.get_end_node(elem_val)
-            current_roundabout = way_queries.is_roundabout(elem_val)
-            current_highway = way_queries.get_highway(elem_val)
-            current_oneway = way_queries.is_oneway(elem_val)
-            current_ref = way_queries.get_way_ref(elem_val)
-            current_role = way_queries.get_role(elem_val)
-            current_nodes = way_queries.get_nodes(elem_val)
-            previous_current = PreviousCurrentHighway(currently_checked_ref=route_number,
-                                                      last_forward_way_before_backward_direction=last_forward_way_before_backward_direction,
-                                                      first_node_previous=first_node_previous,
-                                                      first_node_current=first_node_current,
-                                                      last_node_previous=last_node_previous,
-                                                      last_node_current=last_node_current,
-                                                      previous_role=previous_role,
-                                                      previous_roundabout=previous_roundabout,
-                                                      previous_oneway=previous_oneway, previous_ref=previous_ref,
-                                                      previous_highway=previous_highway, current_role=current_role,
-                                                      current_roundabout=current_roundabout,
-                                                      current_oneway=current_oneway, current_ref=current_ref,
-                                                      current_highway=current_highway)
+            if "nd" in elem_val and "tag" in elem_val:
+                length_of_error_information_at_the_beginning_of_iteration = len(error_information)
+                # current = current way, previous = previous way
+                first_node_current = way_queries.get_start_node(elem_val)
+                last_node_current = way_queries.get_end_node(elem_val)
+                current_roundabout = way_queries.is_roundabout(elem_val)
+                current_highway = way_queries.get_highway(elem_val)
+                current_oneway = way_queries.is_oneway(elem_val)
+                current_ref = way_queries.get_way_ref(elem_val)
+                current_role = way_queries.get_role(elem_val)
+                current_nodes = way_queries.get_nodes(elem_val)
+                previous_current = PreviousCurrentHighway(currently_checked_ref=route_number,
+                                                          last_forward_way_before_backward_direction=last_forward_way_before_backward_direction,
+                                                          first_node_previous=first_node_previous,
+                                                          first_node_current=first_node_current,
+                                                          last_node_previous=last_node_previous,
+                                                          last_node_current=last_node_current,
+                                                          previous_role=previous_role,
+                                                          previous_roundabout=previous_roundabout,
+                                                          previous_oneway=previous_oneway, previous_ref=previous_ref,
+                                                          previous_highway=previous_highway, current_role=current_role,
+                                                          current_roundabout=current_roundabout,
+                                                          current_oneway=current_oneway, current_ref=current_ref,
+                                                          current_highway=current_highway)
 
-            # This is where swaps and other stuff happen firstly.
-            first_node_current, last_node_current, current_role, current_nodes = self.is_role_backward(
-                first_node_current, last_node_current,
-                current_role, current_nodes)
-
-            last_roundabout_nodes, roundabout_ways, error_information = self.is_way_roundabout(current_roundabout,
-                                                                                               current_role,
-                                                                                               current_nodes,
-                                                                                               current_ref,
-                                                                                               roundabout_ways,
-                                                                                               last_roundabout_nodes,
-                                                                                               error_information,
-                                                                                               previous_current)
-            error_information = self.determine_role_errors_at_the_beginning_highway(index_of_current_way, current_role,
-                                                                                    current_oneway,
-                                                                                    current_highway, current_roundabout,
-                                                                                    error_information, previous_current)
-
-            first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
-                self.is_the_way_in_forward_way_series(
-                    index_of_current_way, previous_role, current_role, count_of_forward_roled_way_series,
+                # This is where swaps and other stuff happen firstly.
+                first_node_current, last_node_current, current_role, current_nodes = self.is_role_backward(
                     first_node_current, last_node_current,
-                    first_node_of_first_forward_way_in_the_series,
-                    last_node_of_first_forward_way_in_the_series)
-            # Checking for the gaps.
-            has_directional_roles, error_information = self.check_if_there_is_gap_at_the_beginning(index_of_current_way,
-                                                                                                   count_of_forward_roled_way_series,
-                                                                                                   role_of_first_way,
-                                                                                                   is_mutcd_country,
-                                                                                                   previous_role,
+                    current_role, current_nodes)
+
+                last_roundabout_nodes, roundabout_ways, error_information = self.is_way_roundabout(current_roundabout,
                                                                                                    current_role,
-                                                                                                   first_node_previous,
-                                                                                                   first_node_current,
-                                                                                                   last_node_previous,
-                                                                                                   last_node_current,
-                                                                                                   last_forward_way_before_backward_direction,
-                                                                                                   has_directional_roles,
+                                                                                                   current_nodes,
+                                                                                                   current_ref,
+                                                                                                   roundabout_ways,
+                                                                                                   last_roundabout_nodes,
                                                                                                    error_information,
                                                                                                    previous_current)
+                error_information = self.determine_role_errors_at_the_beginning_highway(index_of_current_way, current_role,
+                                                                                        current_oneway,
+                                                                                        current_highway, current_roundabout,
+                                                                                        error_information, previous_current)
 
-            pieces_of_roundabout, error_information = self.determine_roundabout_errors_and_number(index_of_current_way,
-                                                                                                  previous_roundabout,
-                                                                                                  current_roundabout,
-                                                                                                  current_role,
-                                                                                                  previous_current,
-                                                                                                  error_information,
-                                                                                                  pieces_of_roundabout,
-                                                                                                  count_of_forward_roled_way_series,
-                                                                                                  last_node_previous,
-                                                                                                  last_node_current,
-                                                                                                  first_node_current)
+                first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
+                    self.is_the_way_in_forward_way_series(
+                        index_of_current_way, previous_role, current_role, count_of_forward_roled_way_series,
+                        first_node_current, last_node_current,
+                        first_node_of_first_forward_way_in_the_series,
+                        last_node_of_first_forward_way_in_the_series)
+                # Checking for the gaps.
+                has_directional_roles, error_information = self.check_if_there_is_gap_at_the_beginning(index_of_current_way,
+                                                                                                       count_of_forward_roled_way_series,
+                                                                                                       role_of_first_way,
+                                                                                                       is_mutcd_country,
+                                                                                                       previous_role,
+                                                                                                       current_role,
+                                                                                                       first_node_previous,
+                                                                                                       first_node_current,
+                                                                                                       last_node_previous,
+                                                                                                       last_node_current,
+                                                                                                       last_forward_way_before_backward_direction,
+                                                                                                       has_directional_roles,
+                                                                                                       error_information,
+                                                                                                       previous_current)
 
-            last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information = self.check_if_way_connects_continuously(
-                relation_info["ways_to_search"], previous_highway, previous_nodes, current_nodes, index_of_current_way,
-                first_node_previous, last_node_previous, first_node_current, last_node_current, previous_role,
-                current_role,
-                previous_oneway, previous_roundabout, current_roundabout, current_oneway, is_mutcd_country,
-                role_of_first_way, has_directional_roles, error_information, previous_current,
-                first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
-                motorway_split_way, count_of_forward_roled_way_series, current_highway, current_highway,
-                route_number, network, previous_ref, last_roundabout_nodes)
-            first_node_previous = first_node_current
-            last_node_previous = last_node_current
-            previous_roundabout = current_roundabout
-            previous_nodes = current_nodes
-            previous_oneway = current_oneway
-            previous_role = current_role
-            previous_highway = current_highway
-            previous_ref = current_ref
-            index_of_current_way += 1
-            error_information = self.check_if_motorway_not_split(motorway_split_way, index_of_current_way,
-                                                                 len(relation_info["ways_to_search"]),
-                                                                 current_highway, route_number, network,
-                                                                 current_role, error_information, previous_current)
-            if len(error_information) - length_of_error_information_at_the_beginning_of_iteration > 1:
-                the_amount_to_be_decreased_from_length_of_error_information += 1
+                pieces_of_roundabout, error_information = self.determine_roundabout_errors_and_number(index_of_current_way,
+                                                                                                      previous_roundabout,
+                                                                                                      current_roundabout,
+                                                                                                      current_role,
+                                                                                                      previous_current,
+                                                                                                      error_information,
+                                                                                                      pieces_of_roundabout,
+                                                                                                      count_of_forward_roled_way_series,
+                                                                                                      last_node_previous,
+                                                                                                      last_node_current,
+                                                                                                      first_node_current)
+
+                last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information = self.check_if_way_connects_continuously(
+                    relation_info["ways_to_search"], previous_highway, previous_nodes, current_nodes, index_of_current_way,
+                    first_node_previous, last_node_previous, first_node_current, last_node_current, previous_role,
+                    current_role,
+                    previous_oneway, previous_roundabout, current_roundabout, current_oneway, is_mutcd_country,
+                    role_of_first_way, has_directional_roles, error_information, previous_current,
+                    first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series,
+                    motorway_split_way, count_of_forward_roled_way_series, current_highway, current_highway,
+                    route_number, network, previous_ref, last_roundabout_nodes)
+                first_node_previous = first_node_current
+                last_node_previous = last_node_current
+                previous_roundabout = current_roundabout
+                previous_nodes = current_nodes
+                previous_oneway = current_oneway
+                previous_role = current_role
+                previous_highway = current_highway
+                previous_ref = current_ref
+                index_of_current_way += 1
+                error_information = self.check_if_motorway_not_split(motorway_split_way, index_of_current_way,
+                                                                     len(relation_info["ways_to_search"]),
+                                                                     current_highway, route_number, network,
+                                                                     current_role, error_information, previous_current)
+                if len(error_information) - length_of_error_information_at_the_beginning_of_iteration > 1:
+                    the_amount_to_be_decreased_from_length_of_error_information += 1
         correct_ways_count = len(relation_info["ways_to_search"]) - len(
             error_information) + the_amount_to_be_decreased_from_length_of_error_information
         return error_information, correct_ways_count

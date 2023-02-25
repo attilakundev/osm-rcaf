@@ -10,7 +10,7 @@
             <form method="post" action="/analyze">
                 <p>Relation ID</p>
                 <input type="number" class="form-control" name="relation_id"
-                       placeholder="Please enter the relation ID.">
+                       placeholder="Please enter the relation ID." required>
                 <br>
                 <input type="submit" class="form-control form-control-dark" value="Analyze">
             </form>
@@ -23,7 +23,7 @@
                 <input type="file" class="form-control" name="relation_file">
                 <br>
                 <p>Relation ID</p>
-                <input type="number" class="form-control" name="relation_id" placeholder="Please enter the relation ID.">
+                <input type="number" class="form-control" name="relation_id" placeholder="Please enter the relation ID." required>
                 <br>
                 <input type="submit" class="form-control" name="relUpload" value="Analyze">
             </form>
@@ -46,7 +46,7 @@
         <br>
         <!-- Link for the fixing and choosing the starting way from it -->
         {% if sorted_ways_list|length > 1 %}
-        <p>Errors have been found, please choose a starting way, and the relation will be fixed:</p>
+        <p class="alert alert-danger">Errors have been found, please choose a starting way, and the relation will be fixed:</p>
         <form method="post" action="/fix">
             <select name="first_way">
                 {% for way in sorted_ways_list %}
@@ -55,6 +55,10 @@
             </select>
             <input type="submit" value="Fix">
         </form>
+        <script>
+
+        </script>
+        <div id="map"></div>
         {% endif %}
         <!-- Printing error messages -->
         {% for length_of_array, error in error_messages %}
@@ -91,4 +95,18 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    {% if coordinates|length > 0 %}
+    var map = L.map('map').setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    var latlngs = {{coordinates|safe}}
+    var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+    map.fitBounds(polyline.getBounds());
+    {% endif %}
+</script>
 {% endblock %}
+

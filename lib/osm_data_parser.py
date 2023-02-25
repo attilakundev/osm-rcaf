@@ -10,7 +10,6 @@ OSM_API_RELATION_URL_TEMPLATE = Template(f"https://www.openstreetmap.org/api/0.6
 class OSMDataParser:
 
     def retrieve_XML_from_API(self, relation_number):
-        print(relation_number)
         url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
         relation_file = requests.get(url).content
         if "osm" not in str(relation_file):

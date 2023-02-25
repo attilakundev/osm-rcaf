@@ -18,6 +18,7 @@ sys.path.append(f"{project_path}/lib/fixer")
 import webserver_utils
 import uvicorn
 import logging
+import way_queries
 
 from fastapi import FastAPI, Request, Response, Form, File, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -56,19 +57,16 @@ def check_session_variables(request):
         request.session["debug_mode"] = False
     if request.session.get("loaded_relation") is None:
         request.session["loaded_relation"] = []
-    if request.session.get("error_messages") is None:
-        request.session["error_messages"] = []  # contains errors about the classes
     if request.session.get("uploaded_files") is None:
-        request.session["uploaded_files"] = []  # contains errors about the classes
+        request.session["uploaded_files"] = []
     return request
 
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
     request = check_session_variables(request)
-    request.session["error_messages"] = []  # empty it because we're not supposed to have results on the main route
     context = {"request": request, "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"], "active_page": "home"}
+               "error_messages": [], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
 
@@ -82,20 +80,37 @@ async def about_page(request: Request):
 async def analyze_url(request: Request, relation_id: str = Form(...)):
     request = check_session_variables(request)
     relation_data = data_parser.retrieve_XML_from_API(relation_id)
+    sorted_list =[]
+    coordinates = []
     if relation_data != {}:
-
         error_information, correct_ways_count = analyzer.relation_checking(relation_data, relation_id)
         error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id, "",
                                                             request.session["debug_mode"])
+        relation_info = analyzer.get_relation_info(relation_data, relation_id)
+        coordinates = way_queries.get_coordinates_of_relation(relation_info)
         error_messages = webserver_utils.split_messages_between_newlines(error_messages)
         error_messages = [[len(message), message] for message in error_messages]
+        # do something here to store the relation
+        current_time = datetime.datetime.now()
+        formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
+        upload_file_location = f"{project_path}/uploads/{relation_id}_{formatted_date}.json"
+
+        if not (len(error_messages) == 2 and error_messages[1][0][1] == "This relation has no errors and gaps at all."):
+            ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
+            sorted_list = list(sorted(ways_to_choose_from))
+
+        parent_of_upload_file = Path(upload_file_location).resolve().parent
+        if not Path.exists(parent_of_upload_file):
+            os.mkdir(f"{project_path}/uploads")
+        with open(upload_file_location, "w+") as file:
+            file.write(json.dumps(relation_data, indent=4))
+        request.session["uploaded_files"].append(upload_file_location)
     else:
         not_existing = [[0, "This relation doesn't exist."]]
         error_messages = [[len(not_existing), not_existing]]
-    request.session["error_messages"] = error_messages
-    # do something here to store the relation
-    context = {"request": request, "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"], "active_page": "home"}
+
+    context = {"request": request, "debug_mode": request.session["debug_mode"],"coordinates": coordinates,
+               "error_messages": error_messages, "sorted_ways_list": sorted_list, "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
 
@@ -118,12 +133,11 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...), 
     error_messages = webserver_utils.split_messages_between_newlines(error_messages)
     all_messages = [[len(message), message] for message in error_messages]
 
-    if not (len(error_messages) == 1 and error_messages[0][0][1] == "This relation has no errors and gaps at all."):
+    if not (len(error_messages) == 2 and "no errors and gaps" in error_messages[1][0][1]):
         ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
         sorted_list = list(sorted(ways_to_choose_from))
     else:
         sorted_list = []
-    request.session["error_messages"] = all_messages
 
     parent_of_upload_file = Path(upload_file_location).resolve().parent
     if not Path.exists(parent_of_upload_file):
@@ -131,8 +145,8 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...), 
     with open(upload_file_location, "w+") as file:
         file.write(json.dumps(relation_data, indent=4))
     request.session["uploaded_files"].append(upload_file_location)
-    context = {"request": request, "debug_mode": request.session["debug_mode"],
-               "error_messages": request.session["error_messages"], "sorted_ways_list": sorted_list, "active_page": "home"}
+    context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
+               "error_messages": all_messages, "sorted_ways_list": sorted_list, "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
 

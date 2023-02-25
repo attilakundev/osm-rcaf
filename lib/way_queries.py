@@ -148,3 +148,21 @@ def get_network(array):
 def determine_if_country_has_MUTCD_or_similar(array):
     network = get_network(array)
     return True if ("US" or "CA" or "AU" or "NZ") in network else False
+
+def get_coordinates_of_relation(array) -> list[list[list[str]]]:
+    nodes_of_relation_per_way = []
+    for way in array["ways_to_search"]:
+        nodes_of_relation_per_way.append([node["@ref"] for node in way["nd"]])
+    #now get the coordinates of the nodes.
+    coordinates = []
+    for way in nodes_of_relation_per_way:
+        coordinates.append(get_coordinates_of_a_way(way,array))
+    return coordinates
+
+def get_coordinates_of_a_way(way,array):
+    way_coordinates = []
+    for node_to_search in way:
+        for node in array["nodes"]:
+            if node["@id"] == node_to_search and "@lat" in node and "@lon" in node:
+                way_coordinates.append([node["@lat"], node["@lon"]])
+    return way_coordinates
