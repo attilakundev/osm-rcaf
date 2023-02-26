@@ -344,7 +344,10 @@ class HighwayAnalyzer(AnalyzerBase):
                 previous_roundabout and not current_roundabout or (not previous_roundabout and current_roundabout)):
             good_roundabout = way_queries.roundabout_checker(current_nodes,
                                                              previous_nodes)
-            if not good_roundabout:
+            if not good_roundabout and not (previous_role != "forward" and not previous_oneway and not previous_roundabout):
+                error_information.append(
+                    ErrorHighway(previous_current, "Roundabout gap"))
+            elif not good_roundabout:
                 error_information.append(
                     ErrorHighway(previous_current, "Roundabout gap"))  # this exists - coverage increases
             # this case is not covered yet when good_roundabout is true..

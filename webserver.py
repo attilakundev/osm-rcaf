@@ -159,16 +159,21 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
         relation_info = analyzer.get_relation_info(loaded_relation_file=data)
         corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way,
                                                                        is_from_api=False)
-        data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(
-            data, relation_info, corrected_ways_to_search)
-        xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
+        if "Error" not in corrected_ways_to_search:
+            data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(
+                data, relation_info, corrected_ways_to_search)
+            xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
+            return Response(content=xml_to_return, media_type="application/xml")
+        else:
+            errors = [1,[2,[0, corrected_ways_to_search["Error"]]]]
         for file in request.session["uploaded_files"]:
             os.remove(file)
         request.session["uploaded_files"] = []
     else:
-        xml_to_return = '<?xml version="1.0" encoding="utf-8"?>' \
-                        '<error>No files found to fix.</error>'
-    return Response(content=xml_to_return, media_type="application/xml")
+        errors = [1,[2,[0, "No files found to fix."]]]
+    context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
+               "error_messages": errors, "sorted_ways_list": [], "active_page": "home"}
+    return templates.TemplateResponse("main.html", context=context)
 
 
 @app.get("/debug_mode", response_class=RedirectResponse)

@@ -28,10 +28,10 @@ class RelationFixer(FixerBase, ABC):
 
         if relation_info["type"] != "public_transport":
             if relation_info["type"] == "route" and (relation_info["route"] == "railway" or relation_info["route"] == "train"):
-                return {"Error": "Not implemented yet."}
+                return {"Error": "Not implemented yet."}, []
             elif relation_info["type"] == "route" and relation_info["route"] == "road":
                 return HighwayFixer().fixing(relation_info,first_way,is_from_api)
             else: # Multipolygon fixing
-                return {"Error": "Not implemented yet."}
+                return {"Error": "Not implemented yet."}, []
         else:
-            return {"Error": "This relation type is not supported."}
+            return {"Error": "This relation type is not supported."}, []

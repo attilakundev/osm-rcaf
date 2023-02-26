@@ -47,17 +47,15 @@
         <!-- Link for the fixing and choosing the starting way from it -->
         {% if sorted_ways_list|length > 1 %}
         <p class="alert alert-danger">Errors have been found, please choose a starting way, and the relation will be fixed:</p>
-        <form method="post" action="/fix">
-            <select name="first_way">
+        <form method="post" action="/fix" class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3 w-25">
+            <select name="first_way" class="form-control">
                 {% for way in sorted_ways_list %}
                 <option>{{way}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Fix">
+            <input type="submit" value="Fix" class="form-control">
         </form>
-        <script>
-
-        </script>
+        <br>
         <div id="map"></div>
         {% endif %}
         <!-- Printing error messages -->

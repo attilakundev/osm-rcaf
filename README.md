@@ -10,14 +10,16 @@ to check if it corrected well.
 If it corrected the relation well, hurray, you can upload it into OSM.
 
 ## Dependencies:
+For normal running:
 * Python 3.11
 * FastAPI framework `pip install fastapi`
 * uvicorn `pip install uvicorn["standard"]`
 * jinja2 `pip install jinja2`
-* pytest with coverage `pip install -U pytest pytest-cov`
 * python-multipart `pip install python-multipart`
 * requests`pip install requests`
 * xmltodict `pip install xmltodict`
 * httpx `pip install httpx`
 * itsdangerous `pip install xmltodict`
 
+For testing:
+* pytest with coverage `pip install -U pytest pytest-cov`
