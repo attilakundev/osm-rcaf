@@ -62,7 +62,8 @@ class HighwayFixer(FixerBase):
 
     def search_for_connection_in_open_roundabout(self, ways_to_search, corrected_ways_to_search,
                                                  already_added_members, roundabout_entry_first_node,
-                                                 roundabout_entry_first_node_index, banned_roundabout_ways, number_of_members_of_this_forward_series):
+                                                 roundabout_entry_first_node_index, banned_roundabout_ways,
+                                                 number_of_members_of_this_forward_series):
         index = 0
         checking_condition = "oneway"
         while index < len(ways_to_search) and checking_condition != "normal_road":
@@ -95,7 +96,8 @@ class HighwayFixer(FixerBase):
         found = False
         corrected_ways_to_search, already_added_members, number_of_members_of_this_forward_series = self.reverse_the_other_side_of_roundabout(
             already_added_members, checking_condition, corrected_ways_to_search,
-            found, index_of_the_last_corrected_way, roundabout_entry_first_node_index, ways_to_search, number_of_members_of_this_forward_series)
+            found, index_of_the_last_corrected_way, roundabout_entry_first_node_index, ways_to_search,
+            number_of_members_of_this_forward_series)
         return corrected_ways_to_search, already_added_members, banned_roundabout_ways, number_of_members_of_this_forward_series
 
     def reverse_the_other_side_of_roundabout(self, already_added_members, checking_condition, corrected_ways_to_search,
@@ -117,10 +119,11 @@ class HighwayFixer(FixerBase):
         while roundabout_entry_first_node_index <= index_of_the_last_corrected_way and not found:
             index = 0
             while index < len(ways_to_search):
-                connected = way_queries.check_connectivity(way_queries.get_start_node(corrected_ways_to_search[index_of_the_last_corrected_way]),
-                                                           way_queries.get_end_node(corrected_ways_to_search[index_of_the_last_corrected_way]),
-                                                           way_queries.get_start_node(ways_to_search[index]),
-                                                           None)  # None, because it happens that we find another piece of roundabout item which is NOT what we want
+                connected = way_queries.check_connectivity(
+                    way_queries.get_start_node(corrected_ways_to_search[index_of_the_last_corrected_way]),
+                    way_queries.get_end_node(corrected_ways_to_search[index_of_the_last_corrected_way]),
+                    way_queries.get_start_node(ways_to_search[index]),
+                    None)  # None, because it happens that we find another piece of roundabout item which is NOT what we want
                 way_ref = way_queries.get_way_ref(ways_to_search[index])
                 not_in_array = way_ref not in already_added_members
                 is_oneway = way_queries.is_oneway(ways_to_search[index])
@@ -128,8 +131,10 @@ class HighwayFixer(FixerBase):
                 is_a_normal_road = not is_oneway and not is_roundabout
                 if checking_condition == "normal_road" and connected and not_in_array and is_a_normal_road:
                     returned_array_of_the_ways_other_side = list(reversed(
-                        corrected_ways_to_search[index_of_the_last_corrected_way::]))  # reverse the items, since this is how it's connected real life.
-                    returned_array_of_the_ways_other_side_refs = list(reversed(already_added_members[index_of_the_last_corrected_way::]))
+                        corrected_ways_to_search[
+                        index_of_the_last_corrected_way::]))  # reverse the items, since this is how it's connected real life.
+                    returned_array_of_the_ways_other_side_refs = list(
+                        reversed(already_added_members[index_of_the_last_corrected_way::]))
                     corrected_ways_to_search = corrected_ways_to_search[
                                                0:index_of_the_last_corrected_way] + returned_array_of_the_ways_other_side + [
                                                    ways_to_search[index]]
@@ -141,7 +146,7 @@ class HighwayFixer(FixerBase):
                 else:
                     index += 1
             index_of_the_last_corrected_way -= 1
-            #reset here number of forward ways in the series - so no silly things happen
+            # reset here number of forward ways in the series - so no silly things happen
         return corrected_ways_to_search, already_added_members, count_of_members_in_this_forward_series
 
     def check_what_type_of_way_we_want_to_search_in_roundabout(self, already_added_members, checking_condition,
@@ -334,6 +339,9 @@ class HighwayFixer(FixerBase):
                 # it looks something like this: ----o---><------- (o is oneway) - and because of this probably the end result will be bad
                 # we want instead this: -----o---->--------->
                 index += 1
+            elif way_queries.is_roundabout(ways_to_search[index]) and way_queries.get_end_node(
+                    corrected_ways_to_search[-1]) == way_queries.get_end_node(ways_to_search[index]) and way_queries.is_oneway(corrected_ways_to_search[-1]):
+                index += 1
             elif number_of_members_of_this_forward_series >= 1 and not way_queries.is_oneway(
                     ways_to_search[index]) and not way_queries.is_roundabout(
                 ways_to_search[index]) and not way_queries.get_highway(ways_to_search[index]) == "motorway":
@@ -457,8 +465,9 @@ class HighwayFixer(FixerBase):
             elif previous_roundabout and first_node_previous != last_node_previous:
                 # roundabout_entry_first_node_index: we need this so we can determine when we traverse back, what
                 # should be the limiter of iterating, so we don't iterate through the entire corrected array
-                roundabout_entry_first_node_index = self.find_first_non_roundabout_backwards(len(corrected_ways_to_search)-1,
-                                                                                             corrected_ways_to_search)
+                roundabout_entry_first_node_index = self.find_first_non_roundabout_backwards(
+                    len(corrected_ways_to_search) - 1,
+                    corrected_ways_to_search)
                 roundabout_entry_first_node = way_queries.get_start_node(
                     corrected_ways_to_search[roundabout_entry_first_node_index])
                 corrected_ways_to_search, already_added_members, banned_roundabout_ways, number_of_members_of_this_forward_series = self.search_for_connection_in_open_roundabout(
@@ -508,7 +517,8 @@ class HighwayFixer(FixerBase):
                         if index_of_the_connecting_way == -1 and previous_role == "forward":
                             corrected_ways_to_search, already_added_members, number_of_members_of_this_forward_series = self.reverse_the_other_side_of_roundabout(
                                 already_added_members, "normal_road", corrected_ways_to_search, False,
-                                len(corrected_ways_to_search)-1,0,ways_to_search, number_of_members_of_this_forward_series)
+                                len(corrected_ways_to_search) - 1, 0, ways_to_search,
+                                number_of_members_of_this_forward_series)
                             check_for_forward_ways = False
 
                         elif index_of_the_connecting_way == -1:
@@ -660,10 +670,10 @@ class HighwayFixer(FixerBase):
                 relation_info, corrected_ways_to_search, ways_original_roles, number_of_members_of_this_forward_series,
                 is_common_point, previous_roundabouts_nodes, ways_to_search)
             way_not_found = False if index_of_the_connecting_way != -1 else True
-        if way_not_found and (number_of_members_of_this_forward_series >= 2
-                              and last_node_two_way_before == way_queries.get_start_node(corrected_ways_to_search[-1])
-                              and way_queries.get_end_node(corrected_ways_to_search[-1]) == way_queries.get_start_node(
-                    ways_to_search[index_of_the_connecting_way_copy])):
+        if number_of_members_of_this_forward_series >= 2 and last_node_two_way_before == way_queries.get_start_node(
+                corrected_ways_to_search[-1]) and way_queries.get_end_node(
+            corrected_ways_to_search[-1]) == way_queries.get_start_node(
+            ways_to_search[index_of_the_connecting_way_copy]):
             return split_highway_members, corrected_ways_to_search, index_of_the_connecting_way_copy, number_of_members_of_this_forward_series
         elif way_not_found or way_queries.get_highway(ways_to_search[index_of_the_connecting_way]) == "motorway":
             # if the series is continuous so not the "wrong side" then don't remove anything... (or if the way is not found)
