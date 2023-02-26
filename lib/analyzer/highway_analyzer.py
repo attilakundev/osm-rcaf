@@ -30,7 +30,7 @@ class HighwayAnalyzer(AnalyzerBase):
         last_forward_way_before_backward_direction = previous_nodes = last_roundabout_nodes = []
         roundabout_ways = []
         # last_forward_way_before_backward_direction:  when we have relation beginning with forward ways
-        # (separated highway) connencting to a point
+        # (separated highway) connecting to a point
         first_node_previous = last_node_previous = previous_role = previous_ref = previous_highway \
             = first_node_of_first_forward_way_in_the_series = last_node_of_first_forward_way_in_the_series = ""
         for elem_val in relation_info["ways_to_search"]:
@@ -344,12 +344,9 @@ class HighwayAnalyzer(AnalyzerBase):
                 previous_roundabout and not current_roundabout or (not previous_roundabout and current_roundabout)):
             good_roundabout = way_queries.roundabout_checker(current_nodes,
                                                              previous_nodes)
-            if not good_roundabout and not (previous_role != "forward" and not previous_oneway and not previous_roundabout):
+            if not good_roundabout and not (previous_role == "forward" and previous_oneway and not previous_roundabout):
                 error_information.append(
                     ErrorHighway(previous_current, "Roundabout gap"))
-            elif not good_roundabout:
-                error_information.append(
-                    ErrorHighway(previous_current, "Roundabout gap"))  # this exists - coverage increases
             # this case is not covered yet when good_roundabout is true..
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # Special case, when there are a bunch of oneway roads connecting in weird order in the relation (2x2 lane road
