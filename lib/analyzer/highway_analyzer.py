@@ -347,6 +347,8 @@ class HighwayAnalyzer(AnalyzerBase):
             if not good_roundabout and not (previous_role == "forward" and previous_oneway and not previous_roundabout):
                 error_information.append(
                     ErrorHighway(previous_current, "Roundabout gap"))
+                # the not (previous_role == "forward" and previous_oneway and not previous_roundabout) is needed, since otherwise relations 23099 (3-as főút/ route nr. 3)
+                # and relation 38124 (5-ös főút /route nr. 5) would detect an unnecessary gap, because they start from a common point and split apart but then merge back.
             # this case is not covered yet when good_roundabout is true..
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # Special case, when there are a bunch of oneway roads connecting in weird order in the relation (2x2 lane road
