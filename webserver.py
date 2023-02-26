@@ -95,7 +95,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
         upload_file_location = f"{project_path}/uploads/{relation_id}_{formatted_date}.json"
 
-        if not (len(error_messages) == 2 and error_messages[1][0][1] == "This relation has no errors and gaps at all."):
+        if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in error_messages[2][1][0][1]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
 
@@ -108,7 +108,6 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
     else:
         not_existing = [[0, "This relation doesn't exist."]]
         error_messages = [[len(not_existing), not_existing]]
-
     context = {"request": request, "debug_mode": request.session["debug_mode"],"coordinates": coordinates,
                "error_messages": error_messages, "sorted_ways_list": sorted_list, "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
