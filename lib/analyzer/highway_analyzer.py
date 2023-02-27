@@ -276,7 +276,7 @@ class HighwayAnalyzer(AnalyzerBase):
             if count_of_forward_roled_way_series == 1:
                 error_information.append(
                     ErrorHighway(previous_current, "Only one forward way before closed roundabout"))
-            if last_node_previous == last_node_current:
+            if last_node_previous == last_node_current and first_node_current != last_node_current:
                 # this means that the roundabout would go in a weird way (causing an endless loop in the analyzer),
                 # this is not good!! It's a gap
                 error_information.append(ErrorHighway(previous_current, "Roundabout gap"))

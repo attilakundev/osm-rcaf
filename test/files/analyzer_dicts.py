@@ -396,9 +396,8 @@ relation_info_roundabout_previous_last_is_current_last = {
         {
             '@type': 'way',
             '@ref': '-3',
-            '@role': '',
+            '@role': 'forward',
             'nd': [
-                {'@ref': '-3'},
                 {'@ref': '-4'},
                 {'@ref': '-3'}
             ],
