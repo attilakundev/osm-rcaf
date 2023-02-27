@@ -629,6 +629,8 @@ class HighwayFixer(FixerBase):
                 last_node_exists_already = True
         if first_node_exists_already and last_node_exists_already:
             return True  # BAN IT
+        elif last_node_exists_already:
+            return True #this is the case when it picks up the wrong roundabout way and this is not a good idea to put it in
         return False
 
     def detect_closed_roundabout(self, corrected_ways_to_search, index, closed_roundabout_detected):
