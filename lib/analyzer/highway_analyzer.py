@@ -285,7 +285,7 @@ class HighwayAnalyzer(AnalyzerBase):
             pieces_of_roundabout += 1
             return pieces_of_roundabout, error_information
         elif index_of_current_way > 0 and previous_roundabout and not current_roundabout:
-            pieces_of_roundabout = 0  # this is an important thing, especially at testing
+            pieces_of_roundabout = 0
         return pieces_of_roundabout, error_information
 
     # This is a massive method. You should test it only whenever the methods in it had been thoroughly tested.
