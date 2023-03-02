@@ -37,8 +37,8 @@ class HighwayFixer(FixerBase):
                 # Also important note: the program is prone to such situations like if both of the found ways don't have a common point,
                 # it means they're not connecting, so we need to search for another way...
                 # (if they have a common point, it means they're the entry and exits)
-                if ((start_node == node and count_found_ways == 0 and (is_forward or is_oneway))
-                    or (end_node == node and (is_forward or is_oneway) and count_found_ways == 1)
+                if ((start_node == node and count_found_ways == 0 and (is_forward and is_oneway))
+                    or (end_node == node and (is_forward and is_oneway) and count_found_ways == 1)
                     or ((start_node == node or end_node == node) and not is_forward and not is_oneway)) \
                         and way_ref not in already_added_members and count_found_ways < 2:
                     if count_found_ways == 0:
@@ -288,10 +288,10 @@ class HighwayFixer(FixerBase):
             if is_roundabout and first_node_sought_way == last_node_sought_way and way_queries.get_way_ref(
                     ways_to_search[index]) not in already_added_members and way_queries.roundabout_checker(
                 sought_way_nodes, previous_corrected_nodes):
-                if number_of_members_of_this_forward_series == 1 and retries == 0 and index < len(ways_to_search) - 1:
+                if number_of_members_of_this_forward_series == 1 and retries == 0 and index < len(ways_to_search):
                     index = 0  # because we don't want the roundabout but we want the other half of the roundabout entry in case of a closed roundabout (now go to the beginning)
                     retries += 1
-                elif number_of_members_of_this_forward_series == 1 and retries == 1 and index < len(ways_to_search) - 1:
+                elif number_of_members_of_this_forward_series == 1 and retries == 1 and index < len(ways_to_search):
                     index += 1
                     retries += 1
                 elif retries == 2 or retries == 3:  # retries =3: we assume we didn't find the item at the 2nd try, so we wanna add that for sure
@@ -303,7 +303,7 @@ class HighwayFixer(FixerBase):
                         already_added_members)
                     return index, items_to_add
                 else:
-                    return index, items_to_add  # If no success, return the roundabout's index (for the future, it should be solved to get the given way from Overpass turbo API
+                    return index, items_to_add  # If no success, return the roundabout's index (for the future, it should be solved to get the given way from Overpass turbo API)
             elif way_queries.get_highway(ways_to_search[index]) == "motorway" and not way_queries.check_connectivity(
                     first_node_previous, last_node_previous, first_node_sought_way,
                     last_node_sought_way):
