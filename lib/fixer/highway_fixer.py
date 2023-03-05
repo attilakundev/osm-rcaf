@@ -460,7 +460,7 @@ class HighwayFixer(FixerBase):
             # then try to look for a node that connects to another way.
             if previous_roundabout and first_node_previous == last_node_previous:
                 corrected_ways_to_search, already_added_members, is_common_point, roundabouts_nodes = self.search_for_connection_exiting_from_closed_roundabout(
-                    way_queries.get_nodes(corrected_ways_to_search[index - 1]), corrected_ways_to_search,
+                    way_queries.get_nodes(corrected_ways_to_search[-1]), corrected_ways_to_search,
                     already_added_members, ways_to_search)
             elif previous_roundabout and first_node_previous != last_node_previous:
                 # roundabout_entry_first_node_index: we need this so we can determine when we traverse back, what
