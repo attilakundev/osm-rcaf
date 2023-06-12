@@ -80,7 +80,7 @@ async def about_page(request: Request):
 async def analyze_url(request: Request, relation_id: str = Form(...)):
     request = check_session_variables(request)
     relation_data = data_parser.retrieve_XML_from_API(relation_id)
-    sorted_list =[]
+    sorted_list = []
     coordinates = []
     if relation_data != {}:
         error_information, correct_ways_count = analyzer.relation_checking(relation_data, relation_id)
@@ -95,7 +95,8 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
         upload_file_location = f"{project_path}/uploads/{relation_id}_{formatted_date}.json"
 
-        if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in error_messages[2][1][0][1]):
+        if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in error_messages[2][1][0][
+            1]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
 
@@ -108,7 +109,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
     else:
         not_existing = [[0, "This relation doesn't exist."]]
         error_messages = [[len(not_existing), not_existing]]
-    context = {"request": request, "debug_mode": request.session["debug_mode"],"coordinates": coordinates,
+    context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": coordinates,
                "error_messages": error_messages, "sorted_ways_list": sorted_list, "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
@@ -164,12 +165,12 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
             xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
             return Response(content=xml_to_return, media_type="application/xml")
         else:
-            errors = [1,[2,[0, corrected_ways_to_search["Error"]]]]
+            errors = [1, [2, [0, corrected_ways_to_search["Error"]]]]
         for file in request.session["uploaded_files"]:
             os.remove(file)
         request.session["uploaded_files"] = []
     else:
-        errors = [1,[2,[0, "No files found to fix."]]]
+        errors = [1, [2, [0, "No files found to fix."]]]
     context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
                "error_messages": errors, "sorted_ways_list": [], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
