@@ -145,6 +145,9 @@ def get_network(array):
     return ""
 
 
+# MUTCD stands for Manual on Uniform Traffic Control Devices (it's in the USA), and in this system the route signs are usually
+# signed with cardinal directions like: US 60 EAST (https://www.aaroads.com/guides/us-060-az/). Canada, New Zealand and Australia
+# follow similar routing system.
 def determine_if_country_has_MUTCD_or_similar(array):
     network = get_network(array)
     return True if ("US" or "CA" or "AU" or "NZ") in network else False

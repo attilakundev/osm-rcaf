@@ -15,6 +15,7 @@ import way_queries
 
 highway_fixer = HighwayFixer()
 
+
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_split_entry_wrong_order():
     # Arrange
     file_path = f"{project_path}/test/files/results_highway_analyzer_false/route_closed_roundabout_entry_divided_exit_divided_wrong_order_of_entry.xml"
@@ -34,7 +35,6 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_spli
     assert already_added_members == ["-6", "-5", "-2", "-1", "-3"]
     assert is_common_point == True
     assert roundabouts_nodes == roundabout_nodes
-
 
 
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_wrong_order_exit_wrong_order_both_split():
@@ -57,6 +57,7 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_wrong_ord
     assert is_common_point == True
     assert roundabouts_nodes == roundabout_nodes
 
+
 def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_split():
     # Arrange
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_divided_exit_not_divided_wrong_order.xml"
@@ -70,7 +71,7 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_
     corrected_ways_to_search, already_added_members, is_common_point, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
         roundabout_nodes, corrected_ways_to_search,
         already_added_members, ways_to_search)
-    #Assert
+    # Assert
     assert already_added_members == ["-6", "-5", "-2", "-1"]
     assert corrected_ways_to_search == [ways_to_search[0], ways_to_search[2], ways_to_search[4],
                                         ways_to_search[3]]
@@ -89,12 +90,17 @@ def test_search_for_connection_wrong_order_road_connecting_to_a_oneway_road():
     corrected_ways_to_search = [ways_to_search[0]]
     number_of_members_of_this_forward_series = 0
     is_common_point = False
-    previous_roundabouts_nodes =[]
-    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
-                                                                      ways_to_search, already_added_members,
-                                                                      corrected_ways_to_search,
-                                                                      number_of_members_of_this_forward_series, is_common_point,
-                                                                      previous_roundabouts_nodes)
+    previous_roundabouts_nodes = []
+    banned_roundabout_ways = []
+    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous,
+                                                                                         last_node_previous,
+                                                                                         ways_to_search,
+                                                                                         already_added_members,
+                                                                                         corrected_ways_to_search,
+                                                                                         number_of_members_of_this_forward_series,
+                                                                                         is_common_point,
+                                                                                         previous_roundabouts_nodes,
+                                                                                         banned_roundabout_ways)
     assert connecting_to_3rd_way_index == 2
     assert items_to_be_added == []
 
@@ -110,12 +116,17 @@ def test_search_for_connection_wrong_order_road_connecting_to_a_roundabout():
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2]]
     number_of_members_of_this_forward_series = 1
     is_common_point = False
-    previous_roundabouts_nodes =[]
-    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
-                                                                      ways_to_search, already_added_members,
-                                                                      corrected_ways_to_search,
-                                                                      number_of_members_of_this_forward_series, is_common_point,
-                                                                      previous_roundabouts_nodes)
+    previous_roundabouts_nodes = []
+    banned_roundabout_ways = []
+    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous,
+                                                                                         last_node_previous,
+                                                                                         ways_to_search,
+                                                                                         already_added_members,
+                                                                                         corrected_ways_to_search,
+                                                                                         number_of_members_of_this_forward_series,
+                                                                                         is_common_point,
+                                                                                         previous_roundabouts_nodes,
+                                                                                         banned_roundabout_ways)
     assert connecting_to_3rd_way_index == 1
     assert items_to_be_added == []
 
@@ -136,10 +147,16 @@ def test_search_for_connection_wrong_order_road_connecting_searching_for_the_ent
     number_of_members_of_this_forward_series = 1
     is_common_point = False
     previous_roundabouts_nodes = []
-    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
-                                                                      ways_to_search, already_added_members,
-                                                                      corrected_ways_to_search,
-                                                                      number_of_members_of_this_forward_series,is_common_point,previous_roundabouts_nodes)
+    banned_roundabout_ways = []
+    connecting_to_3rd_way_index, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous,
+                                                                                         last_node_previous,
+                                                                                         ways_to_search,
+                                                                                         already_added_members,
+                                                                                         corrected_ways_to_search,
+                                                                                         number_of_members_of_this_forward_series,
+                                                                                         is_common_point,
+                                                                                         previous_roundabouts_nodes,
+                                                                                         banned_roundabout_ways)
     assert connecting_to_3rd_way_index == 5
     assert items_to_be_added == []
 
@@ -157,10 +174,13 @@ def test_search_for_connection_wrong_order_road_closed_roundabout_return_forward
     number_of_members_of_this_forward_series = 1
     is_common_point = False
     previous_roundabouts_nodes = []
-    result,items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
-                                                 ways_to_search, already_added_members,
-                                                 corrected_ways_to_search,
-                                                 number_of_members_of_this_forward_series,is_common_point,previous_roundabouts_nodes)
+    banned_roundabout_ways = []
+    result, items_to_be_added = highway_fixer.search_for_connection(index, first_node_previous, last_node_previous,
+                                                                    ways_to_search, already_added_members,
+                                                                    corrected_ways_to_search,
+                                                                    number_of_members_of_this_forward_series,
+                                                                    is_common_point, previous_roundabouts_nodes,
+                                                                    banned_roundabout_ways)
     assert result == 1
     assert items_to_be_added == []
 
@@ -393,7 +413,7 @@ def test_remove_oneway_tag_from_non_roundabout_members_if_needed_remove_one_way_
         current_oneway, index, oneway_series_ending_way_index,
         oneway_series_starting_node_detected,
         oneway_series_starting_way_index, previous_forward,
-        previous_oneway, remove_one_way_tag,previous_roundabout, current_roundabout, closed_roundabout_detected)
+        previous_oneway, remove_one_way_tag, previous_roundabout, current_roundabout, closed_roundabout_detected)
     assert index == 3
     assert oneway_series_starting_way_index == 1
     assert oneway_series_ending_way_index == 2
@@ -448,6 +468,7 @@ def test_add_forward_role_where_needed_roundabout_edition():
     assert way_queries.get_role(ways_to_search[index]) == "forward"
     assert way_queries.get_role(ways_to_search[index - 1]) == "forward"
 
+
 def test_check_for_forward_ways_end_of_split_highway():
     # correct order is 1,4,6,5,2,3, but we now check the 1,4,6,2,5 case, when it's not reversed.
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order.xml"
@@ -463,13 +484,14 @@ def test_check_for_forward_ways_end_of_split_highway():
     last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])
     split_highway_members = [ways_to_search[3], ways_to_search[5], ways_to_search[1]]
     banned_roundabout_ways = []
-    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series = highway_fixer.check_for_forward_ways(
+    reversing_method_not_run_if_forward_series_detected = True
+    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series,reversing_method_not_run_if_forward_series_detected = highway_fixer.check_for_forward_ways(
         already_added_members, corrected_ways_to_search,
         first_node_previous,
         index_of_the_connecting_way, last_node_previous,
         number_of_members_of_this_forward_series,
         previous_role, split_highway_members,
-        ways_to_search, banned_roundabout_ways)
+        ways_to_search, banned_roundabout_ways, reversing_method_not_run_if_forward_series_detected)
     assert already_added_members == ["-1", "-4", "-6", "-5", "-2"]
     assert number_of_members_of_this_forward_series == 4
 
@@ -490,14 +512,37 @@ def test_check_for_forward_ways_way_after_split_highway():
     last_node_previous = way_queries.get_end_node(corrected_ways_to_search[index - 1])
     split_highway_members = [ways_to_search[3], ways_to_search[5], ways_to_search[1]]
     banned_roundabout_ways = []
-    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series = highway_fixer.check_for_forward_ways(
+    reversing_method_not_run_if_forward_series_detected = True
+    already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series, reversing_method_not_run_if_forward_series_detected = highway_fixer.check_for_forward_ways(
         already_added_members, corrected_ways_to_search,
         first_node_previous,
         index_of_the_connecting_way, last_node_previous,
         number_of_members_of_this_forward_series,
         previous_role, split_highway_members,
-        ways_to_search, banned_roundabout_ways)
+        ways_to_search, banned_roundabout_ways, reversing_method_not_run_if_forward_series_detected)
     assert already_added_members == ["-1", "-4", "-6", "-5", "-2", "-3"]
     assert number_of_members_of_this_forward_series == 0
 
 
+def test_check_if_ways_connect_continuously():
+    # GIVEN
+    file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_and_exit_divided_multiple_members.xml"
+    relation_info = fixer_utils.get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    # WHEN
+    result = highway_fixer.check_if_ways_connect_continuously(ways_to_search[1:2])
+    # THEN
+    assert result is True
+
+
+def test_get_the_index_of_connecting_way_of_a_way_that_is_not_added_yet():
+    file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_and_exit_divided_multiple_members.xml"
+    relation_info = fixer_utils.get_relation_info(file_path)
+    ways_to_search = relation_info["ways_to_search"]
+    already_added_members = ["-7", "-5", "-10"]
+    split_highway_members = [ways_to_search[1], ways_to_search[2]]
+    index_of_first_split_highway_member = way_queries.get_index_of_way(ways_to_search, way_queries.get_way_ref(
+        split_highway_members[0]))
+    index_of_not_added_member = highway_fixer.get_the_index_of_connecting_way_of_a_way_that_is_not_added_yet(
+        already_added_members, ways_to_search, index_of_first_split_highway_member)
+    assert way_queries.get_way_ref(ways_to_search[index_of_not_added_member]) == "-6"
