@@ -120,4 +120,4 @@ class OSMDataParser:
         return dicts
 
     def unparse_data_to_xml_prettified(self,data):
-        return xmltodict.unparse(data, pretty=True, short_empty_elements=True)
+        return xmltodict.unparse(data, pretty=True, short_empty_elements=True,encoding="utf-8")

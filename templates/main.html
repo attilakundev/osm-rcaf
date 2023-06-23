@@ -69,7 +69,7 @@
             {% endautoescape %}
             {% elif "Link of the relation" in line or "[Relation #" in line %}
             {% autoescape false %}
-        <p class="alert alert-info">{{line}}
+        <p class="alert alert-info" style="font-family: Courier New">{{line}}
             {% endautoescape %}
             {% elif index == 1 %}
             {% autoescape false %}

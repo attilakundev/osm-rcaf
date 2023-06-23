@@ -160,6 +160,7 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
         corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way,
                                                                        is_from_api=False)
         if "Error" not in corrected_ways_to_search:
+            corrected_ways_to_search = fixer.correct_way_roles_tags(relation_info,corrected_ways_to_search)
             data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(
                 data, relation_info, corrected_ways_to_search)
             xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
