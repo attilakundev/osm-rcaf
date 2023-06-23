@@ -383,8 +383,7 @@ class HighwayFixer(FixerBase):
                                                            oneway_series_ending_way_index):
         # We delete the oneway/forward tag from those which shouldn't be in the relation, since the route doesn't split.
         if (current_oneway or (current_forward and not current_roundabout)) and remove_one_way_tag:
-            corrected_ways_to_search[index] = way_queries.remove_tag(corrected_ways_to_search[index], "oneway",
-                                                                     "yes")
+            corrected_ways_to_search[index] = way_queries.remove_tag(corrected_ways_to_search[index], "oneway")
             corrected_ways_to_search[index] = way_queries.modify_role(corrected_ways_to_search[index], "")
             if index == oneway_series_ending_way_index and remove_one_way_tag:
                 remove_one_way_tag = False
@@ -404,7 +403,7 @@ class HighwayFixer(FixerBase):
         if ((previous_oneway and not current_oneway) or (
                 not previous_oneway and (previous_forward and not current_forward))) and not current_roundabout:
             # save the position where it needs to stop searching for other members for resetting
-            oneway_series_ending_way_index = index - 1  # Let's say we're on a non-oneway, so we want the last one which is one way before
+            oneway_series_ending_way_index = index - 1  # Let's say we're on a non-oneway, so we want the last one which is the way before
             if not oneway_series_starting_node_detected and not remove_one_way_tag:
                 if not closed_roundabout_detected and not previous_roundabout:
                     index = oneway_series_starting_way_index
@@ -418,10 +417,9 @@ class HighwayFixer(FixerBase):
             if oneway_series_starting_node_detected:
                 oneway_series_starting_node_detected = False
         elif (previous_oneway and not current_oneway) or (
-                not previous_oneway and previous_forward and not current_forward) and (way_queries.is_roundabout(
-            corrected_ways_to_search[index]) and way_queries.get_start_node(
-            corrected_ways_to_search[index]) == way_queries.get_end_node(corrected_ways_to_search[index])):
-            # for those which have roundabout after the thing: skip it, because this is correct.. (closed roundabouts have no roles)
+                not previous_oneway and previous_forward and not current_forward) and current_roundabout and way_queries.get_start_node(
+            corrected_ways_to_search[index]) == way_queries.get_end_node(corrected_ways_to_search[index]):
+            # for those which have roundabout after the one-way road series: skip it, because this is correct.. (closed roundabouts have no roles)
             oneway_series_starting_node_detected = False
         return index, oneway_series_starting_way_index, oneway_series_ending_way_index, oneway_series_starting_node_detected, remove_one_way_tag, closed_roundabout_detected
 
@@ -439,10 +437,17 @@ class HighwayFixer(FixerBase):
         else:
             return oneway_series_starting_node_detected
 
-    def add_forward_roles_for_ways_before_correction(self, ways_to_search):
+    def add_and_remove_roles_tags_for_ways_before_correction(self, ways_to_search):
         for index, way in enumerate(ways_to_search):
-            if (way_queries.is_roundabout(way) and way_queries.get_start_node(way) != way_queries.get_end_node(
-                    way)) or way_queries.is_oneway(way):
+            current_oneway = way_queries.is_oneway(ways_to_search[index])
+            current_forward = way_queries.get_role(ways_to_search[index]) == "forward"
+            current_roundabout = way_queries.is_roundabout(ways_to_search[index])
+            closed_roundabout_detected = self.detect_closed_roundabout(ways_to_search, index,
+                                                                       False)
+            if current_roundabout and closed_roundabout_detected and (current_forward or current_oneway):
+                way_queries.modify_role(ways_to_search[index], "")
+                way_queries.remove_tag(ways_to_search[index], "oneway")
+            elif (current_roundabout and not closed_roundabout_detected) or way_queries.is_oneway(way):
                 way_queries.modify_role(ways_to_search[index], "forward")
         return ways_to_search
 
@@ -468,7 +473,7 @@ class HighwayFixer(FixerBase):
         # change all backward roles to forward if necessary
         ways_to_search_original_roles = list(map(lambda x: x["@role"], ways_to_search))
         ways_to_search = self.get_nodes_roles_and_change_if_necessary(ways_to_search, relation_info)
-        ways_to_search = self.add_forward_roles_for_ways_before_correction(ways_to_search)
+        ways_to_search = self.add_and_remove_roles_tags_for_ways_before_correction(ways_to_search)
         while index < len(ways_to_search) and len(corrected_ways_to_search) < len(ways_to_search):
             check_for_forward_ways = True
             first_node_previous = way_queries.get_start_node(corrected_ways_to_search[-1])

@@ -454,7 +454,7 @@ def test_add_forward_role_where_needed():
     ways_to_search = relation_info["ways_to_search"]
     # here the order doesn't matter since it's a unit test.
     index = 2
-    ways_to_search = highway_fixer.add_forward_roles_for_ways_before_correction(ways_to_search)
+    ways_to_search = highway_fixer.add_and_remove_roles_tags_for_ways_before_correction(ways_to_search)
     assert way_queries.get_role(ways_to_search[index]) == "forward"
     assert way_queries.get_role(ways_to_search[index - 1]) == "forward"
 
@@ -464,7 +464,7 @@ def test_add_forward_role_where_needed_roundabout_edition():
     relation_info = fixer_utils.get_relation_info(file_path)
     ways_to_search = relation_info["ways_to_search"]
     index = 8
-    ways_to_search = highway_fixer.add_forward_roles_for_ways_before_correction(ways_to_search)
+    ways_to_search = highway_fixer.add_and_remove_roles_tags_for_ways_before_correction(ways_to_search)
     assert way_queries.get_role(ways_to_search[index]) == "forward"
     assert way_queries.get_role(ways_to_search[index - 1]) == "forward"
 

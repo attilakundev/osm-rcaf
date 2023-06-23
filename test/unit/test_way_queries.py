@@ -76,8 +76,8 @@ def test_is_oneway():
 def test_remove_tag():
     # Arrange is done at the beginning
     # Act
-    way_queries.remove_tag(way_queries_dicts.relation["ways"][0], "oneway", "yes")
-    way_queries.remove_tag(osm_data_parser_dicts.relation_info_result_appended["ways"][0], "oneway", "yes")
+    way_queries.remove_tag(way_queries_dicts.relation["ways"][0], "oneway")
+    way_queries.remove_tag(osm_data_parser_dicts.relation_info_result_appended["ways"][0], "oneway")
     # Assert
     assert way_queries_dicts.relation["ways"][0]["tag"] == [{
         "@k": "highway",

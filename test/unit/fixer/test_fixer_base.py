@@ -11,6 +11,7 @@ sys.path.append(f"{project_path}/lib/model")
 sys.path.append(f"{project_path}/test/files")
 from analyzer import Analyzer
 from fixer import RelationFixer
+import way_queries
 from osm_data_parser import OSMDataParser
 
 analyzer = Analyzer()
@@ -32,8 +33,11 @@ def test_67157():
     data = xmltodict.parse(file)
     relation_info = analyzer.get_relation_info(loaded_relation_file=data)
     corrected_ways_to_search, already_added_members = fixer.fixing(relation_info, first_way="4293039",is_from_api=False)
+    corrected_ways_to_search = fixer.correct_way_roles_tags(relation_info,corrected_ways_to_search)
     data = fixer.detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(data,relation_info, corrected_ways_to_search)
     xml_to_return = data_parser.unparse_data_to_xml_prettified(data)
     assert already_added_members[0] == "4293039"
     assert already_added_members[-1] == "571346755"
+    assert way_queries.get_role(corrected_ways_to_search[2]) == ""
+    assert way_queries.get_role(corrected_ways_to_search[-1]) == "forward"
     assert 1 == 1

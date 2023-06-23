@@ -26,10 +26,10 @@ def is_oneway(array):
     return False
 
 
-def remove_tag(array, tag_key, value_of_key):
+def remove_tag(array, tag_key):
     if type(array["tag"]) == list:
         for key_value_pair in array["tag"]:
-            if key_value_pair["@k"] == tag_key and key_value_pair["@v"] == value_of_key:
+            if key_value_pair["@k"] == tag_key:
                 array["tag"].remove(key_value_pair)
     else:
         array["tag"] = []  # since there was only just one dictionary here, we empty this
