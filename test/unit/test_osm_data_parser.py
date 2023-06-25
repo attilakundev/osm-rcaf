@@ -10,10 +10,13 @@ import xmltodict
 project_path = Path(__file__).parents[2].absolute()
 sys.path.append(f"{project_path}")
 sys.path.append(f"{project_path}/lib")
+sys.path.append(f"{project_path}/lib/analyzer")
 sys.path.append(f"{project_path}/test/files")
+from analyzer import Analyzer
 from osm_data_parser import OSMDataParser
 import osm_data_parser_dicts
 
+analyzer = Analyzer()
 data_parser = OSMDataParser()
 
 
@@ -90,3 +93,11 @@ def test_unparse_data_to_xml_prettified():
     xml = data_parser.unparse_data_to_xml_prettified(osm_data_parser_dicts.corrected_relation_data)
     final_result_xml_file_to_expect = open(f"{project_path}/test/files/final_result.xml").read()
     assert xml == final_result_xml_file_to_expect
+
+def test_check_way_attributes_id():
+    file_path = f"{project_path}/test/files/simplest_way_way_not_in_relation.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    relation_info = analyzer.get_relation_info(data)
+    with pytest.raises(KeyError):
+        data_parser.check_way_attributes_id(relation_info)

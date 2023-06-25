@@ -223,8 +223,6 @@ def test_return_messages_verbose_all_errors_hwy():
                                   " (almost) start point via other lane. It should be done that the motorway's right"
                                   " lane goes first to the end point, then left lane from first to end point.")
     assert result_all_hwy[15] == "This public transportation relation type is not supported."
-    # continue with the rest of the strings
-
 
 def test_return_messages_verbose_all_errors_multi():
     correct_ways_count = 2

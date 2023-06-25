@@ -12,10 +12,7 @@ class OSMDataParser:
     def retrieve_XML_from_API(self, relation_number):
         url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
         relation_file = requests.get(url).content
-        if "osm" not in str(relation_file):
-            return {}
-        else:
-            dictionary = xmltodict.parse(relation_file)
+        dictionary = xmltodict.parse(relation_file)
         return dictionary
     def get_relation_ids(self, loaded_data):
         relations_list = loaded_data["osm"]["relation"]
@@ -95,7 +92,7 @@ class OSMDataParser:
 
     def check_way_attributes_id(self, relation_info):
         result = []
-        for i in range(0, len(relation_info["ways_to_search"])):
+        for i in range(len(relation_info["ways_to_search"])):
             try:
                 result.append(relation_info["ways_to_search"][i]["attributes"]["@id"])
             except KeyError as e:

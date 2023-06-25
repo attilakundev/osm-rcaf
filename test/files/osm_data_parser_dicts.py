@@ -45,7 +45,6 @@ result_dict = {
         }
     }
 }
-
 result_dict_multi_relation = {
     'osm': {
         '@generator': 'JOSM',

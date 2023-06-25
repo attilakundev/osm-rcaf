@@ -1,73 +1,73 @@
-def get_nodes(array):
-    return [node["@ref"] for node in array["nd"]]
+def get_nodes(data):
+    return [node["@ref"] for node in data["nd"]]
 
 
-def get_start_node(array):
-    return array["nd"][0]["@ref"]
+def get_start_node(data):
+    return data["nd"][0]["@ref"]
 
 
-def get_end_node(array):
-    return array["nd"][len(array["nd"]) - 1]["@ref"]
+def get_end_node(data):
+    return data["nd"][len(data["nd"]) - 1]["@ref"]
 
 
-def is_roundabout(array):
-    if "tag" in array:
-        for tag in array["tag"]:
+def is_roundabout(data):
+    if "tag" in data:
+        for tag in data["tag"]:
             if tag["@k"] == "junction" and tag["@v"] == "roundabout":
                 return True
     return False
 
 
-def is_oneway(array):
-    if "tag" in array:
-        for tag in array["tag"]:
+def is_oneway(data):
+    if "tag" in data:
+        for tag in data["tag"]:
             if tag["@k"] == "oneway" and tag["@v"] == "yes":
                 return True
     return False
 
 
-def remove_tag(array, tag_key):
-    if type(array["tag"]) == list:
-        for key_value_pair in array["tag"]:
+def remove_tag(data, tag_key):
+    if type(data["tag"]) == list:
+        for key_value_pair in data["tag"]:
             if key_value_pair["@k"] == tag_key:
-                array["tag"].remove(key_value_pair)
+                data["tag"].remove(key_value_pair)
     else:
-        array["tag"] = []  # since there was only just one dictionary here, we empty this
-    return array
+        data["tag"] = []  # since there was only just one dictionary here, we empty this
+    return data
 
 
-def modify_role(array, role):
-    array["@role"] = role
-    return array
+def modify_role(data, role):
+    data["@role"] = role
+    return data
 
 
-def get_role(array):
-    if "@role" in array:
-        return array["@role"]
+def get_role(data):
+    if "@role" in data:
+        return data["@role"]
     return ""
 
 
 # in case we are dealing with route=road (or cycling etc.)
-def get_highway(array):
-    if "tag" in array:
-        for key_value_pair in array["tag"]:
+def get_highway(data):
+    if "tag" in data:
+        for key_value_pair in data["tag"]:
             if key_value_pair["@k"] == "highway":
                 return key_value_pair["@v"]
     return ""
 
 
 # in case we are dealing with route=railway
-def get_railway(array):
-    if "tag" in array:
-        for key_value_pair in array["tag"]:
+def get_railway(data):
+    if "tag" in data:
+        for key_value_pair in data["tag"]:
             if key_value_pair["@k"] == "railway":
                 return key_value_pair["@v"]
     return ""
 
 
-def get_highway_ref(array):
-    if "tag" in array:
-        for key_value_pair in array["tag"]:
+def get_highway_ref(data):
+    if "tag" in data:
+        for key_value_pair in data["tag"]:
             if key_value_pair["@k"] == "ref":
                 return key_value_pair["@v"]
     return ""  # if empty, it means that the ref is not set, which is a problem. We need to put that from the way of the relation
@@ -79,37 +79,37 @@ def get_index_of_way(array, value):
             return index
         index+=1
     return -1
-def put_ref_from_relation_to_highway_way(array):  # this requires enumerate when for looping
-    ref = get_ref_of_the_route(array)
-    for index, element in enumerate(array["ways"]):
+def put_ref_from_relation_to_highway_way(data):  # this requires enumerate when for looping
+    ref = get_ref_of_the_route(data)
+    for index, element in enumerate(data["ways"]):
         if element["@type"] == "way":
             for key_value_pair in element["tag"]:
                 if key_value_pair["@k"] == "highway":
-                    array["ways"][index]["tag"].append({
+                    data["ways"][index]["tag"].append({
                         "@k": "ref",
                         "@v": ref
                     })
 
 
-def get_ref_of_the_route(array):
-    if "ref" in array:
-        return array["ref"]
+def get_ref_of_the_route(data):
+    if "ref" in data:
+        return data["ref"]
     return ""
 
 
-def get_relation_type(array):
-    if "type" in array:
-        return array["type"]
+def get_relation_type(data):
+    if "type" in data:
+        return data["type"]
     return ""
 
-def get_relation_member_type(array):
-    if "@type" in array:
-        return array["@type"]
+def get_relation_member_type(data):
+    if "@type" in data:
+        return data["@type"]
     return ""
-def get_way_ref(array):
+def get_way_ref(data):
     """:returns: The id of the way."""
-    if "@ref" in array:
-        return array["@ref"]
+    if "@ref" in data:
+        return data["@ref"]
     return ""
 
 
@@ -139,33 +139,33 @@ def check_if_directional(way_role):
     return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"
 
 
-def get_network(array):
-    if "network" in array:
-        return array["network"]
+def get_network(data):
+    if "network" in data:
+        return data["network"]
     return ""
 
 
 # MUTCD stands for Manual on Uniform Traffic Control Devices (it's in the USA), and in this system the route signs are usually
 # signed with cardinal directions like: US 60 EAST (https://www.aaroads.com/guides/us-060-az/). Canada, New Zealand and Australia
 # follow similar routing system.
-def determine_if_country_has_MUTCD_or_similar(array):
-    network = get_network(array)
+def determine_if_country_has_MUTCD_or_similar(data):
+    network = get_network(data)
     return True if ("US" or "CA" or "AU" or "NZ") in network else False
 
-def get_coordinates_of_relation(array) -> list[list[list[str]]]:
+def get_coordinates_of_relation(data) -> list[list[list[str]]]:
     nodes_of_relation_per_way = []
-    for way in array["ways_to_search"]:
+    for way in data["ways_to_search"]:
         nodes_of_relation_per_way.append([node["@ref"] for node in way["nd"]])
     #now get the coordinates of the nodes.
     coordinates = []
     for way in nodes_of_relation_per_way:
-        coordinates.append(get_coordinates_of_a_way(way,array))
+        coordinates.append(get_coordinates_of_a_way(way,data))
     return coordinates
 
-def get_coordinates_of_a_way(way,array):
+def get_coordinates_of_a_way(way,data):
     way_coordinates = []
     for node_to_search in way:
-        for node in array["nodes"]:
+        for node in data["nodes"]:
             if node["@id"] == node_to_search and "@lat" in node and "@lon" in node:
                 way_coordinates.append([node["@lat"], node["@lon"]])
     return way_coordinates

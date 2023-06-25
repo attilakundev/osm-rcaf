@@ -164,3 +164,13 @@ def test_get_network():
 def test_determine_if_country_has_MUTCD_or_similar():
     result = way_queries.determine_if_country_has_MUTCD_or_similar(way_queries_dicts.relation2)
     assert result is True
+
+def test_get_relation_member_type():
+    data = {}
+    result = way_queries.get_relation_member_type(data)
+    assert result is ""
+
+def test_get_index_of_way():
+    array = [{"@ref": "0"}]
+    result = way_queries.get_index_of_way(array, "-1")
+    assert result is -1
