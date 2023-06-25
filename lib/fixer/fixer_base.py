@@ -50,7 +50,7 @@ class FixerBase(ABC):
         #make the format of the original ways array:
         if len(original_ways_to_search) == 1 and len(corrected_ways_to_search) == 1:
             ways = {}
-            for key, value in corrected_ways_to_search[0]["attributes"]:
+            for key, value in corrected_ways_to_search[0]["attributes"].items():
                 ways[key] = value
             ways["nd"] = corrected_ways_to_search[0]["nd"]
             ways["tag"] = corrected_ways_to_search[0]["nd"]
@@ -64,7 +64,7 @@ class FixerBase(ABC):
                 way["tag"] = corrected_way["tag"]
                 ways.append(way)
         #now find the existing itens in the original ways array, and merge the results:
-        if len(relation_data["osm"]["way"]) > 1:
+        if type(relation_data["osm"]["way"]) is list:
             for index, original_way in enumerate(relation_data["osm"]["way"]):
                 for way in ways:
                     if original_way["@id"] == way["@id"]:

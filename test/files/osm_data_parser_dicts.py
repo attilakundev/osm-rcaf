@@ -28,10 +28,20 @@ result_dict = {
                 '@ref': '-1',
                 '@role': 'outer'
             },
-            'tag': {
-                '@k': 'ref',
-                '@v': '999'
-            }
+            'tag': [
+                {
+                    '@k': 'ref',
+                    '@v': '999'
+                },
+                {
+                    '@k': 'type',
+                    '@v': 'route'
+                },
+                {
+                    '@k': 'route',
+                    '@v': 'road'
+                }
+            ]
         }
     }
 }
@@ -67,10 +77,20 @@ result_dict_multi_relation = {
                     '@ref': '-1',
                     '@role': 'outer'
                 },
-                'tag': {
-                    '@k': 'ref',
-                    '@v': '999'
-                }
+                'tag': [
+                    {
+                        '@k': 'ref',
+                        '@v': '999'
+                    },
+                    {
+                        '@k': 'type',
+                        '@v': 'route'
+                    },
+                    {
+                        '@k': 'route',
+                        '@v': 'road'
+                    }
+                ]
             },
             {
                 '@id': '-99776',
@@ -163,7 +183,9 @@ relation_info_result = {
             '@role': 'outer'
         }
     ],
-    'ref': '999'
+    'ref': '999',
+    'route': 'road',
+    'type': 'route'
 }
 
 relation_info_result_multi_ways = {
@@ -245,7 +267,9 @@ relation_info_result_appended = {
             ]
         }
     ],
-    'ref': '999'
+    'ref': '999',
+    'route': 'road',
+    'type': 'route'
 }
 
 result_dict_MUTCD = {

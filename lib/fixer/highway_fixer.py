@@ -575,9 +575,9 @@ class HighwayFixer(FixerBase):
                             check_for_forward_ways = False
 
                         elif index_of_the_connecting_way == -1:
-                            return corrected_ways_to_search, already_added_members
+                            return corrected_ways_to_search
                     elif index_of_the_connecting_way == -1 and is_from_api:
-                        return corrected_ways_to_search, already_added_members  # not implemented yet.. it'd be beneficial to use Overpass Turbo API
+                        return corrected_ways_to_search  # not implemented yet.. it'd be beneficial to use Overpass Turbo API
                 if check_for_forward_ways and number_entry_exits_to_roundabout == 0:
                     already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series, reversing_method_not_run_if_forward_series_detected = self.check_for_forward_ways(
                         already_added_members,
@@ -591,7 +591,7 @@ class HighwayFixer(FixerBase):
                         ways_to_search, banned_roundabout_ways, reversing_method_not_run_if_forward_series_detected)
             index += 1
         corrected_ways_to_search = self.correct_way_roles_tags(corrected_ways_to_search)
-        return corrected_ways_to_search, already_added_members
+        return corrected_ways_to_search
 
     def add_split_member(self, already_added_members, corrected_ways_to_search, index_of_the_way_that_would_connect,
                          split_highway_members, ways_to_search):

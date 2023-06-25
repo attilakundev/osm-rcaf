@@ -10,5 +10,7 @@
     <relation id='-99775'>
         <member type='way' ref='-1' role='outer'/>
         <tag k='ref' v='999'/>
+        <tag k='type' v='route'/>
+        <tag k='route' v='road'/>
     </relation>
 </osm>

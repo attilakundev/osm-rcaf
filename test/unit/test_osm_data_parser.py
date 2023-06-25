@@ -44,7 +44,7 @@ def test_gather_way_and_relation_info_dict():
     assert relation_info == osm_data_parser_dicts.relation_info_result
 
 
-# list means that there are more than one ways and relation members and tags in it, so it goes well for that case too.
+# list means that there are more than a way and relation members and tags in it, so it goes well for that case too.
 def test_gather_way_and_relation_info_list():
     relation_info = data_parser.gather_way_and_relation_info(osm_data_parser_dicts.result_dict_multi_ways)
     assert relation_info == osm_data_parser_dicts.relation_info_result_multi_ways
@@ -60,7 +60,9 @@ def test_helper_gather_relation_info_dict():
                                                          relation_info)
 
     assert relation_info == {"ways_to_search": osm_data_parser_dicts.relation_info_result["ways_to_search"],
-                             "ref": osm_data_parser_dicts.relation_info_result["ref"]}
+                             "ref": osm_data_parser_dicts.relation_info_result["ref"],
+                             "route": osm_data_parser_dicts.relation_info_result["route"],
+                             "type": osm_data_parser_dicts.relation_info_result["type"]}
 
 
 # same meaning for list here as mentioned above.
