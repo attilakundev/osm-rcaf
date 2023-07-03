@@ -157,7 +157,7 @@ async def fix_relation(request: Request, first_way: str = Form(...)):
         file = open(request.session["uploaded_files"][-1]).read()
         data = json.loads(file)
         relation_info = analyzer.get_relation_info(loaded_relation_file=data)
-        corrected_ways_to_search, already_added_members = fixer.fixing(relation_info=relation_info, first_way=first_way,
+        corrected_ways_to_search = fixer.fixing(relation_info=relation_info, first_way=first_way,
                                                                        is_from_api=False)
         if "Error" not in corrected_ways_to_search:
             corrected_ways_to_search = fixer.correct_way_roles_tags(relation_info,corrected_ways_to_search)
