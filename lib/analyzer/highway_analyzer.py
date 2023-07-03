@@ -59,7 +59,7 @@ class HighwayAnalyzer(AnalyzerBase):
                                                           current_oneway=current_oneway, current_ref=current_ref,
                                                           current_highway=current_highway)
 
-                # This is where swaps and other stuff happen firstly.
+                # This is where we swap out backward to forward, since the checker only validates continuous routes
                 first_node_current, last_node_current, current_role, current_nodes = self.is_role_backward(
                     first_node_current, last_node_current,
                     current_role, current_nodes)
@@ -74,7 +74,7 @@ class HighwayAnalyzer(AnalyzerBase):
                                                                                                    previous_current)
                 error_information = self.determine_role_errors_at_the_beginning_highway(index_of_current_way, current_role,
                                                                                         current_oneway,
-                                                                                        current_highway, current_roundabout,
+                                                                                        current_roundabout,
                                                                                         error_information, previous_current)
 
                 first_node_of_first_forward_way_in_the_series, last_node_of_first_forward_way_in_the_series, count_of_forward_roled_way_series = \
@@ -268,6 +268,11 @@ class HighwayAnalyzer(AnalyzerBase):
                                                error_information: list, pieces_of_roundabout: int,
                                                count_of_forward_roled_way_series: int, last_node_previous: str,
                                                last_node_current: str, first_node_current: str):
+        """
+        This checks if the open roundabout has missing roles, or too few forward ways before closed roundabout
+        Other than that if everything went well, add the number of roundabout pieces (or reset it)
+        :return:
+        """
         if current_roundabout and current_role == "" and first_node_current != last_node_current:
             error_information.append(
                 ErrorHighway(previous_current, "Forward role missing at roundabout"))
@@ -303,7 +308,7 @@ class HighwayAnalyzer(AnalyzerBase):
                                            last_forward_way_before_backward_direction: list, current_highway: str,
                                            route_number: str, network: str, previous_ref: str,
                                            last_roundabout_nodes: list):
-        """This checks if the way connects continuously, if yes then check if there are issues with the roling. If
+        """This checks if the way connects continuously, if yes then check if there are issues with the roles. If
         it's not continuous, then check if it's a roundabout. if it's not a roundabout but a weirdly connected
 
         **Returns**: last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles,
@@ -311,7 +316,7 @@ class HighwayAnalyzer(AnalyzerBase):
 
         The returned data may have the same value as before, it depends on the evaluation of the currently checked
         way."""
-        # Check if the roundabout's entry way is in wrong order.
+        # Check if the roundabout's entryway is in wrong order.
         if 0 < index_of_current_way < len(
                 ways_to_search) - 2 and last_node_previous == last_node_current and way_queries.is_roundabout(
             ways_to_search[index_of_current_way + 2]):
@@ -476,15 +481,14 @@ class HighwayAnalyzer(AnalyzerBase):
                                                  last_roundabout_nodes: list,
                                                  current_nodes: list,
                                                  previous_nodes: list):
-        """Checks if the ways are either splitting or they are totally independent from each other.
+        """Checks if the ways are either splitting or they are totally independent from each other, so they don't connect.
 
         **Returns:** last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information"""
-        # shouldn't we check it for the last way? technically that should be done too.
-        # Case: unified route tries to be split..
-        if last_node_current == first_node_of_first_forward_way_in_the_series or \
-                first_node_current == first_node_of_first_forward_way_in_the_series or \
-                last_node_current == last_node_of_first_forward_way_in_the_series or \
-                first_node_current == last_node_of_first_forward_way_in_the_series:
+
+        # Case: Split road connects to one of the node of the other side
+        if way_queries.check_connectivity(first_node_current,last_node_current,
+                                          first_node_of_first_forward_way_in_the_series,
+                                          last_node_of_first_forward_way_in_the_series):
             # just go on, since this is good (because it connects...)
             return last_forward_way_before_backward_direction, motorway_split_way, has_directional_roles, error_information
         # now we are getting gaps, but we have to first investigate if this is a case with a motorway / trunk road:
@@ -517,6 +521,11 @@ class HighwayAnalyzer(AnalyzerBase):
                                     current_highway: str,
                                     route_number: str, network: str, current_role: str,
                                     error_information: list, previous_current: PreviousCurrentHighway):
+        """
+        If the entire relation is a motorway and it didn't split all along (so there aren't two parallel parts), then we should mark it as wrong
+        Important, it should have forward role, otherwise this counts as an expressway with 2x1 lanes. Then it's not wrong
+        :return: error_information, which contains all the errors happened with the relation
+        """
         if motorway_split_way is False and index_of_current_way == length_of_ways_to_search and (
                 (current_highway == "motorway" or current_highway == "trunk") or (
                 route_number.startswith("M") and network.startswith("HU"))) and current_role == "forward":
@@ -524,10 +533,14 @@ class HighwayAnalyzer(AnalyzerBase):
         return error_information
 
     def determine_role_errors_at_the_beginning_highway(self, index_of_current_way: int, current_role: str,
-                                                       current_oneway: bool, current_highway: str,
+                                                       current_oneway: bool,
                                                        current_roundabout: bool,
                                                        error_information: ErrorHighway,
                                                        previous_current: PreviousCurrentHighway):
+        """
+        If the first road piece doesn't have a role, and is oneway / it's an open roundabout piece, then we should mark it as wrong
+        :return: error_information, which contains all the errors happened with the relation
+        """
         if index_of_current_way == 0:
             if (current_role == "" and ((current_oneway or (
                     current_roundabout and previous_current.first_node_current != previous_current.last_node_current))
