@@ -1,26 +1,19 @@
 #!/usr/bin/python3
-import sys
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-
-from previous_current import PreviousCurrentMultipolygon
-from error_hwy import ErrorMultipolygon
-from analyzer_base import AnalyzerBase
-import way_queries
+from src.lib.model.previous_current import PreviousCurrentMultipolygon
+from src.lib.model.error_hwy import ErrorMultipolygon
+from src.lib.analyzer.analyzer_base import AnalyzerBase
+from src.lib import way_queries
 
 
 class MultipolygonAnalyzer(AnalyzerBase):
-    def checking(self, relation_info: dict, error_information: list):
+    def checking(self, relation_info: dict):
         """
 
         :param relation_info: The relation's information regarding order of ways, attributes of ways, nodes and other important things
         :param error_information: It contains all the errors that the analyzer detects
         :return: error_information, number_of_correct_ways
         """
+        error_information = []
         ways_to_search = relation_info["ways_to_search"]
         index = 0
         count_members_that_arent_ways = 0

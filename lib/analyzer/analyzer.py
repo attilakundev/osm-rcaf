@@ -1,24 +1,15 @@
 #!/usr/bin/python3
-import sys
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-
-from osm_data_parser import OSMDataParser
-from railway_analyzer import RailwayAnalyzer
-from highway_analyzer import HighwayAnalyzer
-from multipolygon_analyzer import MultipolygonAnalyzer
-import way_queries
-from previous_current import PreviousCurrentHighway
-from error_hwy import ErrorHighway
+from src.lib.osm_data_parser import OSMDataParser
+from src.lib.analyzer.railway_analyzer import RailwayAnalyzer
+from src.lib.analyzer.highway_analyzer import HighwayAnalyzer
+from src.lib.analyzer.multipolygon_analyzer import MultipolygonAnalyzer
+from src.lib import way_queries
+from src.lib.model.previous_current import PreviousCurrentHighway
+from src.lib.model.error_hwy import ErrorHighway
 
 railway_analyzer = RailwayAnalyzer()
 highway_analyzer = HighwayAnalyzer()
 multipolygon_analyzer = MultipolygonAnalyzer()
-
-
 class Analyzer:
     def get_relation_info(self, loaded_relation_file, relation_id: str = ""):
         """This facilitates the retrieval of the relation's information. Relation ID is optional,
@@ -36,18 +27,18 @@ class Analyzer:
          assumes you want the first relation to be analyzed.
         :return: error_information, correct_ways_count
         """
-        error_information = []
         relation_info = self.get_relation_info(loaded_relation_file, relation_id)
+        error_information = []
         # so it'll take whatever relation it is except if it's public transport because that can't be analyzed.
         if way_queries.get_relation_type(relation_info) != "public_transport":
 
             if "route" in relation_info and (
                     relation_info.get("route") == "railway" or relation_info.get("route") == "train"):
-                return railway_analyzer.checking(relation_info, error_information)
+                return railway_analyzer.checking(relation_info)
             elif "route" in relation_info:
-                return highway_analyzer.checking(relation_info, error_information)
+                return highway_analyzer.checking(relation_info)
             else:
-                return multipolygon_analyzer.checking(relation_info, error_information)
+                return multipolygon_analyzer.checking(relation_info)
         else:
             error_information.append(ErrorHighway(PreviousCurrentHighway(), "Not supported"))
             return error_information, 0

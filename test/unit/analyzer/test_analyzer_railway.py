@@ -52,9 +52,8 @@ def test_check_rails_if_the_ways_are_not_connected():
 
 def test_railway_checking():
     # Arrange - it's the relation_info_appended relation_info_result_appended
-    error_information = []
     error_information, correct_ways_count = railway_analyzer.checking(
-        analyzer_dicts.relation_info_railway_result_appended, error_information)
+        analyzer_dicts.relation_info_railway_result_appended)
     assert len(error_information) == 1
     assert correct_ways_count == 2
 

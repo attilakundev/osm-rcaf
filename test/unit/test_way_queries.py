@@ -168,9 +168,9 @@ def test_determine_if_country_has_MUTCD_or_similar():
 def test_get_relation_member_type():
     data = {}
     result = way_queries.get_relation_member_type(data)
-    assert result is ""
+    assert result == ""
 
 def test_get_index_of_way():
     array = [{"@ref": "0"}]
     result = way_queries.get_index_of_way(array, "-1")
-    assert result is -1
+    assert result == -1

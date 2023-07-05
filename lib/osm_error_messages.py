@@ -19,7 +19,7 @@ class OSMErrorMessages:
         remote_relation = ("https://osm.org/way/{}").format(way_id) if not source else way_id
         return remote_relation
 
-    def remote_last_forward_way_before_backward_direction(self, array, source):
+    def remote_last_forward_way_ref_nodes_before_backward(self, array, source):
         if not source and len(array) > 0:
             return ("https://osm.org/way/{}").format(array[0])
         elif len(array) >0:
@@ -90,8 +90,8 @@ class OSMErrorMessages:
                     if error["type"] == "Route":
 
                         previous_ref = self.remote_way(error["prev_curr"]["previous_ref"], source)
-                        last_forward_way_before_backward_direction = self.remote_last_forward_way_before_backward_direction(
-                            error["prev_curr"]["last_forward_way_before_backward_direction"], source)
+                        last_forward_way_ref_nodes_before_backward = self.remote_last_forward_way_ref_nodes_before_backward(
+                            error["prev_curr"]["last_forward_way_ref_nodes_before_backward"], source)
                         currently_checked_ref = error["prev_curr"]["currently_checked_ref"]
                         current_ref = self.remote_way(error["prev_curr"]["current_ref"], source)
                         nodes_and_other_information = self.previous_current_nodes_hwy(error["prev_curr"],
@@ -104,10 +104,10 @@ class OSMErrorMessages:
                                                 "this happened at the beginning of the "
                                                 "relation, since it started with a 2x2 seperated highway. "
                                                 "The ID of last way before going to backward direction: "
-                                                "{last_forward_way_before_backward_direction} \n{nodes}"
+                                                "{last_forward_way_ref_nodes_before_backward} \n{nodes}"
                                                 .format(currently_checked_ref=currently_checked_ref,
                                                         current_ref=current_ref,
-                                                        last_forward_way_before_backward_direction=last_forward_way_before_backward_direction,
+                                                        last_forward_way_ref_nodes_before_backward=last_forward_way_ref_nodes_before_backward,
                                                         nodes=nodes_and_other_information))
 
                             case "Split roundabout":

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
+from src.lib.model.previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
 
 
 @dataclass

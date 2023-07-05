@@ -1,3 +1,4 @@
+import logging
 import multiprocessing
 import sys
 import os
@@ -50,6 +51,9 @@ def get_result_of_one_relation(relation_id, outdir, source, verbose):
                 else:
                     file.write(f"[ERROR] {relation_id} has problems\n")
                 file.close()
+        else:
+            for message in error_messages:
+                print(message)
     else:
         error_messages = []
         print(f"Data unavailable for {relation_id}")

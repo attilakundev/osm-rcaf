@@ -174,6 +174,7 @@ relation_info_highway_to_test_backward_role = {
 relation_info_highway_to_test_if_roundabout = {
     'ways_to_search': [
         {
+            '@ref': '-1',
             '@role': '',
             'nd': [
                 {'@ref': '-1'},
@@ -185,6 +186,7 @@ relation_info_highway_to_test_if_roundabout = {
             ]
         },
         {
+            '@ref': '-2',
             '@role': '',
             'nd': [
                 {'@ref': '-3'},
@@ -1169,10 +1171,6 @@ relation_info_one_piece_roundabout_gap = {
                 {
                     '@k': 'junction',
                     '@v': 'roundabout'
-                },
-                {
-                    '@k': 'oneway',
-                    '@v': 'yes'
                 },
             ]
         },

@@ -3,8 +3,13 @@ from dataclasses import dataclass, field
 
 @dataclass
 class PreviousCurrentHighway:
+
+    """
+    This class contains everything that a relation's item would contain or during the lifecycle of checking
+    """
     currently_checked_ref: str = ""
-    last_forward_way_before_backward_direction: list = field(default_factory=list)
+    first_node_of_first_forward_way_in_the_series: str = "0"
+    last_node_of_first_forward_way_in_the_series: str = "0"
 
     first_node_previous: str = ""
     first_node_current: str = ""
@@ -12,16 +17,35 @@ class PreviousCurrentHighway:
     last_node_current: str = ""
 
     previous_role: str = ""
-    previous_roundabout: bool = ""
-    previous_oneway: bool = ""
+    previous_roundabout: bool = False
+    previous_oneway: bool = False
     previous_ref: str = ""
     previous_highway: str = ""
 
     current_role: str = ""
-    current_roundabout: bool = ""
-    current_oneway: bool = ""
+    current_roundabout: bool = False
+    current_oneway: bool = False
     current_ref: str = ""
     current_highway: str = ""
+
+    route_number: str = ""
+    network: str = ""
+    role_of_first_way: str = ""
+
+    motorway_split_way: bool = False
+    has_directional_roles: bool = False
+    is_mutcd_country: bool = False
+
+    count_of_forward_role_way_series: int = 0
+    index_of_current_way: int = 0
+    the_amount_to_be_decreased_from_length_of_error_information: int = 0
+    pieces_of_roundabout: int = 0
+
+    last_forward_way_ref_nodes_before_backward: list = field(default_factory=list)
+    previous_nodes: list = field(default_factory=list)
+    current_nodes: list = field(default_factory=list)
+    last_roundabout_nodes: list = field(default_factory=list)
+    roundabout_ways: list = field(default_factory=list)
 
 
 @dataclass

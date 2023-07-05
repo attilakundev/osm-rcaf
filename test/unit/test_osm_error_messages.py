@@ -82,8 +82,8 @@ def test_remote_last_forward_way_before_backward_direction():
     source_empty = ""
     source_file = "file.xml"
     # Act
-    result_empty = error_messages.remote_last_forward_way_before_backward_direction(array, source_empty)
-    result_content = error_messages.remote_last_forward_way_before_backward_direction(array, source_file)
+    result_empty = error_messages.remote_last_forward_way_ref_nodes_before_backward(array, source_empty)
+    result_content = error_messages.remote_last_forward_way_ref_nodes_before_backward(array, source_file)
 
     assert result_empty == "https://osm.org/way/-1"
     assert result_content == array[0]
@@ -168,15 +168,15 @@ def test_return_messages_verbose_all_errors_hwy():
     assert result_all_hwy[2] == (f"\n[ERROR] Relation with route number {prev_curr_hwy.currently_checked_ref} "
                                  f"has gap at way: https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  f"{nodes_with_link}")
-    remote_last_forward_way_before_backward_direction = error_messages.remote_last_forward_way_before_backward_direction(
-        prev_curr_hwy.last_forward_way_before_backward_direction, source)
+    remote_last_forward_way_ref_nodes_before_backward = error_messages.remote_last_forward_way_ref_nodes_before_backward(
+        prev_curr_hwy.last_forward_way_ref_nodes_before_backward, source)
     assert result_all_hwy[3] == (f"\n[ERROR] Relation with route number {prev_curr_hwy.currently_checked_ref}"
                                  f" has gap at way: https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  "This case occured because there is a gap,"
                                  "this happened at the beginning of the "
                                  "relation, since it started with a 2x2 seperated highway. "
                                  "The ID of last way before going to backward direction: "
-                                 f"{remote_last_forward_way_before_backward_direction} \n{nodes_with_link}")
+                                 f"{remote_last_forward_way_ref_nodes_before_backward} \n{nodes_with_link}")
     assert result_all_hwy[4] == (f"\nINFO: There is a roundabout split up to multiple ways, "
                                  f"last known way is https://osm.org/way/{prev_curr_hwy.current_ref} \n{nodes_with_link}")
     assert result_all_hwy[5] == ("\n[ERROR] Relation with route number "

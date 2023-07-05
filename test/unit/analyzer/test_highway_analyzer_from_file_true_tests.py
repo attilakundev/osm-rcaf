@@ -5,12 +5,8 @@ from pathlib import Path
 import xmltodict
 
 project_path = Path(__file__).parents[3].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-sys.path.append(f"{project_path}/test/files")
-from osm_data_parser import OSMDataParser
-from analyzer import Analyzer
+from src.lib.osm_data_parser import OSMDataParser
+from src.lib.analyzer.analyzer import Analyzer
 
 analyzer = Analyzer()
 data_parser = OSMDataParser()

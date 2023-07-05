@@ -1,22 +1,17 @@
 #!/usr/bin/python3
 import sys
 from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-
-import way_queries
-from previous_current import PreviousCurrentHighway
-from analyzer_base import AnalyzerBase
+from src.lib import way_queries
+from src.lib.model.previous_current import PreviousCurrentHighway
+from src.lib.analyzer.analyzer_base import AnalyzerBase
 
 class RailwayAnalyzer(AnalyzerBase):
-    def checking(self, relation_info, error_information):
+    def checking(self, relation_info):
         first_node_previous = ""
         last_node_previous = ""
         previous_ref = ""
         correct_ways_count = 0
+        error_information = []
         for elem_val in relation_info["ways_to_search"]:
             first_node_current = way_queries.get_start_node(elem_val)
             last_node_current = way_queries.get_end_node(elem_val)
