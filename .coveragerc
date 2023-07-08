@@ -2,9 +2,10 @@
 [run]
 branch = True
 omit =
-    test/*
-    webserver.py
-    analyzer_fixer.py
+    src/test/*.py
+    src/test/*/*.py
+    src/test/*/*/*.py
+    src/analyzer_fixer.py
 
 [report]
 exclude_lines =

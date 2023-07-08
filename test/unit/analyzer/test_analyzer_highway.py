@@ -260,7 +260,7 @@ def test_check_roundabout_gaps_only_one_forward_way():
     # Setup
     index_of_current_way = 2
     error_information = []
-    ways = analyzer_dicts.relation_info_roundabout_only_one_forward_roled["ways_to_search"]
+    ways = analyzer_dicts.relation_info_roundabout_only_one_forward_role["ways_to_search"]
     prev_curr = PreviousCurrentHighway(index_of_current_way=index_of_current_way,
                                        previous_roundabout=way_queries.is_roundabout(ways[index_of_current_way - 1]),
                                        current_roundabout=way_queries.is_roundabout(ways[index_of_current_way]),

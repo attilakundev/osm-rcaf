@@ -336,7 +336,7 @@ relation_info_no_gap_in_first_forward_series = {
     ],
 }
 
-relation_info_roundabout_only_one_forward_roled = {
+relation_info_roundabout_only_one_forward_role = {
     'ways_to_search': [
         {
             '@type': 'way',
@@ -694,7 +694,9 @@ relation_info_no_gap_in_two_by_two_splitting_highway = {
 }
 
 relation_info_motorway = {
-    # What you need to know about highways, that whenever one side ends, the other one starts parallelly from the starting point of the other.
+    # What you need to know about highways,
+    # that whenever one side ends, the other one starts parallel
+    # from the starting point of the other.
     'ways_to_search': [
         {
             '@type': 'way',
@@ -816,7 +818,9 @@ relation_info_motorway = {
 }
 
 relation_info_motorway_not_split = {
-    # What you need to know about highways, that whenever one side ends, the other one starts parallelly from the starting point of the other.
+    # What you need to know about highways,
+    # that whenever one side ends, the other one starts parallel
+    # from the starting point of the other.
     'ways_to_search': [
         {
             '@type': 'way',

@@ -211,12 +211,11 @@ class HighwayAnalyzer(AnalyzerBase):
             previous_current.pieces_of_roundabout = 0
         return previous_current, error_information
 
-    # This is a massive method. You should test it only whenever the methods in it had been thoroughly tested.
-    def is_roundabout_entry_way_in_wrong_order(self, prev_curr: PreviousCurrentHighway, error_information: list,
-                                               ways_to_search: list):
+    def __is_roundabout_entry_way_in_wrong_order__(self, prev_curr: PreviousCurrentHighway, error_information: list,
+                                                   ways_to_search: list):
         if 0 < prev_curr.index_of_current_way < len(
                 ways_to_search) - 2 and prev_curr.last_node_previous == prev_curr.last_node_current and way_queries.is_roundabout(
-            ways_to_search[prev_curr.index_of_current_way + 2]):
+                ways_to_search[prev_curr.index_of_current_way + 2]):
             error_information.append(
                 ErrorHighway(prev_curr, "Wrong order of roundabout entries"))
             return True
@@ -234,13 +233,13 @@ class HighwayAnalyzer(AnalyzerBase):
         The returned data may have the same value as before, it depends on the evaluation of the currently checked
         way."""
         # Check if the roundabout's entryway is in wrong order.
-        if self.is_roundabout_entry_way_in_wrong_order(prev_curr, error_information, ways_to_search):
+        if self.__is_roundabout_entry_way_in_wrong_order__(prev_curr, error_information, ways_to_search):
             return prev_curr, error_information
         if prev_curr.index_of_current_way > 0 and (
                 (prev_curr.first_node_previous == prev_curr.first_node_current
                  or prev_curr.first_node_previous == prev_curr.last_node_current
-                or prev_curr.last_node_previous == prev_curr.first_node_current
-                or prev_curr.last_node_previous == prev_curr.last_node_current)
+                 or prev_curr.last_node_previous == prev_curr.first_node_current
+                 or prev_curr.last_node_previous == prev_curr.last_node_current)
                 or (prev_curr.previous_roundabout and not prev_curr.current_roundabout and
                     way_queries.roundabout_checker(prev_curr.current_nodes, prev_curr.previous_nodes))):
             prev_curr, error_information = self.check_role_issues_in_continuous_way(prev_curr, error_information)
@@ -256,9 +255,11 @@ class HighwayAnalyzer(AnalyzerBase):
                                             and prev_curr.previous_oneway and not prev_curr.previous_roundabout):
                 error_information.append(
                     ErrorHighway(prev_curr, "Roundabout gap"))
-                # the not (previous_role == "forward" and previous_oneway and not previous_roundabout) is needed, since otherwise relations 23099 (3-as főút/ route nr. 3)
-                # and relation 38124 (5-ös főút /route nr. 5) would detect an unnecessary gap, because they start from a common point and split apart but then merge back.
-            # this case is not covered yet when good_roundabout is true..
+                # the not (previous_role == "forward" and previous_oneway and not previous_roundabout)
+                # is needed, since otherwise relations 23099 (3-as főút/ route nr. 3)
+                # and relation 38124 (5-ös főút /route nr. 5) would detect an unnecessary gap,
+                # because they start from a common point and split apart but then merge back.
+            # this case is not covered yet when good_roundabout is true...
         # Special case, when there are a bunch of oneway roads connecting in weird order in the relation (2x2 lane road
         # to 2x2 separate highway, opposite of the starting 2x2 separate to 2x2 merged)
         elif prev_curr.index_of_current_way > 0 \
@@ -281,7 +282,7 @@ class HighwayAnalyzer(AnalyzerBase):
             # This way is a normal way, but then we need to check its pattern
             # Since if it's oneway, it's not correct (there are chances though that it's alright, ex. it starts with a
             # oneway road due to road works but in this case NO)
-            return self.condition_forward_no_oneway_in_non_forward_series(previous_current, error_information)
+            return self.__condition_forward_no_oneway_in_non_forward_series__(previous_current, error_information)
         elif ((previous_current.current_role == "forward" or (
                 previous_current.is_mutcd_country and
                 way_queries.check_if_directional(previous_current.current_role)))) \
@@ -301,10 +302,10 @@ class HighwayAnalyzer(AnalyzerBase):
                 ErrorHighway(dataclasses.replace(previous_current), "Wrong role setup"))
         return previous_current, error_information
 
-    def condition_forward_no_oneway_in_non_forward_series(self, previous_current: PreviousCurrentHighway,
-                                                          error_information: list):
+    def __condition_forward_no_oneway_in_non_forward_series__(self, previous_current: PreviousCurrentHighway,
+                                                              error_information: list):
         """Case: NNFN - this is a bad case because in the case of 2x1 lane motorways there's no ability to go backwards
-        (or can be FFFN etc - since you can't traverse backwards then in the case of 2x1 - or if the forward series
+        (or can be FFFN etc. - since you can't traverse backwards then in the case of 2x1 - or if the forward series
         consists of only 1 members
          - worst case! then it's an error for sure, no ability to return, this is for all types of roads)
 
@@ -316,8 +317,8 @@ class HighwayAnalyzer(AnalyzerBase):
                 and ((previous_current.previous_role == "forward" or
                       (previous_current.is_mutcd_country and
                        way_queries.check_if_directional(previous_current.previous_role))) and (
-                previous_current.previous_highway == "motorway"
-                or previous_current.count_of_forward_role_way_series == 1)
+                             previous_current.previous_highway == "motorway"
+                             or previous_current.count_of_forward_role_way_series == 1)
                      and not previous_current.previous_oneway
                      and (len(previous_current.last_forward_way_ref_nodes_before_backward) == 0 or
                           (len(previous_current.last_forward_way_ref_nodes_before_backward) > 1 and not
@@ -374,7 +375,8 @@ class HighwayAnalyzer(AnalyzerBase):
     def check_if_motorway_not_split(self, prev_curr: PreviousCurrentHighway, length_of_ways_to_search: int,
                                     error_information: list):
         """
-        If the entire relation is a motorway and it didn't split all along (so there aren't two parallel parts), then we should mark it as wrong
+        If the entire relation is a motorway and it didn't split all along (so there aren't two parallel parts),
+         then we should mark it as wrong
         Important, it should have forward role, otherwise this counts as an expressway with 2x1 lanes. Then it's not wrong
         :return: error_information, which contains all the errors happened with the relation
         """
@@ -388,7 +390,8 @@ class HighwayAnalyzer(AnalyzerBase):
     def determine_role_errors_at_the_beginning_highway(self, prev_curr: PreviousCurrentHighway,
                                                        error_information: list):
         """
-        If the first road piece doesn't have a role, and is oneway / it's an open roundabout piece, then we should mark it as wrong
+        If the first road piece doesn't have a role, and is oneway / it's an open roundabout piece, then we should mark
+        it as wrong
         :return: error_information, which contains all the errors happened with the relation
         """
         if prev_curr.index_of_current_way == 0:
