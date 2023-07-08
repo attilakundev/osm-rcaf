@@ -1,13 +1,7 @@
 #!/usr/bin/python3
-import sys
 
-from pathlib import Path
-
-project_path = Path(__file__).parents[3].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib/model")
-from previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
-from error_hwy import ErrorHighway, ErrorMultipolygon
+from src.lib.model.previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
+from src.lib.model.error_hwy import ErrorHighway, ErrorMultipolygon
 
 
 def test_previous_curr_hwy():
@@ -19,7 +13,7 @@ def test_previous_curr_hwy():
     assert error_hwy.prev_curr.currently_checked_ref == "33"
     assert error_hwy.prev_curr.previous_role == "forward"
     assert error_hwy.prev_curr.first_node_previous == ""
-    assert error_hwy.prev_curr.previous_roundabout == True
+    assert error_hwy.prev_curr.previous_roundabout is True
     assert error_hwy.error_type == "asdf"
 
 

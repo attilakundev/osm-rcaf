@@ -70,16 +70,19 @@ def get_highway_ref(data):
         for key_value_pair in data["tag"]:
             if key_value_pair["@k"] == "ref":
                 return key_value_pair["@v"]
-    return ""  # if empty, it means that the ref is not set, which is a problem. We need to put that from the way of the relation
+    return ""
+
 
 def get_index_of_way(array, value):
     index = 0
     while index < len(array):
         if "@ref" in array[index] and array[index]["@ref"] == value:
             return index
-        index+=1
+        index += 1
     return -1
-def put_ref_from_relation_to_highway_way(data):  # this requires enumerate when for looping
+
+
+def put_ref_from_relation_to_highway_way(data):
     ref = get_ref_of_the_route(data)
     for index, element in enumerate(data["ways"]):
         if element["@type"] == "way":
@@ -102,10 +105,13 @@ def get_relation_type(data):
         return data["type"]
     return ""
 
+
 def get_relation_member_type(data):
     if "@type" in data:
         return data["@type"]
     return ""
+
+
 def get_way_ref(data):
     """:returns: The id of the way."""
     if "@ref" in data:
@@ -135,6 +141,7 @@ def check_connectivity(first_node_way1, last_node_way1, first_node_way2, last_no
             first_node_way1 == first_node_way2 or last_node_way1 == last_node_way2 or
             first_node_way1 == last_node_way1)
 
+
 def check_if_directional(way_role):
     return way_role == "north" or way_role == "south" or way_role == "west" or way_role == "east"
 
@@ -145,24 +152,27 @@ def get_network(data):
     return ""
 
 
-# MUTCD stands for Manual on Uniform Traffic Control Devices (it's in the USA), and in this system the route signs are usually
-# signed with cardinal directions like: US 60 EAST (https://www.aaroads.com/guides/us-060-az/). Canada, New Zealand and Australia
+# MUTCD stands for Manual on Uniform Traffic Control Devices (it's in the USA), and in this system
+# the route signs are usually signed with cardinal directions like: US 60 EAST
+# (https://www.aaroads.com/guides/us-060-az/). Canada, New Zealand and Australia
 # follow similar routing system.
 def determine_if_country_has_MUTCD_or_similar(data):
     network = get_network(data)
     return True if ("US" or "CA" or "AU" or "NZ") in network else False
 
+
 def get_coordinates_of_relation(data) -> list[list[list[str]]]:
     nodes_of_relation_per_way = []
     for way in data["ways_to_search"]:
         nodes_of_relation_per_way.append([node["@ref"] for node in way["nd"]])
-    #now get the coordinates of the nodes.
+    # now get the coordinates of the nodes.
     coordinates = []
     for way in nodes_of_relation_per_way:
-        coordinates.append(get_coordinates_of_a_way(way,data))
+        coordinates.append(get_coordinates_of_a_way(way, data))
     return coordinates
 
-def get_coordinates_of_a_way(way,data):
+
+def get_coordinates_of_a_way(way, data):
     way_coordinates = []
     for node_to_search in way:
         for node in data["nodes"]:

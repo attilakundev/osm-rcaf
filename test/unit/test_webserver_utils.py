@@ -1,13 +1,4 @@
-import sys
-
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/test/files")
-
-import webserver_utils
+from src.lib import webserver_utils
 
 
 def test_split_messages_between_newlines():
@@ -19,7 +10,8 @@ def test_split_messages_between_newlines():
     # Assert
     assert result[0] == [[0, "This "], [1, "message "], [2, "has "], [3, "line breaks. "]]
     assert result[1] == [[0, "This "], [1, "has some "], [2, "too. "]]
-    assert result[2] == [[0, "Here is a link: "], [1, "<a href=\"https://www.google.com\">https://www.google.com</a> "]]
+    assert result[2] == [[0, "Here is a link: "],
+                         [1, "<a href=\"https://www.google.com\">https://www.google.com</a> "]]
 
 
 def test_find_link_in_the_line():
@@ -31,4 +23,5 @@ def test_find_link_in_the_line():
     result_link = webserver_utils.find_link_in_the_line(list_with_url)
     # Assert
     assert result_no_link == ["This ", "message ",  "has ", "line breaks. "]
-    assert result_link == ["Here is a link: ", '<a href="https://www.google.com">https://www.google.com</a> ']
+    assert result_link == ["Here is a link: ",
+                           '<a href="https://www.google.com">https://www.google.com</a> ']

@@ -1,17 +1,8 @@
 #!/usr/bin/python3
-import sys
 from abc import ABC
-from pathlib import Path
 
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-
-from railway_fixer import RailwayFixer
-from highway_fixer import HighwayFixer
-from multipolygon_fixer import MultipolygonFixer
-from fixer_base import FixerBase
+from src.lib.fixer.highway_fixer import HighwayFixer
+from src.lib.fixer.fixer_base import FixerBase
 
 
 class RelationFixer(FixerBase, ABC):

@@ -1,17 +1,10 @@
 #!/usr/bin/python3
-import sys
-import xmltodict
 from pathlib import Path
+from src.lib.fixer.highway_fixer import HighwayFixer
+from src.lib.fixer import fixer_utils
+from src.lib import way_queries
 
 project_path = Path(__file__).parents[3].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/fixer")
-sys.path.append(f"{project_path}/lib/model")
-sys.path.append(f"{project_path}/test/files")
-from highway_fixer import HighwayFixer
-import fixer_utils
-import way_queries
 
 highway_fixer = HighwayFixer()
 
@@ -295,28 +288,35 @@ def test_route_closed_double_roundabout_divided_2_by_2_ways_forward_role_wrong_o
     relation_info = fixer_utils.get_relation_info(file_path)
     corrected_ways_to_search = highway_fixer.fixing(relation_info)
     refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
-    assert refs_of_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10", "-11", "-12"]
-    assert list(map(lambda x: x["@ref"], corrected_ways_to_search)) == refs_of_members # this has to be ensured, otherwise we get error
+    assert refs_of_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10", "-11",
+                               "-12"]
+    assert list(map(lambda x: x["@ref"],
+                    corrected_ways_to_search)) == refs_of_members  # this has to be ensured, otherwise we get error
+
 
 def test_route_open_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order():
     file_path = f"{project_path}/test/files/files_for_fixer/route_open_double_roundabout_divided_2_by_2_ways_forward_role_wrong_order.xml"
     relation_info = fixer_utils.get_relation_info(file_path)
     corrected_ways_to_search = highway_fixer.fixing(relation_info)
     refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
-    assert refs_of_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-15", "-14", "-13", "-12", "-11","-10","-9", "-16"]
-    assert list(map(lambda x: x["@ref"], corrected_ways_to_search)) == refs_of_members # this has to be ensured, otherwise we get error
+    assert refs_of_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-15", "-14", "-13",
+                               "-12", "-11", "-10", "-9", "-16"]
+    assert list(map(lambda x: x["@ref"],
+                    corrected_ways_to_search)) == refs_of_members  # this has to be ensured, otherwise we get error
+
 
 def test_route_split_wrong_order_backward_gap():
     file_path = f"{project_path}/test/files/files_for_fixer/route_split_wrong_order_backward_gap.xml"
     relation_info = fixer_utils.get_relation_info(file_path)
-    corrected_ways_to_search = highway_fixer.fixing(relation_info, "-1",False)
+    corrected_ways_to_search = highway_fixer.fixing(relation_info, "-1", False)
     refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
     assert refs_of_members == ["-1", "-4", "-6", "-5", "-2", "-3"]
+
 
 def test_route_closed_roundabout_entry_and_exit_divided_multiple_members():
     # The order of the ways are correct in this case, but I want to check if it can recreate it in the very same order.
     file_path = f"{project_path}/test/files/files_for_fixer/route_closed_roundabout_entry_and_exit_divided_multiple_members.xml"
     relation_info = fixer_utils.get_relation_info(file_path)
-    corrected_ways_to_search = highway_fixer.fixing(relation_info, "-7",False)
+    corrected_ways_to_search = highway_fixer.fixing(relation_info, "-7", False)
     refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
-    assert refs_of_members == ["-7", "-5", "-10", "-6", "-9", "-1","-3","-8","-2","-4"]
+    assert refs_of_members == ["-7", "-5", "-10", "-6", "-9", "-1", "-3", "-8", "-2", "-4"]

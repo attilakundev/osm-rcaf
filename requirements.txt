@@ -2,6 +2,7 @@ fastapi==0.100.0
 httpx==0.24.1
 itsdangerous==2.1.2
 Jinja2==3.1.2
+mock==5.0.2
 python-multipart==0.0.6
 pytest==7.4.0
 pytest-cov==4.1.0

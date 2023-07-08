@@ -13,10 +13,11 @@ analyzer = Analyzer()
 def test_check_rails_if_the_ways_are_connected():
     # Arrange
     ways_to_search = analyzer_dicts.relation_info_railway_result_appended["ways_to_search"]
-    prev_curr = PreviousCurrentHighway(first_node_previous=way_queries.get_start_node(ways_to_search[0]),
-                                       last_node_previous=way_queries.get_end_node(ways_to_search[0]),
-                                       first_node_current=way_queries.get_start_node(ways_to_search[1]),
-                                       last_node_current=way_queries.get_end_node(ways_to_search[1]))
+    prev_curr = PreviousCurrentHighway(
+        first_node_previous=way_queries.get_start_node(ways_to_search[0]),
+        last_node_previous=way_queries.get_end_node(ways_to_search[0]),
+        first_node_current=way_queries.get_start_node(ways_to_search[1]),
+        last_node_current=way_queries.get_end_node(ways_to_search[1]))
     is_error = railway_analyzer.check_rails_if_the_ways_are_not_connected(prev_curr)
     assert is_error is False
 
@@ -24,10 +25,11 @@ def test_check_rails_if_the_ways_are_connected():
 def test_check_rails_if_the_ways_are_not_connected():
     # Arrange
     ways_to_search = analyzer_dicts.relation_info_railway_result_appended["ways_to_search"]
-    prev_curr = PreviousCurrentHighway(first_node_previous=way_queries.get_start_node(ways_to_search[1]),
-                                       last_node_previous=way_queries.get_end_node(ways_to_search[1]),
-                                       first_node_current=way_queries.get_start_node(ways_to_search[2]),
-                                       last_node_current=way_queries.get_end_node(ways_to_search[2]))
+    prev_curr = PreviousCurrentHighway(
+        first_node_previous=way_queries.get_start_node(ways_to_search[1]),
+        last_node_previous=way_queries.get_end_node(ways_to_search[1]),
+        first_node_current=way_queries.get_start_node(ways_to_search[2]),
+        last_node_current=way_queries.get_end_node(ways_to_search[2]))
     is_error = railway_analyzer.check_rails_if_the_ways_are_not_connected(prev_curr)
     assert is_error is True
 

@@ -1,12 +1,5 @@
 #!/usr/bin/python3
-import sys
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-from fixer_base import FixerBase
+from src.lib.fixer.fixer_base import FixerBase
 
 
 class MultipolygonFixer(FixerBase):

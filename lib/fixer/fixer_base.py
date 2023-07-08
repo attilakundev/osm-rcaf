@@ -1,12 +1,5 @@
-import sys
 from abc import ABC, abstractmethod
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-from osm_data_parser import OSMDataParser
-import way_queries
+from src.lib import way_queries
 
 
 class FixerBase(ABC):
@@ -15,10 +8,15 @@ class FixerBase(ABC):
     def fixing(self, relation_info: dict, first_way: str = "", is_from_api: bool = True):
         pass
 
-    def detect_differences_in_original_and_repaired_relation_and_return_relation_dictionary_accordingly(self,
-                                                                                                        relation_data: dict,
-                                                                                                        relation_info: dict,
-                                                                                                        corrected_ways_to_search: dict):
+    def detect_differences_in_original_and_repaired_relation(self,
+                                                             relation_data: dict,
+                                                             relation_info: dict,
+                                                             corrected_ways_to_search: dict):
+
+        """
+        Detects if a relation's members or ways were changed and put the action modifier to it,
+        so JOSM can interpret as modified data.
+        """
         original_ways_to_search = relation_info["ways_to_search"]
         # putting action=modify where change is detected
         # check the relation based on these: the size of the corrected ways to search,the tags of that and the order of the ways.
@@ -28,9 +26,13 @@ class FixerBase(ABC):
         for original_way in original_ways_to_search:
             for index, corrected_way in enumerate(corrected_ways_to_search):
                 # check if the tags aren't the same or nodes aren't the same or if it's not in the original array
-                if way_queries.get_way_ref(original_way) == way_queries.get_way_ref(corrected_way) and (original_way[
-                    "tag"] != corrected_way["tag"] or way_queries.get_nodes(original_way) != way_queries.get_nodes(
-                        corrected_way) or way_queries.get_way_ref(corrected_way) not in original_way_refs):
+                if way_queries.get_way_ref(original_way) == way_queries.get_way_ref(
+                        corrected_way) and (original_way[
+                                                "tag"] != corrected_way[
+                                                "tag"] or way_queries.get_nodes(
+                    original_way) != way_queries.get_nodes(
+                    corrected_way) or way_queries.get_way_ref(
+                    corrected_way) not in original_way_refs):
                     corrected_ways_to_search[index]["attributes"]["@action"] = "modify"
         # check the order and roles in the relation
         original_roles = list(map(lambda x: x["@role"], original_ways_to_search))
@@ -47,7 +49,7 @@ class FixerBase(ABC):
         }, corrected_ways_to_search))
         relation_data["osm"]["relation"]["member"] = relation_members
         # now put the edited ways back to the original data extraction:
-        #make the format of the original ways array:
+        # make the format of the original ways array:
         if len(original_ways_to_search) == 1 and len(corrected_ways_to_search) == 1:
             ways = {}
             for key, value in corrected_ways_to_search[0]["attributes"].items():
@@ -63,7 +65,7 @@ class FixerBase(ABC):
                 way["nd"] = corrected_way["nd"]
                 way["tag"] = corrected_way["tag"]
                 ways.append(way)
-        #now find the existing itens in the original ways array, and merge the results:
+        # now find the existing itens in the original ways array, and merge the results:
         if type(relation_data["osm"]["way"]) is list:
             for index, original_way in enumerate(relation_data["osm"]["way"]):
                 for way in ways:

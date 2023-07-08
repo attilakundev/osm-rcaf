@@ -1,12 +1,5 @@
-import sys
-from pathlib import Path
-
 import xmltodict
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/analyzer")
-from analyzer import Analyzer
+from src.lib.analyzer.analyzer import Analyzer
 
 analyzer = Analyzer()
 def add_tag_to_item(key, value, array: dict):

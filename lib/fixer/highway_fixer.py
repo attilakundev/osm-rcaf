@@ -1,16 +1,10 @@
 #!/usr/bin/python3
-import sys
-from pathlib import Path
 import copy
 
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/model")
-from fixer_base import FixerBase
-import fixer_utils
-from osm_data_parser import OSMDataParser
-import way_queries
+from src.lib.fixer.fixer_base import FixerBase
+from src.lib.fixer import fixer_utils
+from src.lib.osm_data_parser import OSMDataParser, __copy_attributes__
+from src.lib import way_queries
 
 osm_data_parser = OSMDataParser()
 
@@ -854,7 +848,7 @@ class HighwayFixer(FixerBase):
                 or (last_connected_is_roundabout or current_roundabout) and way_queries.roundabout_checker(
                         way_queries.get_nodes(corrected_ways_to_search[-1]), way)) and way_ref not in map(
                 lambda x: x["@ref"], ways_to_search):
-                attributes_of_the_way = osm_data_parser.__copy_attributes__(way)
+                attributes_of_the_way = __copy_attributes__(way)
                 way_to_be_added = {"@type": "way", "@ref": way_ref, "@role": "", "attributes": attributes_of_the_way,
                                    "nd": way["nd"], "tag": way_tags}
                 ways_to_search.append(way_to_be_added)

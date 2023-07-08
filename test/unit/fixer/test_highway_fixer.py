@@ -1,17 +1,11 @@
 #!/usr/bin/python3
-import sys
-import xmltodict
 from pathlib import Path
+from src.lib.fixer.highway_fixer import HighwayFixer
+from src.lib.fixer import fixer_utils
+from src.lib import way_queries
 
 project_path = Path(__file__).parents[3].absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/fixer")
-sys.path.append(f"{project_path}/lib/model")
-sys.path.append(f"{project_path}/test/files")
-from highway_fixer import HighwayFixer
-import fixer_utils
-import way_queries
+
 
 highway_fixer = HighwayFixer()
 

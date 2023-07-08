@@ -1,40 +1,32 @@
-import logging
-import multiprocessing
-import sys
 import os
 import time
-
 import click
-from pathlib import Path
 
-project_path = Path(__file__).resolve().parent.absolute()
-sys.path.append(f"{project_path}")
-sys.path.append(f"{project_path}/lib/analyzer")
-from analyzer import Analyzer
-from osm_data_parser import OSMDataParser
-from osm_error_messages import OSMErrorMessages
+from src.lib.analyzer.analyzer import Analyzer
+from src.lib.osm_data_parser import retrieve_xml_from_api
+from src.lib.osm_error_messages import return_messages
+from src.webserver import project_path
 
 
 def get_result_of_one_relation(relation_id, outdir, source, verbose):
     analyzer = Analyzer()
-    osm_data_parser = OSMDataParser()
-    osm_error_messages = OSMErrorMessages()
     data = {}
     multiplier = 1
     timer = 1
     tries = 1
     while not data:
         time_to_wait = 10 if timer * multiplier > 10 else timer * multiplier
-        print(f"Trying to get relation {relation_id}, try #{tries}, waiting {time_to_wait}s before retrieval")
+        print(f"Trying to get relation {relation_id}, try #{tries}, waiting {time_to_wait}s"
+              f" before retrieval")
         time.sleep(timer * multiplier)
-        data = osm_data_parser.retrieve_XML_from_API(relation_id)
+        data = retrieve_xml_from_api(relation_id)
         tries += 1
         multiplier *= 2
     if data:
         error_information, correct_ways_count = analyzer.relation_checking(data, relation_id)
-        error_messages = osm_error_messages.return_messages(error_information, correct_ways_count, relation_id,
-                                                            source,
-                                                            verbose)
+        error_messages = return_messages(error_information, correct_ways_count, relation_id,
+                                         source,
+                                         verbose)
         if outdir != "":
             try:
                 os.mkdir(f"{project_path}/{outdir}")
@@ -67,10 +59,9 @@ def get_result_of_one_relation(relation_id, outdir, source, verbose):
 @click.option("--relationcfg", default="", help="The relation config file which you want to use. ")
 @click.option("--outdir", show_default=True, default="",
               help="The output folder where you want the logs and xml files.")
-@click.option("--verbose", is_flag=True, show_default=False, default=False, help="Get detailed log results.")
+@click.option("--verbose", is_flag=True, show_default=False, default=False,
+              help="Get detailed log results.")
 def program(relation: str, source: str, relationcfg: str, outdir: str, verbose: str):
-    # make this runnable in parallel
-    cpu_count = multiprocessing.cpu_count()
     if relation == "" and source == "" and relationcfg == "":
         raise Exception("No input was entered. Please input a relation "
                         "(optionally: output file for the log) or a relation config file.")
@@ -80,19 +71,23 @@ def program(relation: str, source: str, relationcfg: str, outdir: str, verbose: 
         relations = []
         for relation_id in relation_ids:
             relations.append(get_result_of_one_relation(relation_id, outdir, source, verbose))
-            # pool.apply_async(func=get_result_of_one_relation, args=(relation_id, outdir, source, verbose,),
+            # pool.apply_async(func=get_result_of_one_relation,
+            #                 args=(relation_id, outdir, source, verbose,),
             #                 callback=relations.append)
         # pool.close()
         # pool.join()
 
     elif relation == "" and relationcfg != "" and source == "":
         file = open(relationcfg, "r")
-        relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in file.readlines()]
-        # pool = multiprocessing.Pool(2) if multiprocessing.cpu_count() > 1 else multiprocessing.Pool(1)
+        relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in
+                        file.readlines()]
+        # pool = multiprocessing.Pool(2) if multiprocessing.cpu_count() > 1 else
+        # multiprocessing.Pool(1)
         relations = []
         for relation_id in relation_ids:
             relations.append(get_result_of_one_relation(relation_id, outdir, source, verbose))
-            # pool.apply_async(func=get_result_of_one_relation, args=(relation_id, outdir, source, verbose,),
+            # pool.apply_async(func=get_result_of_one_relation,
+            #                 args=(relation_id, outdir, source, verbose,),
             #                 callback=relations.append)
         # pool.close()
         # pool.join()

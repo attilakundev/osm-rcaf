@@ -1,13 +1,6 @@
-import sys
-from pathlib import Path
-
-project_path = Path(__file__).parents[2].absolute()
-sys.path.append(f"{project_path}/lib")
-sys.path.append(f"{project_path}/lib/analyzer")
-sys.path.append(f"{project_path}/lib/model")
-
 from fastapi.testclient import TestClient
-from webserver import app
+from src.webserver import app, project_path
+
 
 def test_client():
     client = TestClient(app)
@@ -35,6 +28,15 @@ def test_analyze_file():
         files = {"relation_file": file}
         response = client.post("/analyze_file", files=files, data={"relation_id": "-99775"})
         assert response.status_code == 200  # because we redirect the user so it should be correct
+
+
+def test_fix_file():
+    client = TestClient(app)
+    with open(f"{project_path}/test/files/67157.xml", "rb") as file:
+        files = {"relation_file": file}
+        response = client.post("/fix", files=files, data={"first_way": "4293039"})
+        assert response.status_code == 200  # because we redirect the user so it should be correct
+
 
 def test_debug_mode():
     client = TestClient(app)

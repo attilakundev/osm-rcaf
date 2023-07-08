@@ -1,11 +1,11 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 
 
 @dataclass
 class PreviousCurrentHighway:
-
     """
-    This class contains everything that a relation's item would contain or during the lifecycle of checking
+    This class contains everything that a relation's item would contain or during the lifecycle of
+    checking
     """
     currently_checked_ref: str = ""
     first_node_of_first_forward_way_in_the_series: str = "0"
@@ -46,6 +46,9 @@ class PreviousCurrentHighway:
     current_nodes: list = field(default_factory=list)
     last_roundabout_nodes: list = field(default_factory=list)
     roundabout_ways: list = field(default_factory=list)
+
+    def as_dict(self):
+        return asdict(self)
 
 
 @dataclass
