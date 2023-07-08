@@ -69,11 +69,11 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
     sorted_list = []
     coordinates = []
     if relation_data:
-        error_information, correct_ways_count = analyzer.relation_checking(relation_data,
-                                                                           relation_id)
+        error_information, correct_ways_count,amount_to_decrease_from_errors = \
+            analyzer.relation_checking(relation_data,relation_id)
         error_messages = return_messages(error_information, correct_ways_count,
-                                         relation_id, True,
-                                         request.session["debug_mode"])
+                                         amount_to_decrease_from_errors,
+                                         relation_id, True, request.session["debug_mode"])
         relation_info = analyzer.get_relation_info(relation_data, relation_id)
         coordinates = way_queries.get_coordinates_of_relation(relation_info)
         error_messages = webserver_utils.split_messages_between_newlines(error_messages)
@@ -83,8 +83,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
 
         if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in
-                error_messages[2][1][0][
-                    1]):
+                error_messages[2][1][0][1]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
     else:
@@ -105,12 +104,13 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...),
     relation_data = xmltodict.parse(xml_data)
 
     # Analyzing
-    error_information, correct_ways_count = analyzer.relation_checking(relation_data, relation_id)
+    error_information, correct_ways_count, amount_to_decrease_errors = analyzer.relation_checking(
+        relation_data,
+        relation_id)
     relation_info = analyzer.get_relation_info(relation_data, relation_id)
     error_messages = return_messages(error_information, correct_ways_count,
-                                     relation_id,
-                                     False,
-                                     request.session["debug_mode"])
+                                     amount_to_decrease_errors,
+                                     relation_id,False, request.session["debug_mode"])
     error_messages = webserver_utils.split_messages_between_newlines(error_messages)
     all_messages = [[len(message), message] for message in error_messages]
 

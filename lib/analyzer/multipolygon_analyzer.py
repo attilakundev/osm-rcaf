@@ -67,7 +67,7 @@ class MultipolygonAnalyzer(AnalyzerBase):
                 previous_role = current_role
                 previous_ref = current_ref
         correct_ways_count = ways_to_search_length - len(error_information) - count_members_that_arent_ways
-        return error_information, correct_ways_count
+        return error_information, correct_ways_count, 0
 
     def check_if_way_is_continuous_or_not(self, first_node_previous: str, last_node_previous: str,
                                           first_node_current: str,

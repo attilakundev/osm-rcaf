@@ -60,8 +60,8 @@ def test_remote_relation():
     from_api = True
     when_source_has_nothing = remote_relation(relation_id, not_from_api)
     when_source_has_content = remote_relation(relation_id, from_api)
-    assert when_source_has_nothing == "https://osm.org/relation/23099"
-    assert when_source_has_content == 23099
+    assert when_source_has_content == "https://osm.org/relation/23099"
+    assert when_source_has_nothing == 23099
 
 
 def test_remote_way():
@@ -70,8 +70,8 @@ def test_remote_way():
     from_api = True
     when_source_has_nothing = remote_way(way_id, not_from_api)
     when_source_has_content = remote_way(way_id, from_api)
-    assert when_source_has_nothing == "https://osm.org/way/1"
-    assert when_source_has_content == 1
+    assert when_source_has_content == "https://osm.org/way/1"
+    assert when_source_has_nothing == 1
 
 
 def test_remote_last_forward_way_before_backward_direction():
@@ -82,8 +82,8 @@ def test_remote_last_forward_way_before_backward_direction():
     result_empty = remote_last_forward_way_ref_nodes_before_backward(array, not_from_api)
     result_content = remote_last_forward_way_ref_nodes_before_backward(array, from_api)
 
-    assert result_empty == "https://osm.org/way/-1"
-    assert result_content == array[0]
+    assert result_content == "https://osm.org/way/-1"
+    assert result_empty == array[0]
 
 
 def test_remote_node():
@@ -92,8 +92,8 @@ def test_remote_node():
     from_api = True
     when_source_has_nothing = remote_node(node_id, not_from_api)
     when_source_has_content = remote_node(node_id, from_api)
-    assert when_source_has_nothing == "https://osm.org/node/1"
-    assert when_source_has_content == 1
+    assert when_source_has_content == "https://osm.org/node/1"
+    assert when_source_has_nothing == 1
 
 
 def test_previous_current_nodes_hwy():
@@ -102,9 +102,9 @@ def test_previous_current_nodes_hwy():
     not_from_api = False
     from_api = True
     result_string_link = previous_current_nodes_hwy(error_information_list_hwy[0]["prev_curr"],
-                                                    not_from_api)
+                                                    from_api)
     result_string_no_link = previous_current_nodes_hwy(error_information_list_hwy[0]["prev_curr"],
-                                                       from_api)
+                                                       not_from_api)
     assert result_string_link == nodes_with_link
     assert result_string_no_link == nodes_without_link
 
@@ -115,20 +115,22 @@ def test_previous_current_nodes_multi():
     not_from_api = False
     from_api = True
     result_string_link = previous_current_nodes_multi(error_information_list_multi[0]["prev_curr"],
-                                                      not_from_api)
+                                                      from_api)
     result_string_no_link = previous_current_nodes_multi(
         error_information_list_multi[0]["prev_curr"],
-        from_api)
+        not_from_api)
     assert result_string_link == nodes_multi_with_link
     assert result_string_no_link == nodes_multi_without_link
 
 
 def test_return_messages_not_verbose():
     correct_ways_count = 2
+    errors_to_decrease = 0
     relation_id = "23099"
     verbose = False
-    is_from_api = False
+    is_from_api = True
     result = return_messages(error_information_list_no_dict_conversion_hwy, correct_ways_count,
+                             errors_to_decrease,
                              relation_id, is_from_api,
                              verbose)
     assert result == ["=================[Relation #23099]=================",
@@ -139,9 +141,10 @@ def test_return_messages_not_verbose():
 
 def test_return_messages_verbose_all_errors_hwy():
     correct_ways_count = 2
+    errors_to_decrease = 0
     relation_id = "1"
     verbose = True
-    is_from_api = False
+    is_from_api = True
     error_messages_all_errors = [ErrorHighway(prev_curr_hwy, "Gap"),
                                  ErrorHighway(prev_curr_hwy, "Gap at the beginning"),
                                  ErrorHighway(prev_curr_hwy, "Split roundabout"),
@@ -162,7 +165,8 @@ def test_return_messages_verbose_all_errors_hwy():
                                               " backward"),
                                  ErrorHighway(prev_curr_hwy, "Motorway not split"),
                                  ErrorHighway(prev_curr_hwy, "Not supported")]
-    result_all_hwy = return_messages(error_messages_all_errors, correct_ways_count, relation_id,
+    result_all_hwy = return_messages(error_messages_all_errors, correct_ways_count,
+                                     errors_to_decrease, relation_id,
                                      is_from_api,
                                      verbose)
     assert result_all_hwy[2] == (
@@ -247,9 +251,10 @@ def test_return_messages_verbose_all_errors_hwy():
 
 def test_return_messages_verbose_all_errors_multi():
     correct_ways_count = 2
+    errors_to_decrease = 0
     relation_id = "1"
     verbose = True
-    is_from_api = False
+    is_from_api = True
     error_messages_all_errors = [
         ErrorMultipolygon(prev_curr_multi, "Gap in an area consisting of one way"),
         ErrorMultipolygon(prev_curr_multi,
@@ -258,9 +263,8 @@ def test_return_messages_verbose_all_errors_multi():
         ErrorMultipolygon(prev_curr_multi, "Gap in multi way multipolygon"),
         ErrorMultipolygon(prev_curr_multi, "No role")
     ]
-    result_all_multi = return_messages(error_messages_all_errors, correct_ways_count, relation_id,
-                                       is_from_api,
-                                       verbose)
+    result_all_multi = return_messages(error_messages_all_errors, correct_ways_count,
+                                       errors_to_decrease, relation_id, is_from_api, verbose)
     assert result_all_multi[2] == ("\n[ERROR] Multipolygon"
                                    " has an area consisting of one way unclosed,"
                                    f" the way affected:"
@@ -288,5 +292,5 @@ def test_return_messages_verbose_all_errors_multi():
 
 
 def test_return_message_no_error():
-    results_no_error = return_messages([], 1, "23099", False, False)
+    results_no_error = return_messages([], 1,  0, "23099", True, False)
     assert results_no_error[2] == "This relation has no errors and gaps at all."

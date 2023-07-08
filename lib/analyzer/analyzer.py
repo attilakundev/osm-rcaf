@@ -41,4 +41,4 @@ class Analyzer:
                 return multipolygon_analyzer.checking(relation_info)
         else:
             error_information.append(ErrorHighway(PreviousCurrentHighway(), "Not supported"))
-            return error_information, 0
+            return error_information, 0, 0

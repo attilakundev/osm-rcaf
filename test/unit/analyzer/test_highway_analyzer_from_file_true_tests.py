@@ -17,7 +17,7 @@ def test_godollo_route_3_m31_roundabout():
                 f"Godollo_Route_3_M31_roundabout.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 11
 
@@ -31,7 +31,7 @@ def test_route_closed_roundabout_entry_divided_exit_divided():
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-6", "-5", "-4", "-2", "-1", "-3", "-7"]
     assert 1 == 1
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 7
 
@@ -44,7 +44,7 @@ def test_route_closed_roundabout_entry_divided_exit_not_divided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3", "-4", "-5"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 5
 
@@ -57,7 +57,7 @@ def test_route_closed_roundabout_entry_notdivided_exit_not_divided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 3
 
@@ -70,7 +70,7 @@ def test_route_continuous_no_role_no_oneway():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 3
 
@@ -83,7 +83,7 @@ def test_route_continuous_no_role_no_oneway_flipped():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 3
 
@@ -96,7 +96,7 @@ def test_route_double_roundabout_divided_2_by_2_ways_forward_role():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10", "-11", "-12"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 12
 
@@ -109,7 +109,7 @@ def test_route_motorway_two_sided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3", "-4"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 4
 
@@ -122,7 +122,7 @@ def test_route_only_one_piece_way():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 1
 
@@ -135,7 +135,7 @@ def test_route_open_roundabout_entry_divided_exit_divided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-6", "-5", "-9", "-1", "-4", "-2", "-3", "-7"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 8
 
@@ -148,7 +148,7 @@ def test_route_split_backward_role_on_a_way():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3", "-4", "-5"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 5
 
@@ -160,7 +160,7 @@ def test_route_split_oneway():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-4", "-2", "-3"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 4
 
@@ -173,7 +173,7 @@ def test_route_split_oneway_series_multiple_ways():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-4", "-6", "-5", "-2", "-3"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 6
 
@@ -186,7 +186,7 @@ def test_route_splits_at_the_beginning():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-3", "-4", "-5", "-6", "-1", "-2"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 6
 
@@ -199,7 +199,7 @@ def test_route_splits_at_the_end():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-1", "-2", "-3", "-4", "-5", "-6"]
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 6
 
@@ -210,6 +210,6 @@ def test_zamardi_7_m7_roundabout():
                 f"Zamardi_7_M7_roundabout.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
-    error_information, correct_ways_count = analyzer.relation_checking(data)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 18

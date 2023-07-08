@@ -14,7 +14,7 @@ class RailwayAnalyzer(AnalyzerBase):
             self.check_if_connected_to_other_member(error_information, prev_curr)
             self.set_previous_member(elem_val, prev_curr)
         correct_ways_count = len(relation_info["ways_to_search"]) - len(error_information)
-        return error_information, correct_ways_count
+        return error_information, correct_ways_count, 0
 
     def check_if_connected_to_other_member(self, error_information, prev_curr):
         if prev_curr.first_node_previous != "" and prev_curr.last_node_previous != "" \

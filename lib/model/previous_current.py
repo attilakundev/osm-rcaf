@@ -38,7 +38,7 @@ class PreviousCurrentHighway:
 
     count_of_forward_role_way_series: int = 0
     index_of_current_way: int = 0
-    the_amount_to_be_decreased_from_length_of_error_information: int = 0
+    amount_to_be_decreased_from_error_information_length: int = 0
     pieces_of_roundabout: int = 0
 
     last_forward_way_ref_nodes_before_backward: list = field(default_factory=list)

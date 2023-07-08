@@ -5,17 +5,17 @@ data_parser = OSMDataParser()
 
 def remote_relation(relation_id, is_from_api):
     relation = "https://osm.org/relation/{}".format(
-        relation_id) if not is_from_api else relation_id
+        relation_id) if is_from_api else relation_id
     return relation
 
 
 def remote_way(way_id, is_from_api):
-    relation = "https://osm.org/way/{}".format(way_id) if not is_from_api else way_id
+    relation = "https://osm.org/way/{}".format(way_id) if is_from_api else way_id
     return relation
 
 
 def remote_last_forward_way_ref_nodes_before_backward(array, is_from_api):
-    if not is_from_api and len(array) > 0:
+    if is_from_api and len(array) > 0:
         return "https://osm.org/way/{}".format(array[0])
     elif len(array) > 0:
         return array[0]
@@ -23,7 +23,7 @@ def remote_last_forward_way_ref_nodes_before_backward(array, is_from_api):
 
 
 def remote_node(way_id, is_from_api):
-    relation = "https://osm.org/node/{}".format(way_id) if not is_from_api else way_id
+    relation = "https://osm.org/node/{}".format(way_id) if is_from_api else way_id
     return relation
 
 
@@ -71,10 +71,10 @@ def previous_current_nodes_multi(prev_curr: dict,
     return string_to_return
 
 
-def return_messages(error_information_list, correct_ways_count, relation_id,
-                    is_from_api: bool, verbose):
+def return_messages(error_information_list, correct_ways_count, amount_to_decrease_from_errors,
+                    relation_id, is_from_api: bool, verbose):
     messages = []
-    errors = len(error_information_list)
+    errors = len(error_information_list) - amount_to_decrease_from_errors
     total = errors + correct_ways_count
     relation = remote_relation(relation_id, is_from_api)
     correctness = round((correct_ways_count / total) * 100, 2)
@@ -137,33 +137,33 @@ def return_messages(error_information_list, correct_ways_count, relation_id,
                                             "is a normal road segment, way number where this was"
                                             " found: {current_ref} \n"
                                             "Previous way: {previous_ref}\n{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                previous_ref=previous_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                previous_ref=previous_ref,
+                                nodes=nodes_and_other_information))
                         case "Wrong role setup":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has wrong role setup at way:"
                                             " {current_ref}\n{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Roundabout gap":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has gap at roundabout:"
                                             " {current_ref}\n{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Gap in forward series":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has gap at way: "
                                             "{current_ref} \n"
                                             "It's found in a series of ways with forward role.\n"
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Only one forward way before closed roundabout":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has gap at way: {current_ref}"
@@ -172,9 +172,9 @@ def return_messages(error_information_list, correct_ways_count, relation_id,
                                             "(its start and end nodes are the same) roundabout"
                                             " instead of two.\n"
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Wrong order of roundabout entries":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has the way {current_ref} "
@@ -182,26 +182,26 @@ def return_messages(error_information_list, correct_ways_count, relation_id,
                                             "it should be swapped in order to maintain the "
                                             "continuity. \n"
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Duplicated roundabout ways":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has the way {current_ref} "
                                             "roundabout way duplicated, this is wrong, "
                                             "since the route only contains the roundabout once. \n"
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Forward role missing at roundabout":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has a roundabout {current_ref}"
                                             " with forward role missing. \n"
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                current_ref=current_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                current_ref=current_ref,
+                                nodes=nodes_and_other_information))
                         case "Forward and non-oneway without ability to move backward":
                             messages.append("\n[ERROR] Relation with route number "
                                             "{currently_checked_ref} has a forward road piece or "
@@ -212,9 +212,9 @@ def return_messages(error_information_list, correct_ways_count, relation_id,
                                             "trunk/motorways "
                                             "the traffic can't traverse in the backwards direction."
                                             "{nodes}".format(
-                                                currently_checked_ref=currently_checked_ref,
-                                                previous_ref=previous_ref,
-                                                nodes=nodes_and_other_information))
+                                currently_checked_ref=currently_checked_ref,
+                                previous_ref=previous_ref,
+                                nodes=nodes_and_other_information))
                         case "Motorway not split":
                             messages.append(
                                 "\n[WARNING] The motorway is continuous, however it "
