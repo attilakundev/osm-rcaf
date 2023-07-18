@@ -64,5 +64,8 @@ class PreviousCurrentMultipolygon:
     current_role: str = ""
 
     currently_sought_role_first_member_nodes: list = field(default_factory=list)
+    nodes_of_first_way_of_the_area: list = field(default_factory=list)
     currently_sought_role: str = ""
     ref_of_first_way_of_the_area: str = ""
+
+    way_count_of_one_polygon = 0

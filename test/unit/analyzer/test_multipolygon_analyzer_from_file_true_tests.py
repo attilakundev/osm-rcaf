@@ -96,8 +96,9 @@ def test_eight_way_two_area_continuous():
 
 def test_los_angeles_good():
     file_path = f"{project_path}/test/files/results_multi_analyzer/los_angeles_good.xml"
-    file = open(file_path, "r").read()
+    file = open(file_path, "r", encoding="utf8").read()
     data = xmltodict.parse(file)
+    assert 1 == 1
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 214

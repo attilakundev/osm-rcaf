@@ -106,7 +106,8 @@ def test_eight_way_two_area_gap_at_second():
     assert correct_ways_count == 6
 
 
-def test_eight_way_two_area_both():
+def test_eight_way_two_area_gap_in_both():
+
     file_path = f"{project_path}/test/files/results_multi_analyzer/false/" \
                 f"eight_way_two_area_gap_both.xml"
     file = open(file_path, "r").read()
