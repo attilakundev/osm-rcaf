@@ -19,31 +19,35 @@ class MultipolygonAnalyzer(AnalyzerBase):
         ways_to_search = relation_info["ways_to_search"]
         outer_index = 0
         count_members_that_arent_ways = 0
-        while way_queries.get_relation_member_type(ways_to_search[outer_index]) != "way":
+        while outer_index < len(ways_to_search) - 1 and way_queries.get_relation_member_type(
+                ways_to_search[outer_index]) != "way":
             outer_index += 1
             count_members_that_arent_ways += 1
-        nodes_of_first_way_of_the_area = way_queries.get_nodes(
-            ways_to_search[outer_index])  # the nodes of the area's first way
-        ref_of_first_way_of_the_area = way_queries.get_way_ref(ways_to_search[outer_index])
-        prev_curr = PreviousCurrentMultipolygon(nodes_of_first_way_of_the_area=
-                                                nodes_of_first_way_of_the_area,
-                                                ref_of_first_way_of_the_area=
-                                                ref_of_first_way_of_the_area)
-        for index, elem_val in enumerate(ways_to_search):
-            # current = current way, previous = previous way
-            if way_queries.get_relation_member_type(elem_val) == "way":
-                self.__set_current_member__(elem_val, index, prev_curr, ways_to_search)
+        if way_queries.get_relation_member_type(
+                ways_to_search[outer_index]) == "way" and outer_index <= len(ways_to_search) - 1:
+            nodes_of_first_way_of_the_area = way_queries.get_nodes(
+                ways_to_search[outer_index])  # the nodes of the area's first way
+            ref_of_first_way_of_the_area = way_queries.get_way_ref(ways_to_search[outer_index])
+            prev_curr = PreviousCurrentMultipolygon(nodes_of_first_way_of_the_area=
+                                                    nodes_of_first_way_of_the_area,
+                                                    ref_of_first_way_of_the_area=
+                                                    ref_of_first_way_of_the_area)
+            for index, elem_val in enumerate(ways_to_search):
+                # current = current way, previous = previous way
+                if way_queries.get_relation_member_type(elem_val) == "way":
+                    self.__set_current_member__(elem_val, index, prev_curr, ways_to_search)
 
-                error_information = self.check_if_current_way_has_no_role(error_information,
-                                                                          prev_curr)
-                error_information = self.check_if_the_only_polygon_consists_of_one_way(
-                    index, ways_to_search, prev_curr, error_information)
-                error_information, prev_curr = self.check_if_way_is_continuous_or_not(
-                    prev_curr, error_information, index, ways_to_search, elem_val)
-                self.__set_previous_member__(prev_curr)
+                    error_information = self.check_if_current_way_has_no_role(error_information,
+                                                                              prev_curr)
+                    error_information = self.check_if_the_only_polygon_consists_of_one_way(
+                        index, ways_to_search, prev_curr, error_information)
+                    error_information, prev_curr = self.check_if_way_is_continuous_or_not(
+                        prev_curr, error_information, index, ways_to_search, elem_val)
+                    self.__set_previous_member__(prev_curr)
         correct_ways_count = len(ways_to_search) - len(
             error_information) - count_members_that_arent_ways
         return error_information, correct_ways_count, 0
+
 
     def __set_previous_member__(self, prev_curr):
         prev_curr.first_node_previous = prev_curr.first_node_current
