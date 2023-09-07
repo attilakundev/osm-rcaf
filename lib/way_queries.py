@@ -163,12 +163,14 @@ def determine_if_country_has_MUTCD_or_similar(data):
 
 def get_coordinates_of_relation(data) -> list[list[list[str]]]:
     nodes_of_relation_per_way = []
-    for way in data["ways_to_search"]:
-        nodes_of_relation_per_way.append([node["@ref"] for node in way["nd"]])
-    # now get the coordinates of the nodes.
     coordinates = []
-    for way in nodes_of_relation_per_way:
-        coordinates.append(get_coordinates_of_a_way(way, data))
+    try:
+        for way in data["ways_to_search"]:
+            nodes_of_relation_per_way.append([node["@ref"] for node in way["nd"]])
+        for way in nodes_of_relation_per_way:
+            coordinates.append(get_coordinates_of_a_way(way, data))
+    except KeyError:
+        coordinates = get_coordinates_of_nodes(data)
     return coordinates
 
 
@@ -178,4 +180,10 @@ def get_coordinates_of_a_way(way, data):
         for node in data["nodes"]:
             if node["@id"] == node_to_search and "@lat" in node and "@lon" in node:
                 way_coordinates.append([node["@lat"], node["@lon"]])
+    return way_coordinates
+def get_coordinates_of_nodes(data):
+    way_coordinates = []
+    for node in data["nodes"]:
+        if "@lat" in node and "@lon" in node:
+            way_coordinates.append([node["@lat"], node["@lon"]])
     return way_coordinates
