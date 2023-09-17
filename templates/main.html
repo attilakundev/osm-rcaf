@@ -47,7 +47,8 @@
         <!-- Link for the fixing and choosing the starting way from it -->
         {% if sorted_ways_list|length > 1 %}
         <p class="alert alert-danger">Errors have been found, please choose a starting way and
-            resupply the relation file, the relation will be fixed:</p>
+            resupply/download the relation file (right click on the xml link -> save as...), the
+            relation will be fixed:</p>
         <form method="post" enctype="multipart/form-data" action="/fix"
               class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3 w-25">
             <input type="file" class="form-control" name="relation_file">
@@ -70,7 +71,7 @@
         {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
         <p class="alert alert-danger">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
             {% endautoescape %}
-            {% elif "Link of the relation" in line or "[Relation #" in line %}
+            {% elif "Link of the relation" in line or "[Relation #" in line or "XML file" in line %}
             {% autoescape false %}
         <p class="alert alert-info" style="font-family: Courier New">{{line}}
             {% endautoescape %}

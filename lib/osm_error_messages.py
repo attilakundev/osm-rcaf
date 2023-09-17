@@ -4,17 +4,35 @@ data_parser = OSMDataParser()
 
 
 def remote_relation(relation_id, is_from_api):
+    """
+    Returns the link of the relation.
+    """
     relation = "https://osm.org/relation/{}".format(
         relation_id) if is_from_api else relation_id
     return relation
 
 
+def remote_relation_xml(relation_id, is_from_api):
+    """
+    Returns the link of the relation's XML file.
+    """
+    relation = "https://www.openstreetmap.org/api/0.6/relation/{}/full".format(
+        relation_id) if is_from_api else relation_id
+    return relation
+
+
 def remote_way(way_id, is_from_api):
+    """
+    Returns the link of the way.
+    """
     relation = "https://osm.org/way/{}".format(way_id) if is_from_api else way_id
     return relation
 
 
 def remote_last_forward_way_ref_nodes_before_backward(array, is_from_api):
+    """
+    Returns the last forward way before backward direction in the road.
+    """
     if is_from_api and len(array) > 0:
         return "https://osm.org/way/{}".format(array[0])
     elif len(array) > 0:
@@ -23,11 +41,17 @@ def remote_last_forward_way_ref_nodes_before_backward(array, is_from_api):
 
 
 def remote_node(way_id, is_from_api):
+    """
+    Returns the URL of the remote node.
+    """
     relation = "https://osm.org/node/{}".format(way_id) if is_from_api else way_id
     return relation
 
 
 def previous_current_nodes_hwy(prev_curr: dict, is_from_api: bool):
+    """
+    Returns the error message of a problematic way in a route.
+    """
     string_to_return = (
         "Previous way's first and last nodes: {first_node_previous} and {last_node_previous} \n"
         "Role: {previous_role} \n"
@@ -55,6 +79,9 @@ def previous_current_nodes_hwy(prev_curr: dict, is_from_api: bool):
 
 def previous_current_nodes_multi(prev_curr: dict,
                                  is_from_api: bool):
+    """
+    Returns the error message during a erroneous way at a multipolygon.
+    """
     string_to_return = (
         "Previous way's first and last nodes: {first_node_previous} and {last_node_previous} \n"
         "Role: {previous_role} \n"
@@ -73,17 +100,22 @@ def previous_current_nodes_multi(prev_curr: dict,
 
 def return_messages(error_information_list, correct_ways_count, amount_to_decrease_from_errors,
                     relation_id, is_from_api: bool, verbose):
+    """
+    This returns the error messages listed.
+    """
     messages = []
     errors = len(error_information_list) - amount_to_decrease_from_errors
     total = errors + correct_ways_count
     relation = remote_relation(relation_id, is_from_api)
+    relation_xml = remote_relation_xml(relation_id, is_from_api)
     correctness = round((correct_ways_count / total) * 100, 2)
     error_information_list = convert_multiple_dataclasses_to_dicts(error_information_list)
 
     messages.append("=================[Relation #{relation_id}]=================".format(
         relation_id=relation_id))
     if "https" in relation:
-        messages.append("Link of the relation: {relation}".format(relation=relation))
+        messages.append("Link of the relation: {link}".format(link=relation))
+        messages.append("To download the XML file: {link}".format(link=relation_xml))
     if errors > 0:
         if not verbose:
             messages.append(
