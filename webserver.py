@@ -68,23 +68,19 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
     sorted_list = []
     coordinates = []
     if relation_data:
-        error_information, correct_ways_count,amount_to_decrease_from_errors = \
-            analyzer.relation_checking(relation_data,relation_id)
-        error_messages = return_messages(error_information, correct_ways_count,
-                                         amount_to_decrease_from_errors,
-                                         relation_id, True, request.session["debug_mode"])
-        relation_info = analyzer.get_relation_info(relation_data, relation_id)
+        relation_info, split_error_messages = await analyze_and_get_error_messages(relation_data,
+                                                                                   relation_id,
+                                                                                   request, True)
         coordinates = way_queries.get_coordinates_of_relation(relation_info)
-        error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-        if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in
-                error_messages[2][0]):
+        if not (len(split_error_messages) == 3 and "This relation has no errors and gaps at all." in
+                split_error_messages[2][0]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
     else:
-        error_messages = [["This relation doesn't exist."]]
+        split_error_messages = [["This relation doesn't exist."]]
     context = {"request": request, "debug_mode": request.session["debug_mode"],
                "coordinates": coordinates,
-               "error_messages": error_messages, "sorted_ways_list": sorted_list,
+               "error_messages": split_error_messages, "sorted_ways_list": sorted_list,
                "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
@@ -97,25 +93,36 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...),
     relation_data = xmltodict.parse(xml_data)
 
     # Analyzing
-    error_information, correct_ways_count, amount_to_decrease_errors = analyzer.relation_checking(
-        relation_data,
-        relation_id)
-    relation_info = analyzer.get_relation_info(relation_data, relation_id)
-    error_messages = return_messages(error_information, correct_ways_count,
-                                     amount_to_decrease_errors,
-                                     relation_id,False, request.session["debug_mode"])
-    all_messages = webserver_utils.split_messages_between_newlines(error_messages)
+    relation_info, split_error_messages = await analyze_and_get_error_messages(relation_data,
+                                                                               relation_id,
+                                                                               request,False)
 
-    if not (len(all_messages) == 2 and "no errors and gaps" in error_messages[1][0]):
+    if not (len(split_error_messages) == 2 and "no errors and gaps" in split_error_messages[1][0]):
         ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
         sorted_list = list(sorted(ways_to_choose_from))
     else:
         sorted_list = []
     context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
-               "error_messages": all_messages, "sorted_ways_list": sorted_list,
+               "error_messages": split_error_messages, "sorted_ways_list": sorted_list,
                "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
-async def return_file_like_object(xml_to_return,file_format: "txt"):
+
+
+async def analyze_and_get_error_messages(relation_data, relation_id, request, is_from_api):
+    error_information, correct_ways_count, amount_to_decrease_errors = analyzer.relation_checking(
+        relation_data,
+        relation_id)
+    error_messages = return_messages(error_information, correct_ways_count,
+                                     amount_to_decrease_errors,
+                                     relation_id, is_from_api=is_from_api,
+                                     verbose=request.session[
+                                         "debug_mode"])
+    split_error_messages = webserver_utils.split_messages_between_newlines(error_messages)
+    relation_info = analyzer.get_relation_info(relation_data, relation_id)
+    return relation_info, split_error_messages
+
+
+async def return_file_like_object(xml_to_return,file_format: str = "txt"):
     file_like_object = StringIO(xml_to_return)
     current_time = datetime.datetime.now()
     formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
@@ -128,7 +135,6 @@ async def return_file_like_object(xml_to_return,file_format: "txt"):
 @app.post("/fix")
 async def fix_relation(request: Request, relation_file: UploadFile = File(...), first_way: str =
 Form(...)):
-    request = check_session_variables(request)
     xml_data = await relation_file.read()
     relation_data = xmltodict.parse(xml_data)
     if relation_data:
@@ -143,9 +149,9 @@ Form(...)):
             xml_to_return = unparse_data_to_xml_prettified(relation_data)
             return await return_file_like_object(xml_to_return, "xml")
         else:
-            errors = [1, [2, [0, corrected_ways_to_search["Error"]]]]
+            errors = [[corrected_ways_to_search["Error"]]]
     else:
-        errors = [1, [2, [0, "No files found to fix."]]]
+        errors = [["No files found to fix."]]
     context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
                "error_messages": errors, "sorted_ways_list": [], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
