@@ -248,7 +248,7 @@ class HighwayAnalyzer(AnalyzerBase):
                 prev_curr.last_node_current and way_queries. \
                 is_roundabout(ways_to_search[prev_curr.index_of_current_way + 2]):
             error_information.append(
-                ErrorHighway(prev_curr, "Wrong order of roundabout entries"))
+                ErrorHighway(dataclasses.replace(prev_curr), "Wrong order of roundabout entries"))
             return True
         else:
             return False
@@ -293,7 +293,7 @@ class HighwayAnalyzer(AnalyzerBase):
                                             and prev_curr.previous_oneway
                                             and not prev_curr.previous_roundabout):
                 error_information.append(
-                    ErrorHighway(prev_curr, "Roundabout gap"))
+                    ErrorHighway(dataclasses.replace(prev_curr), "Roundabout gap"))
                 # the not (previous_role == "forward" and previous_oneway and
                 # not previous_roundabout) is needed, since otherwise relations 23099 (route nr 3)
                 # and relation 38124 (route nr 5) would detect an unnecessary gap,
@@ -311,7 +311,7 @@ class HighwayAnalyzer(AnalyzerBase):
                                                          error_information)
         elif prev_curr.index_of_current_way > 0:
             # It's definitely a gap
-            error_information.append(ErrorHighway(prev_curr, "Gap"))
+            error_information.append(ErrorHighway(dataclasses.replace(prev_curr), "Gap"))
         return prev_curr, error_information
 
     def check_role_issues_in_continuous_way(self, previous_current: PreviousCurrentHighway,
@@ -469,5 +469,5 @@ class HighwayAnalyzer(AnalyzerBase):
                     prev_curr.current_roundabout and
                     prev_curr.first_node_current != prev_curr.last_node_current))
             )):
-                error_information.append(ErrorHighway(prev_curr, "Wrong role setup"))
+                error_information.append(ErrorHighway(dataclasses.replace(prev_curr), "Wrong role setup"))
         return prev_curr, error_information

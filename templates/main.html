@@ -47,8 +47,7 @@
         <!-- Link for the fixing and choosing the starting way from it -->
         {% if sorted_ways_list|length > 1 %}
         <p class="alert alert-danger">Errors have been found, please choose a starting way and
-            resupply/download the relation file (right click on the xml link -> save as...), the
-            relation will be fixed:</p>
+            resupply/download the relation file from the API to have it repaired:</p>
         <form method="post" enctype="multipart/form-data" action="/fix"
               class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3 w-25">
             <input type="file" class="form-control" name="relation_file">
@@ -63,35 +62,35 @@
         <div id="map"></div>
         {% endif %}
         <!-- Printing error messages -->
-        {% for length_of_array, error in error_messages %}
-        {% for index, line in error %}
-        {% if "This relation has no errors and gaps at all." in line %}
-         <p class="alert alert-success">{{line}}
-        {% elif "ERROR" in line and index == 1 or "This relation has" in line %}
-        {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
-        <p class="alert alert-danger">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
-            {% endautoescape %}
-            {% elif "Link of the relation" in line or "[Relation #" in line or "XML file" in line %}
-            {% autoescape false %}
-        <p class="alert alert-info" style="font-family: Courier New">{{line}}
-            {% endautoescape %}
-            {% elif index == 1 %}
-            {% autoescape false %}
-        <p>{{ line }}
-            {% endautoescape %}
-            {% elif "Previous way's" in line %}
-            {% autoescape false %}
-            <br><br>{{ line }}
-            {% endautoescape %}
-            {% elif index == length_of_array - 1 %}
-            {% autoescape false %}
-            {{ line }}
-            {% endautoescape %}
-            {% else %}
-            {% autoescape false %}
-            <br>{{ line }}
-            {% endautoescape %}
-            {% endif %}
+        {% for error in error_messages %}
+            {% for line in error %}
+                {% if "This relation has no errors and gaps at all." in line %}
+                    <p class="alert alert-success">{{line}}
+                {% elif "ERROR" in line and loop.index0 == 1 or "This relation has" in line %}
+                    {% autoescape false %} <!-- if we didn't use this, then it would literally print out the tags.. -->
+                    <p class="alert alert-danger">{{ line | replace("[ERROR]", "<b>[ERROR]</b>") }}
+                    {% endautoescape %}
+                {% elif "Link of the relation" in line or "[Relation #" in line or "XML file" in line %}
+                    {% autoescape false %}
+                    <p class="alert alert-info" style="font-family: Courier New">{{line}}
+                    {% endautoescape %}
+                {% elif loop.index0 == 1 %}
+                    {% autoescape false %}
+                    <p>{{ line }}
+                    {% endautoescape %}
+                {% elif "Previous way's" in line %}
+                    {% autoescape false %}
+                    <br><br>{{ line }}
+                    {% endautoescape %}
+                {% elif loop.index == error|length %}
+                    {% autoescape false %}
+                    {{ line }}
+                    {% endautoescape %}
+                {% else %}
+                    {% autoescape false %}
+                    <br>{{ line }}
+                    {% endautoescape %}
+                {% endif %}
             {% endfor %}
         </p>
         {% endfor %}

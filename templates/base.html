@@ -40,7 +40,13 @@
                     {% else %}
                         <a class="nav-link" href="/about">About</a>
                     {% endif %}
-
+                </li>
+                <li class="nav-item">
+                    {% if active_page == "compare" %}
+                        <a class="nav-link active" aria-current="page" href="#">Compare</a>
+                    {% else %}
+                        <a class="nav-link" href="/compare">Compare</a>
+                    {% endif %}
                 </li>
             </ul>
         </div>

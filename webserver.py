@@ -1,5 +1,7 @@
 import json
 import os
+from io import StringIO
+
 import xmltodict
 import datetime
 import uvicorn
@@ -10,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.responses import StreamingResponse
 
 from src.lib.osm_data_parser import unparse_data_to_xml_prettified, retrieve_xml_from_api
 from src.lib import way_queries
@@ -77,13 +80,8 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
         relation_info = analyzer.get_relation_info(relation_data, relation_id)
         coordinates = way_queries.get_coordinates_of_relation(relation_info)
         error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-        error_messages = [[len(message), message] for message in error_messages]
-        # do something here to store the relation
-        current_time = datetime.datetime.now()
-        formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
-
         if not (len(error_messages) == 3 and "This relation has no errors and gaps at all." in
-                error_messages[2][1][0][1]):
+                error_messages[2][0]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
     else:
@@ -111,10 +109,9 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...),
     error_messages = return_messages(error_information, correct_ways_count,
                                      amount_to_decrease_errors,
                                      relation_id,False, request.session["debug_mode"])
-    error_messages = webserver_utils.split_messages_between_newlines(error_messages)
-    all_messages = [[len(message), message] for message in error_messages]
+    all_messages = webserver_utils.split_messages_between_newlines(error_messages)
 
-    if not (len(error_messages) == 2 and "no errors and gaps" in error_messages[1][0][1]):
+    if not (len(all_messages) == 2 and "no errors and gaps" in error_messages[1][0]):
         ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
         sorted_list = list(sorted(ways_to_choose_from))
     else:
@@ -141,7 +138,7 @@ Form(...)):
             relation_data = fixer.detect_differences_in_original_and_repaired_relation(
                 relation_data, relation_info, corrected_ways_to_search)
             xml_to_return = unparse_data_to_xml_prettified(relation_data)
-            return Response(content=xml_to_return, media_type="application/xml")
+            return await return_file_like_object(xml_to_return, "xml")
         else:
             errors = [1, [2, [0, corrected_ways_to_search["Error"]]]]
     else:
@@ -149,6 +146,16 @@ Form(...)):
     context = {"request": request, "debug_mode": request.session["debug_mode"], "coordinates": [],
                "error_messages": errors, "sorted_ways_list": [], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
+
+
+async def return_file_like_object(xml_to_return,file_format: "txt"):
+    file_like_object = StringIO(xml_to_return)
+    current_time = datetime.datetime.now()
+    formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
+    return StreamingResponse(file_like_object, headers={
+        "Content-Disposition": f"attachment; "
+                               f"filename=fix_{formatted_date}.{file_format}"
+    }, media_type=f"text/{file_format}")
 
 
 @app.get("/debug_mode", response_class=RedirectResponse)

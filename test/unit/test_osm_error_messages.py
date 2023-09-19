@@ -133,9 +133,12 @@ def test_return_messages_not_verbose():
                              errors_to_decrease,
                              relation_id, is_from_api,
                              verbose)
-    assert result == ["=================[Relation #23099]=================",
-                      "Link of the relation: https://osm.org/relation/23099",
-                      "This relation has 1 errors and 2 correct ways. "
+    assert result == [f"=================[Relation #{relation_id}]=================",
+                      f"Link of the relation: https://osm.org/relation/{relation_id}",
+                      "To download the XML file: https://www.openstreetmap.org/api/0.6/relation/"
+                      f"{relation_id}/full",
+                      f"This relation has {len(error_information_list_no_dict_conversion_hwy)}"
+                      f" errors and {correct_ways_count} correct ways. "
                       "That's 66.67% correct."]
 
 
@@ -169,14 +172,14 @@ def test_return_messages_verbose_all_errors_hwy():
                                      errors_to_decrease, relation_id,
                                      is_from_api,
                                      verbose)
-    assert result_all_hwy[2] == (
+    assert result_all_hwy[3] == (
         f"\n[ERROR] Relation with route number {prev_curr_hwy.currently_checked_ref} "
         f"has gap at way: https://osm.org/way/{prev_curr_hwy.current_ref} \n"
         f"{nodes_with_link}")
     remote_last_forward_way_ref_nodes_before_backward_result = \
         osm_error_messages.remote_last_forward_way_ref_nodes_before_backward(
             prev_curr_hwy.last_forward_way_ref_nodes_before_backward, is_from_api)
-    assert result_all_hwy[3] == (
+    assert result_all_hwy[4] == (
         f"\n[ERROR] Relation with route number {prev_curr_hwy.currently_checked_ref}"
         f" has gap at way: https://osm.org/way/{prev_curr_hwy.current_ref} \n"
         "This case occured because there is a gap,"
@@ -184,56 +187,56 @@ def test_return_messages_verbose_all_errors_hwy():
         "relation, since it started with a 2x2 seperated highway. "
         "The ID of last way before going to backward direction: "
         f"{remote_last_forward_way_ref_nodes_before_backward_result} \n{nodes_with_link}")
-    assert result_all_hwy[4] == (f"\nINFO: There is a roundabout split up to multiple ways, "
+    assert result_all_hwy[5] == (f"\nINFO: There is a roundabout split up to multiple ways, "
                                  f"last known way is "
                                  f"https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  f"{nodes_with_link}")
-    assert result_all_hwy[5] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[6] == ("\n[ERROR] Relation with route number "
                                  f"{prev_curr_hwy.currently_checked_ref} has a road segment which "
                                  "has forward role, but not oneway and the following road segment "
                                  f"is a normal road segment, way number where this was found: "
                                  f"https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  f"Previous way: https://osm.org/way/{prev_curr_hwy.previous_ref}\n"
                                  f"{nodes_with_link}")
-    assert result_all_hwy[6] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[7] == ("\n[ERROR] Relation with route number "
                                  f"{prev_curr_hwy.currently_checked_ref}"
                                  f" has wrong role setup at way:"
                                  f" https://osm.org/way/{prev_curr_hwy.current_ref}\n"
                                  f"{nodes_with_link}")
-    assert result_all_hwy[7] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[8] == ("\n[ERROR] Relation with route number "
                                  f"{prev_curr_hwy.currently_checked_ref} has gap at roundabout:"
                                  f" https://osm.org/way/{prev_curr_hwy.current_ref}"
                                  f"\n{nodes_with_link}")
-    assert result_all_hwy[8] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[9] == ("\n[ERROR] Relation with route number "
                                  f"{prev_curr_hwy.currently_checked_ref} has gap at way:"
                                  f" https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  "It's found in a series of ways with forward role.\n"
                                  f"{nodes_with_link}")
-    assert result_all_hwy[9] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[10] == ("\n[ERROR] Relation with route number "
                                  f"{prev_curr_hwy.currently_checked_ref} has gap at way:"
                                  f" https://osm.org/way/{prev_curr_hwy.current_ref} \n"
                                  "There is only one connecting way into the closed "
                                  "(its start and end nodes are the same) roundabout"
                                  " instead of two.\n"
                                  f"{nodes_with_link}")
-    assert result_all_hwy[10] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[11] == ("\n[ERROR] Relation with route number "
                                   f"{prev_curr_hwy.currently_checked_ref} has the way"
                                   f" https://osm.org/way/{prev_curr_hwy.current_ref} "
                                   "earlier than needed, it's a roundabout entry node and "
                                   "it should be swapped in order to maintain the continuity. \n"
                                   f"{nodes_with_link}")
-    assert result_all_hwy[11] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[12] == ("\n[ERROR] Relation with route number "
                                   f"{prev_curr_hwy.currently_checked_ref} has the way"
                                   f" https://osm.org/way/{prev_curr_hwy.current_ref} "
                                   "roundabout way duplicated, this is wrong, "
                                   "since the route only contains the roundabout once. \n"
                                   f"{nodes_with_link}")
-    assert result_all_hwy[12] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[13] == ("\n[ERROR] Relation with route number "
                                   f"{prev_curr_hwy.currently_checked_ref} has a roundabout"
                                   f" https://osm.org/way/{prev_curr_hwy.current_ref}"
                                   " with forward role missing. \n"
                                   f"{nodes_with_link}")
-    assert result_all_hwy[13] == ("\n[ERROR] Relation with route number "
+    assert result_all_hwy[14] == ("\n[ERROR] Relation with route number "
                                   f"{prev_curr_hwy.currently_checked_ref} has a forward road"
                                   f" piece or series,"
                                   f"previous ref which is one of the affected:"
@@ -242,11 +245,11 @@ def test_return_messages_verbose_all_errors_hwy():
                                   " 2x1 lane trunk/motorways "
                                   "the traffic can't traverse in the backwards direction."
                                   f"{nodes_with_link}")
-    assert result_all_hwy[14] == (
+    assert result_all_hwy[15] == (
         "\n[WARNING] The motorway is continuous, however it reached back from start point to"
         " (almost) start point via other lane. It should be done that the motorway's right"
         " lane goes first to the end point, then left lane from first to end point.")
-    assert result_all_hwy[15] == "This public transportation relation type is not supported."
+    assert result_all_hwy[16] == "This public transportation relation type is not supported."
 
 
 def test_return_messages_verbose_all_errors_multi():
@@ -265,27 +268,27 @@ def test_return_messages_verbose_all_errors_multi():
     ]
     result_all_multi = return_messages(error_messages_all_errors, correct_ways_count,
                                        errors_to_decrease, relation_id, is_from_api, verbose)
-    assert result_all_multi[2] == ("\n[ERROR] Multipolygon"
+    assert result_all_multi[3] == ("\n[ERROR] Multipolygon"
                                    " has an area consisting of one way unclosed,"
                                    f" the way affected:"
                                    f" https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
-    assert result_all_multi[3] == ("\n[ERROR] Multipolygon has an area consisting"
+    assert result_all_multi[4] == ("\n[ERROR] Multipolygon has an area consisting"
                                    " of one way unclosed at the end of the relation, "
                                    "the way affected:"
                                    f" https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
-    assert result_all_multi[4] == ("\n[ERROR] Multipolygon"
+    assert result_all_multi[5] == ("\n[ERROR] Multipolygon"
                                    " has an area consisting of multiple ways unclosed at the end"
                                    " of the relation, the way affected: "
                                    f"https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
-    assert result_all_multi[5] == ("\n[ERROR] Multipolygon"
+    assert result_all_multi[6] == ("\n[ERROR] Multipolygon"
                                    " has an area consisting of multiple ways unclosed, the way "
                                    "affected:"
                                    f" https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
-    assert result_all_multi[6] == ("\n[ERROR] Multipolygon"
+    assert result_all_multi[7] == ("\n[ERROR] Multipolygon"
                                    " has a way which doesn't have a role, the way affected:"
                                    f" https://osm.org/way/{prev_curr_multi.current_ref}\n"
                                    f"\n{nodes_multi_with_link}")
@@ -293,4 +296,4 @@ def test_return_messages_verbose_all_errors_multi():
 
 def test_return_message_no_error():
     results_no_error = return_messages([], 1,  0, "23099", True, False)
-    assert results_no_error[2] == "This relation has no errors and gaps at all."
+    assert results_no_error[3] == "This relation has no errors and gaps at all."

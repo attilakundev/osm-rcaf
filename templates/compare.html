@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3 p-3">
+            <!-- This is the area where you can upload the two files and compare that -->
+            <p><b>Supply the new and the old file :</b></p>
+            <form method="post" enctype="multipart/form-data" action="/analyze_file">
+                <br>
+                <p>Old relation file:</p>
+                <input type="file" class="form-control" name="old_rel">
+                <br>
+                <p>Corrected relation file:</p>
+                <input type="file" class="form-control" name="new_rel">
+                <br>
+                <p>Relation ID</p>
+                <input type="number" class="form-control" name="relation_id" placeholder="Please enter the relation ID." required>
+                <br>
+                <input type="submit" class="form-control" name="compare" value="Compare">
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <br>
+        <!-- Printing changes -->
+        {% if changes|length == 0 %}
+        <p class="alert alert-success">There is no changes detected.</p>
+        {% endif %}
+        {% for old, new in changes %}
+        <p class="alert alert-info">Change at position {{ loop.index }}: {{ old }} → {{ new }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

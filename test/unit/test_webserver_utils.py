@@ -8,10 +8,10 @@ def test_split_messages_between_newlines():
     # Act
     result = webserver_utils.split_messages_between_newlines(messages_filled_with_line_breaks)
     # Assert
-    assert result[0] == [[0, "This "], [1, "message "], [2, "has "], [3, "line breaks. "]]
-    assert result[1] == [[0, "This "], [1, "has some "], [2, "too. "]]
-    assert result[2] == [[0, "Here is a link: "],
-                         [1, "<a href=\"https://www.google.com\">https://www.google.com</a> "]]
+    assert result[0] == ["This ", "message ", "has ", "line breaks. "]
+    assert result[1] == ["This ", "has some ", "too. "]
+    assert result[2] == ["Here is a link: ",
+                         "<a href=\"https://www.google.com\">https://www.google.com</a> "]
 
 
 def test_find_link_in_the_line():

@@ -2,9 +2,6 @@ def split_messages_between_newlines(array_of_strings):
     for index, string in enumerate(array_of_strings):
         array_of_strings[index] = string.split('\n')
         array_of_strings[index] = find_link_in_the_line(array_of_strings[index])
-        array_of_strings[index] = [[index_of_array_of_strings, line] for index_of_array_of_strings, line in
-                                   enumerate(array_of_strings[index])]
-
     return array_of_strings
 
 
