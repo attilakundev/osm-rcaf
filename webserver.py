@@ -1,5 +1,3 @@
-import json
-import os
 from io import StringIO
 
 import xmltodict
@@ -7,7 +5,7 @@ import datetime
 import uvicorn
 import logging
 from pathlib import Path
-from fastapi import FastAPI, Request, Response, Form, File, UploadFile
+from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -15,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import StreamingResponse
 
 from src.lib.osm_data_parser import unparse_data_to_xml_prettified, retrieve_xml_from_api
-from src.lib import way_queries
+from src.lib import way_queries, compare
 from src.lib import webserver_utils
 from src.lib.osm_data_parser import OSMDataParser
 from src.lib.osm_error_messages import return_messages
@@ -46,8 +44,6 @@ app.add_middleware(SessionMiddleware, secret_key="someSecretKey")
 def check_session_variables(request):
     if request.session.get("debug_mode") is None:
         request.session["debug_mode"] = False
-    if request.session.get("loaded_relation") is None:
-        request.session["loaded_relation"] = []
     return request
 
 
@@ -85,8 +81,7 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
     else:
-        not_existing = [[0, "This relation doesn't exist."]]
-        error_messages = [[len(not_existing), not_existing]]
+        error_messages = [["This relation doesn't exist."]]
     context = {"request": request, "debug_mode": request.session["debug_mode"],
                "coordinates": coordinates,
                "error_messages": error_messages, "sorted_ways_list": sorted_list,
@@ -120,6 +115,14 @@ async def analyze_file(request: Request, relation_file: UploadFile = File(...),
                "error_messages": all_messages, "sorted_ways_list": sorted_list,
                "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
+async def return_file_like_object(xml_to_return,file_format: "txt"):
+    file_like_object = StringIO(xml_to_return)
+    current_time = datetime.datetime.now()
+    formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
+    return StreamingResponse(file_like_object, headers={
+        "Content-Disposition": f"attachment; "
+                               f"filename=fix_{formatted_date}.{file_format}"
+    }, media_type=f"text/{file_format}")
 
 
 @app.post("/fix")
@@ -147,16 +150,20 @@ Form(...)):
                "error_messages": errors, "sorted_ways_list": [], "active_page": "home"}
     return templates.TemplateResponse("main.html", context=context)
 
+@app.get("/compare")
+async def compare_page(request: Request):
+    context = {"request": request, "active_page": "compare"}
+    return templates.TemplateResponse("compare.html", context=context)
 
-async def return_file_like_object(xml_to_return,file_format: "txt"):
-    file_like_object = StringIO(xml_to_return)
-    current_time = datetime.datetime.now()
-    formatted_date = current_time.strftime("%Y%m%d-%H%M%S")
-    return StreamingResponse(file_like_object, headers={
-        "Content-Disposition": f"attachment; "
-                               f"filename=fix_{formatted_date}.{file_format}"
-    }, media_type=f"text/{file_format}")
-
+@app.post("/compare")
+async def compare_page_post(request: Request, old_rel: UploadFile = File(...), new_rel:
+UploadFile = File(...), relation_id: str = Form(...)):
+    old_data = xmltodict.parse(await old_rel.read())
+    new_data = xmltodict.parse(await new_rel.read())
+    changes, deletions = compare.compare_two_relation_files(old_data,new_data,relation_id)
+    context = {"request": request, "active_page": "compare", "changes": changes, "deletions":
+        deletions}
+    return templates.TemplateResponse("compare.html", context=context)
 
 @app.get("/debug_mode", response_class=RedirectResponse)
 async def debug_mode_switch(request: Request):

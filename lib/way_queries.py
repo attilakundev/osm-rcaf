@@ -187,3 +187,10 @@ def get_coordinates_of_nodes(data):
         if "@lat" in node and "@lon" in node:
             way_coordinates.append([node["@lat"], node["@lon"]])
     return way_coordinates
+
+def get_relation(relation_id,data):
+    if type(data["osm"]["relation"]) is list:
+        for relation in data["osm"]["relation"]:
+            if relation["@id"] == relation_id:
+                return relation
+    return data["osm"]["relation"]
