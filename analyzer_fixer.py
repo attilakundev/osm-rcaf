@@ -67,31 +67,17 @@ def program(relation: str, source: str, relationcfg: str, outdir: str, verbose: 
                         "(optionally: output file for the log) or a relation config file.")
     elif relation != "" and relationcfg == "" and source == "":
         relation_ids = relation.split(",")
-        # pool = multiprocessing.Pool(multiprocessing.cpu_count())
         relations = []
         for relation_id in relation_ids:
             relations.append(get_result_of_one_relation(relation_id, outdir, source, verbose))
-            # pool.apply_async(func=get_result_of_one_relation,
-            #                 args=(relation_id, outdir, source, verbose,),
-            #                 callback=relations.append)
-        # pool.close()
-        # pool.join()
 
     elif relation == "" and relationcfg != "" and source == "":
         file = open(relationcfg, "r")
         relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in
                         file.readlines()]
-        # pool = multiprocessing.Pool(2) if multiprocessing.cpu_count() > 1 else
-        # multiprocessing.Pool(1)
         relations = []
         for relation_id in relation_ids:
             relations.append(get_result_of_one_relation(relation_id, outdir, source, verbose))
-            # pool.apply_async(func=get_result_of_one_relation,
-            #                 args=(relation_id, outdir, source, verbose,),
-            #                 callback=relations.append)
-        # pool.close()
-        # pool.join()
-
     elif relation == "" and relationcfg == "" and source != "":
         print("To be implemented")
     else:
