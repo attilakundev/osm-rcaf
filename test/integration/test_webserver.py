@@ -27,7 +27,7 @@ def test_debug_mode():
     assert response.status_code == 200
 
 
-def test_analyze_url():
+def test_analyze_relation():
     client = TestClient(app)
     response = client.get("/analyze")
     assert response.status_code == 405
@@ -37,6 +37,13 @@ def test_analyze_url():
     response = client.post("/analyze", data=relation)
     assert response.status_code == 200
 
+def test_analyze_relation_only_nodes():
+    client = TestClient(app)
+    relation = {
+        "relation_id": "67103"
+    }
+    response = client.post("/analyze", data=relation)
+    assert response.status_code == 200
 
 def test_analyze_file():
     client = TestClient(app)

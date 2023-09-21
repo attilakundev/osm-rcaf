@@ -57,8 +57,10 @@
                 {% endfor %}
             </select>
             <input type="submit" value="Fix" class="form-control">
+            <br>
         </form>
-        <br>
+        {% endif %}
+        {% if coordinates|length > 1 %}
         <div id="map"></div>
         {% endif %}
         <!-- Printing error messages -->

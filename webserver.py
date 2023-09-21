@@ -72,8 +72,8 @@ async def analyze_url(request: Request, relation_id: str = Form(...)):
                                                                                    relation_id,
                                                                                    request, True)
         coordinates = way_queries.get_coordinates_of_relation(relation_info)
-        if not (len(split_error_messages) == 3 and "This relation has no errors and gaps at all." in
-                split_error_messages[2][0]):
+        if not (len(split_error_messages) == 4 and "This relation has no errors and gaps at all." in
+                split_error_messages[3][0]):
             ways_to_choose_from = [int(x["@ref"]) for x in relation_info["ways_to_search"]]
             sorted_list = list(sorted(ways_to_choose_from))
     else:
