@@ -182,3 +182,32 @@ def test_get_index_of_way():
     array = [{"@ref": "0"}]
     result = way_queries.get_index_of_way(array, "-1")
     assert result == -1
+
+def test_get_coordinates_of_nodes():
+    data = {"nodes": [{"@lat": "1", "@lon": "1"},{"@lat": "2", "@lon": "2"}]}
+    result = way_queries.get_coordinates_of_nodes(data)
+    assert result == [["1","1"],["2","2"]]
+
+def test_get_relation_from_list():
+    # the dictionary version can be found at test_compare.py where there is only one relation.
+    relation_id = "10"
+    data = {
+        "osm":{
+            "relation":[
+                {
+                    "@id": "1",
+                    "member": [{"@ref": "1"},
+                               {"@ref": "2"}]
+                },
+                {
+                    "@id": "10",
+                    "member": [{"@ref": "3"},
+                               {"@ref": "4"}]
+
+                }
+            ]
+        }
+    }
+    given_relation = way_queries.get_relation(relation_id,data)
+    assert given_relation["@id"] == relation_id
+    assert len(given_relation["member"]) == 2

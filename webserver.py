@@ -166,7 +166,7 @@ async def compare_page_post(request: Request, old_rel: UploadFile = File(...), n
 UploadFile = File(...), relation_id: str = Form(...)):
     old_data = xmltodict.parse(await old_rel.read())
     new_data = xmltodict.parse(await new_rel.read())
-    changes, deletions = compare.compare_two_relation_files(old_data,new_data,relation_id)
+    changes, deletions = compare.compare_two_relation_data(old_data, new_data, relation_id)
     context = {"request": request, "active_page": "compare", "changes": changes, "deletions":
         deletions}
     return templates.TemplateResponse("compare.html", context=context)

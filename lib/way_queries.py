@@ -170,7 +170,7 @@ def get_coordinates_of_relation(data) -> list[list[list[str]]]:
         for way in nodes_of_relation_per_way:
             coordinates.append(get_coordinates_of_a_way(way, data))
     except KeyError:
-        coordinates = get_coordinates_of_nodes(data)
+        coordinates = get_coordinates_of_nodes(data) # use case: relation #67103 (it has only nodes)
     return coordinates
 
 
@@ -181,6 +181,8 @@ def get_coordinates_of_a_way(way, data):
             if node["@id"] == node_to_search and "@lat" in node and "@lon" in node:
                 way_coordinates.append([node["@lat"], node["@lon"]])
     return way_coordinates
+
+
 def get_coordinates_of_nodes(data):
     way_coordinates = []
     for node in data["nodes"]:
@@ -188,7 +190,8 @@ def get_coordinates_of_nodes(data):
             way_coordinates.append([node["@lat"], node["@lon"]])
     return way_coordinates
 
-def get_relation(relation_id,data):
+
+def get_relation(relation_id, data):
     if type(data["osm"]["relation"]) is list:
         for relation in data["osm"]["relation"]:
             if relation["@id"] == relation_id:
