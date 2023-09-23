@@ -44,9 +44,7 @@ def append_ways_to_search_with_useful_info(relation_info):
                 relation_info["ways_to_search"][i]["nd"] = relation_info["ways"][j]["nd"]
                 if "tag" in relation_info["ways"][j]:
                     if type(relation_info["ways"][j]["tag"]) is dict:
-                        relation_info["ways_to_search"][i]["tag"] = []
-                        relation_info["ways_to_search"][i]["tag"].append(
-                            relation_info["ways"][j]["tag"])
+                        relation_info["ways_to_search"][i]["tag"] = [relation_info["ways"][j]["tag"]]
                     else:
                         relation_info["ways_to_search"][i]["tag"] = relation_info["ways"][j][
                             "tag"]
@@ -78,16 +76,6 @@ def __gather_relation_info__(relation, relation_info):
     # copy the ways to a separate array so the final result can be copied back there.
     return relation_info
 
-
-def get_relation_ids(loaded_data):
-    relations_list = loaded_data["osm"]["relation"]
-    if type(relations_list) is dict:
-        return relations_list["@id"]
-    else:
-        # We know it's a list
-        return [relation["@id"] for relation in relations_list]
-
-
 def gather_way_and_relation_info(data, relation_id: str = ""):
     """
     pull way and relation info to separate arrays (so they can be copied back)
@@ -105,7 +93,7 @@ def gather_way_and_relation_info(data, relation_id: str = ""):
             if relation_id != "":
                 index = \
                     [index for index, relation in enumerate(osmvalue) if
-                     relation["@id"] == relation_id][0]  # deal with only the 1st relation
+                     relation["@id"] == relation_id][0]
                 relation_info = __gather_relation_info__(osmvalue[index].items(),
                                                          relation_info)
             else:

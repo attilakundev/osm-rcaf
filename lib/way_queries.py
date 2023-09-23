@@ -197,3 +197,12 @@ def get_relation(relation_id, data):
             if relation["@id"] == relation_id:
                 return relation
     return data["osm"]["relation"]
+
+
+def get_relation_ids(loaded_data):
+    relations_list = loaded_data["osm"]["relation"]
+    if type(relations_list) is dict:
+        return relations_list["@id"]
+    else:
+        # We know it's a list
+        return [relation["@id"] for relation in relations_list]
