@@ -47,36 +47,21 @@ def get_role(data):
     return ""
 
 
-# in case we are dealing with route=road (or cycling etc.)
+def __get_tag_value__(data, tag):
+    if "tag" in data:
+        for key_value_pair in data["tag"]:
+            if key_value_pair["@k"] == tag:
+                return key_value_pair["@v"]
+    return ""
+
+
 def get_highway(data):
-    if "tag" in data:
-        for key_value_pair in data["tag"]:
-            if key_value_pair["@k"] == "highway":
-                return key_value_pair["@v"]
-    return ""
+    return __get_tag_value__(data, "highway")
 
-
-# in case we are dealing with route=railway
-def get_railway(data):
-    if "tag" in data:
-        for key_value_pair in data["tag"]:
-            if key_value_pair["@k"] == "railway":
-                return key_value_pair["@v"]
-    return ""
-
-
-def get_highway_ref(data):
-    if "tag" in data:
-        for key_value_pair in data["tag"]:
-            if key_value_pair["@k"] == "ref":
-                return key_value_pair["@v"]
-    return ""
-
-
-def get_index_of_way(array, value):
+def get_index_of_way(array, ref_number):
     index = 0
     while index < len(array):
-        if "@ref" in array[index] and array[index]["@ref"] == value:
+        if "@ref" in array[index] and array[index]["@ref"] == ref_number:
             return index
         index += 1
     return -1
@@ -94,37 +79,26 @@ def put_ref_from_relation_to_highway_way(data):
                     })
 
 
-def get_ref_of_the_route(data):
-    if "ref" in data:
-        return data["ref"]
+def __get_value_of_relation_or_way__(data, to_look_for):
+    if to_look_for in data:
+        return data[to_look_for]
     return ""
+
+
+def get_ref_of_the_route(data):
+    return __get_value_of_relation_or_way__(data, "ref")
 
 
 def get_relation_type(data):
-    if "type" in data:
-        return data["type"]
-    return ""
-
+    return __get_value_of_relation_or_way__(data, "type")
 
 def get_relation_member_type(data):
-    if "@type" in data:
-        return data["@type"]
-    return ""
+    return __get_value_of_relation_or_way__(data, "@type")
 
 
 def get_way_ref(data):
     """:returns: The id of the way."""
-    if "@ref" in data:
-        return data["@ref"]
-    return ""
-
-
-def get_id_of_the_relation_members(array):
-    return [member["@ref"] for member in array]
-
-
-def get_the_refs_of_ways_in_the_relation(array):
-    return [member["@ref"] for member in array if member["@type"] == "way"]
+    return __get_value_of_relation_or_way__(data, "@ref")
 
 
 # input: nodes of the roundabout and the node sought that we want to search its connection.
@@ -170,7 +144,8 @@ def get_coordinates_of_relation(data) -> list[list[list[str]]]:
         for way in nodes_of_relation_per_way:
             coordinates.append(get_coordinates_of_a_way(way, data))
     except KeyError:
-        coordinates = get_coordinates_of_nodes(data) # use case: relation #67103 (it has only nodes)
+        coordinates = get_coordinates_of_nodes(
+            data)  # use case: relation #67103 (it has only nodes)
     return coordinates
 
 

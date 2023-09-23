@@ -46,18 +46,6 @@ def test_get_highway():
     assert way_queries.get_highway(way_queries_dicts.relation["ways"]) == ""
 
 
-def test_get_railway():
-    assert way_queries.get_railway(way_queries_dicts.relation["ways"][0]) == "rail"
-    assert way_queries.get_railway(way_queries_dicts.relation["ways"][3]) == ""
-    assert way_queries.get_railway(way_queries_dicts.relation["ways"]) == ""
-
-
-def test_get_highway_ref():
-    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"][0]) == ""
-    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"][1]) == "3"
-    assert way_queries.get_highway_ref(way_queries_dicts.relation["ways"]) == ""
-
-
 def test_is_roundabout():
     # Arrange is done at the beginning
     # Act
@@ -109,15 +97,9 @@ def test_get_ref_of_the_route():
     assert ref == 710
 
 
-def test_get_id_of_the_relation_members():
-    # Arrange is done at the beginning
-    # Act
-    refs = way_queries.get_id_of_the_relation_members(way_queries_dicts.relation["ways"])
-    # Assert
-    assert refs == ['1', '2', '3', '4']
-
-
 def test_put_ref_from_relation_to_highway_way():
+    #Hey, this function is not implemented yet into
+    # the fixer. would you mind implementing it?
     # Arrange
     assertion = {
         "@k": "ref",
@@ -156,11 +138,6 @@ def test_check_connectivity():
 def test_get_relation_type():
     assert way_queries.get_relation_type(way_queries_dicts.relation) == "route"
     assert way_queries.get_relation_type(way_queries_dicts.relation2) == ""
-
-
-def test_get_the_refs_of_ways_in_the_relation():
-    assert way_queries.get_the_refs_of_ways_in_the_relation(way_queries_dicts.relation["ways"]) == [
-        '1', '2', '4']
 
 
 def test_get_network():
