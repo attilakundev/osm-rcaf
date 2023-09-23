@@ -1,4 +1,3 @@
-from dataclasses import asdict
 import requests
 import xmltodict
 from string import Template
@@ -7,16 +6,11 @@ OSM_API_RELATION_URL_TEMPLATE = Template(f"https://www.openstreetmap.org/api/0.6
                                          f"$relation/full")
 
 
-def __copy_attributes__(way):
-    attributes = {key: value for key, value in way.items() if "@" in key}
-    return attributes
-
-
-def convert_multiple_dataclasses_to_dicts(dataclasses):
-    dicts = []
-    for dataclass in dataclasses:
-        dicts.append(asdict(dataclass))
-    return dicts
+def retrieve_xml_from_api(relation_number):
+    url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
+    relation_file = requests.get(url)
+    dictionary = xmltodict.parse(relation_file.content)
+    return dictionary
 
 
 def unparse_data_to_xml_prettified(data):
@@ -34,6 +28,11 @@ def check_way_attributes_id(relation_info):
                 f"The relation's way ({currently_checked_way}) doesn't exist in the <way> tags,"
                 f" this is mostly a unit-testing issue, please fix it.")
     return result
+
+
+def __copy_attributes__(way):
+    attributes = {key: value for key, value in way.items() if "@" in key}
+    return attributes
 
 
 def append_ways_to_search_with_useful_info(relation_info):
@@ -86,7 +85,6 @@ def get_relation_ids(loaded_data):
         return relations_list["@id"]
     else:
         # We know it's a list
-        assert type(relations_list) == list
         return [relation["@id"] for relation in relations_list]
 
 
@@ -120,16 +118,7 @@ def gather_way_and_relation_info(data, relation_id: str = ""):
             return relation_info
 
 
-def retrieve_xml_from_api(relation_number):
-    url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
-    relation_file = requests.get(url)
-    dictionary = xmltodict.parse(relation_file.content)
-    return dictionary
-
-
-class OSMDataParser:
-
-    def collect_information_about_the_relation(self, data, relation_id):
-        return_value: dict = append_ways_to_search_with_useful_info(
-            gather_way_and_relation_info(data, relation_id))
-        return return_value
+def collect_information_about_the_relation(data, relation_id):
+    return_value: dict = append_ways_to_search_with_useful_info(
+        gather_way_and_relation_info(data, relation_id))
+    return return_value

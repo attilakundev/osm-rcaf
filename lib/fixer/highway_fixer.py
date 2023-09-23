@@ -3,10 +3,9 @@ import copy
 
 from src.lib.fixer.fixer_base import FixerBase
 from src.lib.fixer import fixer_utils
-from src.lib.osm_data_parser import OSMDataParser, __copy_attributes__
+from src.lib.osm_data_parser import __copy_attributes__
 from src.lib import way_queries
 
-osm_data_parser = OSMDataParser()
 
 
 class HighwayFixer(FixerBase):

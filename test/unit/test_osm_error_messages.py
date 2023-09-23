@@ -2,10 +2,9 @@ from src.lib import osm_error_messages
 from src.lib.model.previous_current import PreviousCurrentHighway, PreviousCurrentMultipolygon
 from src.lib.model.error_hwy import ErrorHighway, ErrorMultipolygon
 
-from src.lib.osm_data_parser import convert_multiple_dataclasses_to_dicts
 from src.lib.osm_error_messages import remote_relation, remote_way, \
     remote_last_forward_way_ref_nodes_before_backward, remote_node, previous_current_nodes_hwy, \
-    previous_current_nodes_multi, return_messages
+    previous_current_nodes_multi, return_messages, convert_multiple_dataclasses_to_dicts
 
 prev_curr_hwy = PreviousCurrentHighway(first_node_previous="1", last_node_previous="2",
                                        previous_role="forward", previous_roundabout=False,

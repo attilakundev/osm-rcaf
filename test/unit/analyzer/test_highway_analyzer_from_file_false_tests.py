@@ -1,14 +1,11 @@
 #!/usr/bin/python3
 from pathlib import Path
 import xmltodict
-from src.lib.osm_data_parser import OSMDataParser
 from src.lib.analyzer.analyzer import Analyzer
 
 project_path = Path(__file__).parents[3].absolute()
 
 analyzer = Analyzer()
-data_parser = OSMDataParser()
-
 
 def test_route_forward_not_split_nooneway_multiple_fwd():
     file_path = f"{project_path}/test/files/results_highway_analyzer_false/" \

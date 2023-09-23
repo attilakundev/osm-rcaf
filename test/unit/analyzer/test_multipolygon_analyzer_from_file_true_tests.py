@@ -1,20 +1,18 @@
 #!/usr/bin/python3
 from pathlib import Path
 import xmltodict
-from src.lib.osm_data_parser import OSMDataParser, get_relation_ids
+from src.lib.osm_data_parser import get_relation_ids
 from src.lib.analyzer.analyzer import Analyzer
 
 project_path = Path(__file__).parents[3].absolute()
 
 analyzer = Analyzer()
-data_parser = OSMDataParser()
 
 
 def test_one_way_one_area_continuous():
     file_path = f"{project_path}/test/files/results_multi_analyzer/true/one_way_one_area_continuous.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
-    assert 1 == 1
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 1
@@ -24,7 +22,6 @@ def test_two_way_one_area_continuous():
     file_path = f"{project_path}/test/files/results_multi_analyzer/true/two_way_one_area_continuous.xml"
     file = open(file_path, "r").read()
     data = xmltodict.parse(file)
-    assert 1 == 1
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 2
@@ -98,7 +95,6 @@ def test_los_angeles_good():
     file_path = f"{project_path}/test/files/results_multi_analyzer/los_angeles_good.xml"
     file = open(file_path, "r", encoding="utf8").read()
     data = xmltodict.parse(file)
-    assert 1 == 1
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 214

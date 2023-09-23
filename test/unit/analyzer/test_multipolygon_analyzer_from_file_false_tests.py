@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 from pathlib import Path
 import xmltodict
-from src.lib.osm_data_parser import OSMDataParser
 from src.lib.analyzer.analyzer import Analyzer
 
 project_path = Path(__file__).parents[3].absolute()
 
 analyzer = Analyzer()
-data_parser = OSMDataParser()
 
 
 def test_one_way_one_area_gap():

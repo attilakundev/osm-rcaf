@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from pathlib import Path
 import xmltodict
 from src.lib.analyzer.analyzer import Analyzer
-from src.lib.osm_data_parser import OSMDataParser, get_relation_ids, retrieve_xml_from_api, \
+from src.lib.osm_data_parser import get_relation_ids, retrieve_xml_from_api, \
     gather_way_and_relation_info, __gather_relation_info__, \
     append_ways_to_search_with_useful_info, \
     __copy_attributes__, unparse_data_to_xml_prettified, check_way_attributes_id
@@ -14,8 +14,6 @@ from src.test.files import osm_data_parser_dicts
 project_path = Path(__file__).parents[2].absolute()
 
 analyzer = Analyzer()
-data_parser = OSMDataParser()
-
 
 @mock.patch("src.lib.osm_data_parser.requests.get")
 def test_retrieve_xml_from_api(requests_get):

@@ -15,7 +15,6 @@ from starlette.responses import StreamingResponse
 from src.lib.osm_data_parser import unparse_data_to_xml_prettified, retrieve_xml_from_api
 from src.lib import way_queries, compare
 from src.lib import webserver_utils
-from src.lib.osm_data_parser import OSMDataParser
 from src.lib.osm_error_messages import return_messages
 from src.lib.analyzer.analyzer import Analyzer
 from src.lib.fixer.fixer import RelationFixer
@@ -26,7 +25,6 @@ logging.basicConfig(level=logging.INFO)
 templates = Jinja2Templates(directory=str(Path(project_path, "templates")))
 
 app = FastAPI()
-data_parser = OSMDataParser()
 analyzer = Analyzer()
 fixer = RelationFixer()
 

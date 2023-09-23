@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 from pathlib import Path
 import xmltodict
-from src.lib.osm_data_parser import OSMDataParser, check_way_attributes_id
+from src.lib.osm_data_parser import check_way_attributes_id
 from src.lib.analyzer.analyzer import Analyzer
 
 project_path = Path(__file__).parents[3].absolute()
 
 
 analyzer = Analyzer()
-data_parser = OSMDataParser()
 
 
 def test_godollo_route_3_m31_roundabout():
@@ -30,7 +29,6 @@ def test_route_closed_roundabout_entry_divided_exit_divided():
     relation_info = analyzer.get_relation_info(data)
     way_ids = check_way_attributes_id(relation_info)
     assert way_ids == ["-6", "-5", "-4", "-2", "-1", "-3", "-7"]
-    assert 1 == 1
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 7

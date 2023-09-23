@@ -1,6 +1,4 @@
-from src.lib.osm_data_parser import OSMDataParser, convert_multiple_dataclasses_to_dicts
-
-data_parser = OSMDataParser()
+from dataclasses import asdict
 
 
 def remote_relation(relation_id, is_from_api):
@@ -315,3 +313,10 @@ def return_messages(error_information_list, correct_ways_count, amount_to_decrea
         messages.append("This relation has no errors and gaps at all.")
         pass
     return messages
+
+
+def convert_multiple_dataclasses_to_dicts(dataclasses):
+    dicts = []
+    for dataclass in dataclasses:
+        dicts.append(asdict(dataclass))
+    return dicts

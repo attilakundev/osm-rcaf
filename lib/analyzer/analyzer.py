@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-from src.lib.osm_data_parser import OSMDataParser
+import src.lib.osm_data_parser as data_parser
+import src.lib.way_queries as way_queries
 from src.lib.analyzer.railway_analyzer import RailwayAnalyzer
 from src.lib.analyzer.highway_analyzer import HighwayAnalyzer
 from src.lib.analyzer.multipolygon_analyzer import MultipolygonAnalyzer
-from src.lib import way_queries
 from src.lib.model.previous_current import PreviousCurrentHighway
 from src.lib.model.error_hwy import ErrorHighway
 
@@ -15,7 +15,6 @@ class Analyzer:
         """This facilitates the retrieval of the relation's information. Relation ID is optional,
         because if you leave it empty, it automatically assigns the first relation for analyzing.
         """
-        data_parser = OSMDataParser()
         relation_info = data_parser.collect_information_about_the_relation(loaded_relation_file, relation_id)
         return relation_info
 
