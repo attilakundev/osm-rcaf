@@ -24,7 +24,7 @@ class HighwayAnalyzer(AnalyzerBase):
                 self.determine_role_errors_at_the_beginning_highway(prev_curr, error_information)
                 prev_curr = self.is_the_way_in_forward_way_series(prev_curr)
                 self.check_if_there_is_gap_at_the_beginning(prev_curr, error_information)
-                prev_curr, error_information = self.determine_roundabout_errors_and_number(
+                prev_curr, error_information = self.check_roundabout_errors(
                     prev_curr, error_information)
 
                 prev_curr, error_information = self.check_if_way_connects_continuously(
@@ -109,8 +109,8 @@ class HighwayAnalyzer(AnalyzerBase):
                 error_information.append(
                     ErrorHighway(dataclasses.replace(prev_curr), "Duplicated roundabout ways"))
             prev_curr.roundabout_ways.append(prev_curr.current_ref)
-        if prev_curr.current_role == "" and prev_curr.current_roundabout is True:
-            prev_curr.last_roundabout_nodes = prev_curr.current_nodes
+            if prev_curr.current_role == "":
+                prev_curr.last_roundabout_nodes = prev_curr.current_nodes
 
     def is_the_way_in_forward_way_series(self, previous_current: PreviousCurrentHighway):
         """Is the current way going into a series of forward ways or
@@ -206,8 +206,8 @@ class HighwayAnalyzer(AnalyzerBase):
                 ErrorHighway(prev_curr=dataclasses.replace(prev_curr),
                              error_type="Gap at the beginning"))
 
-    def determine_roundabout_errors_and_number(self, previous_current: PreviousCurrentHighway,
-                                               error_information: list):
+    def check_roundabout_errors(self, previous_current: PreviousCurrentHighway,
+                                error_information: list):
         """
         This checks if the open roundabout has missing roles, or too few forward ways before closed
         roundabout.
@@ -221,7 +221,6 @@ class HighwayAnalyzer(AnalyzerBase):
                              "Forward role missing at roundabout"))
         if previous_current.index_of_current_way > 0 and not \
                 previous_current.previous_roundabout and previous_current.current_roundabout:
-            previous_current.pieces_of_roundabout = 1
             if previous_current.count_of_forward_role_way_series == 1:
                 error_information.append(
                     ErrorHighway(dataclasses.replace(previous_current),
@@ -232,12 +231,6 @@ class HighwayAnalyzer(AnalyzerBase):
                 # the analyzer), this is not good!! It's a gap
                 error_information.append(
                     ErrorHighway(dataclasses.replace(previous_current), "Roundabout gap"))
-        elif previous_current.index_of_current_way > 0 and previous_current.previous_roundabout \
-                and previous_current.current_roundabout:
-            previous_current.pieces_of_roundabout += 1
-        elif previous_current.index_of_current_way > 0 and previous_current.previous_roundabout \
-                and not previous_current.current_roundabout:
-            previous_current.pieces_of_roundabout = 0
         return previous_current, error_information
 
     def __is_roundabout_entry_way_in_wrong_order__(self, prev_curr: PreviousCurrentHighway,

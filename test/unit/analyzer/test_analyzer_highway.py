@@ -286,7 +286,6 @@ def test_check_roundabout_gaps_only_one_forward_way():
                                            ways[index_of_current_way - 1]),
                                        current_roundabout=way_queries.is_roundabout(
                                            ways[index_of_current_way]),
-                                       pieces_of_roundabout=0,
                                        count_of_forward_role_way_series=1,
                                        last_node_previous=way_queries.get_end_node(
                                            ways[index_of_current_way - 1]),
@@ -296,10 +295,9 @@ def test_check_roundabout_gaps_only_one_forward_way():
                                            ways[index_of_current_way]),
                                        current_role="forward")
     # Act
-    prev_curr, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+    prev_curr, error_information = highway_analyzer.check_roundabout_errors(
         prev_curr, error_information)
     # Assert
-    assert prev_curr.pieces_of_roundabout == 1
     assert len(error_information) == 1
     assert error_information[0].error_type == "Only one forward way before closed roundabout"
 
@@ -313,7 +311,6 @@ def test_check_roundabout_gaps_when_previous_last_is_current_last():
                                            ways[index_of_current_way - 1]),
                                        current_roundabout=way_queries.is_roundabout(
                                            ways[index_of_current_way]),
-                                       pieces_of_roundabout=0,
                                        count_of_forward_role_way_series=2,
                                        last_node_previous=way_queries.get_end_node(
                                            ways[index_of_current_way - 1]),
@@ -324,10 +321,9 @@ def test_check_roundabout_gaps_when_previous_last_is_current_last():
                                        current_role="forward")
 
     # Act
-    prev_curr, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+    prev_curr, error_information = highway_analyzer.check_roundabout_errors(
         prev_curr, error_information)
     # Assert
-    assert prev_curr.pieces_of_roundabout == 1
     assert len(error_information) == 1
     assert error_information[0].error_type == "Roundabout gap"
 
@@ -341,7 +337,6 @@ def test_check_roundabout_no_gaps():
                                            ways[index_of_current_way - 1]),
                                        current_roundabout=way_queries.is_roundabout(
                                            ways[index_of_current_way]),
-                                       pieces_of_roundabout=1,
                                        last_node_previous=way_queries.get_end_node(
                                            ways[index_of_current_way - 1]),
                                        last_node_current=way_queries.get_end_node(
@@ -356,9 +351,8 @@ def test_check_roundabout_no_gaps():
 
 
 def check_roundabout_no_gaps_at_the_beginning(error_information, prev_curr):
-    prev_curr, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+    prev_curr, error_information = highway_analyzer.check_roundabout_errors(
         prev_curr, error_information)
-    assert prev_curr.pieces_of_roundabout == 2
     assert len(error_information) == 0
     return error_information, prev_curr
 
@@ -373,7 +367,7 @@ def check_roundabout_no_gaps_at_the_end_of_roundabout(error_information, prev_cu
     prev_curr.first_node_current = way_queries.get_start_node(ways[index_of_current_way])
     # Act
     prev_curr, error_information = \
-        highway_analyzer.determine_roundabout_errors_and_number(prev_curr, error_information)
+        highway_analyzer.check_roundabout_errors(prev_curr, error_information)
     assert prev_curr.pieces_of_roundabout == 0
     assert len(error_information) == 0
 
@@ -396,7 +390,7 @@ def test_check_roundabout_gaps_continuous_no_roundabout_series():
                                            ways[index_of_current_way]),
                                        current_role="forward")
     # Act
-    prev_curr, error_information = highway_analyzer.determine_roundabout_errors_and_number(
+    prev_curr, error_information = highway_analyzer.check_roundabout_errors(
         prev_curr, error_information)
     # Assert
     assert prev_curr.pieces_of_roundabout == 0
