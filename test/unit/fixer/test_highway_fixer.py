@@ -20,14 +20,13 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_spli
     roundabout_nodes = ["-20", "-21", "-22", "-8", "-7", "-6", "-5", "-24", "-23", "-15", "-16", "-17", "-18", "-19",
                         "-20"]
     # Act
-    corrected_ways_to_search, already_added_members, is_common_point, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
+    corrected_ways_to_search, already_added_members, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
         roundabout_nodes, corrected_ways_to_search,
         already_added_members, ways_to_search)
     # Assert
     assert corrected_ways_to_search == [ways_to_search[0], ways_to_search[2], ways_to_search[3], ways_to_search[4],
                                         ways_to_search[5]]
     assert already_added_members == ["-6", "-5", "-2", "-1", "-3"]
-    assert is_common_point == True
     assert roundabouts_nodes == roundabout_nodes
 
 
@@ -41,14 +40,13 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_wrong_ord
     roundabout_nodes = ["-20", "-21", "-22", "-8", "-7", "-6", "-5", "-24", "-23", "-15", "-16", "-17", "-18", "-19",
                         "-20"]
     # Act
-    corrected_ways_to_search, already_added_members, is_common_point, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
+    corrected_ways_to_search, already_added_members, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
         roundabout_nodes, corrected_ways_to_search,
         already_added_members, ways_to_search)
     # Assert
     assert already_added_members == ["-6", "-5", "-2", "-1", "-3"]
     assert corrected_ways_to_search == [ways_to_search[0], ways_to_search[2], ways_to_search[3], ways_to_search[5],
                                         ways_to_search[4]]
-    assert is_common_point == True
     assert roundabouts_nodes == roundabout_nodes
 
 
@@ -62,14 +60,13 @@ def test_search_for_connection_exiting_from_closed_roundabout_if_entry_exit_not_
                         "-20"]
     corrected_ways_to_search = [ways_to_search[0], ways_to_search[2], ways_to_search[4]]
     # Act
-    corrected_ways_to_search, already_added_members, is_common_point, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
+    corrected_ways_to_search, already_added_members, roundabouts_nodes = highway_fixer.search_for_connection_exiting_from_closed_roundabout(
         roundabout_nodes, corrected_ways_to_search,
         already_added_members, ways_to_search)
     # Assert
     assert already_added_members == ["-6", "-5", "-2", "-1"]
     assert corrected_ways_to_search == [ways_to_search[0], ways_to_search[2], ways_to_search[4],
                                         ways_to_search[3]]
-    assert is_common_point == False
     assert roundabouts_nodes == roundabout_nodes
 
 
