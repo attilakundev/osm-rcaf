@@ -81,7 +81,7 @@
     <tag k='oneway' v='yes' />
   </way>
   <way id='-7' action='modify' visible='true'>
-    <nd ref='-' />
+    <nd ref='-1' />
     <nd ref='-2' />
     <tag k='highway' v='primary' />
   </way>

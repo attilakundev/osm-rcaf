@@ -376,9 +376,6 @@ class HighwayFixer(FixerBase):
                     retries += 1
                 elif number_of_members_of_this_forward_series == 1 and retries == 1 and index < len(
                         ways_to_search):
-                    index += 1
-                    retries += 1
-                elif retries == 2 or retries == 3:  # retries =3: we assume we didn't find the item at the 2nd try, so we wanna add that for sure
                     items_to_add.append(ways_to_search[index])
                     # Basically save this roundabout member into an array, we're struggling with either the end of the relation or double roundabout,
                     # since it may happen that we have members between roundabout nodes
@@ -397,19 +394,21 @@ class HighwayFixer(FixerBase):
                                                     first_node_sought_way,
                                                     last_node_sought_way):  # not connecting
                 index += 1
-                if index == len(ways_to_search) and not is_previous_roundabout and (
-                        retries == 0 or retries == 2):
+                if index == len(ways_to_search) and not is_previous_roundabout and \
+                        retries == 0:
                     index = 0
                     retries += 1
             elif way_ref in already_added_members:  # no duplications are allowed
                 index += 1
-                if index == len(ways_to_search) and (retries == 0 or retries == 2):
+                if index == len(ways_to_search) and retries == 0:
                     index = 0
                     retries += 1
             elif is_roundabout and (
                     not is_previous_roundabout and way_queries.is_roundabout(
                 corrected_ways_to_search[-2])):
                 index += 1
+                # covered in:
+                # test_search_for_connection_wrong_order_road_connecting_searching_for_the_entry_after_exit
             elif way_queries.is_oneway(ways_to_search[index]) and way_queries.get_start_node(
                     corrected_ways_to_search[-1]) == way_queries.get_end_node(
                 ways_to_search[index]):
@@ -427,8 +426,9 @@ class HighwayFixer(FixerBase):
                     corrected_ways_to_search[-1]) == way_queries.get_end_node(ways_to_search[index]) \
                     and not way_queries.is_oneway(corrected_ways_to_search[-1]):
                 # this is a weird way combination, since it suggests that the way found is reversed, either in roundabouts or just normal ways
-                # it looks something like this: ----o---><------- (o is oneway) - and because of this probably the end result will be bad
-                # we want instead this: -----o---->--------->
+                # it looks something like this: -------><---o---- (o is oneway)
+                # - and because of this probably the end result will be bad
+                # we want instead this: --------->----o----->
                 index += 1
             elif way_queries.is_roundabout(ways_to_search[index]) and way_queries.get_end_node(
                     corrected_ways_to_search[-1]) == way_queries.get_end_node(
@@ -442,7 +442,7 @@ class HighwayFixer(FixerBase):
                 # BUT. It may happen that there won't be any of those case, so save it.
                 temp_forward_way = index
                 index += 1
-                if index == len(ways_to_search) and (retries == 0 or retries == 2):
+                if index == len(ways_to_search) and retries == 0:
                     index = 0
                     retries += 1
             else:
@@ -561,7 +561,8 @@ class HighwayFixer(FixerBase):
             first_way, relation_info)
         # change all backward roles to forward if necessary
         ways_to_search_original_roles = list(map(lambda x: x["@role"], ways_to_search))
-        ways_to_search = self.get_way_roles_and_change_direction_if_necessary(ways_to_search, relation_info)
+        ways_to_search = self.get_way_roles_and_change_direction_if_necessary(ways_to_search,
+                                                                              relation_info)
         ways_to_search = self.add_and_remove_roles_tags_for_ways_before_correction(ways_to_search)
         while index < len(ways_to_search) and len(corrected_ways_to_search) < len(ways_to_search):
             check_for_forward_ways, first_node_previous, last_node_previous, previous_role, \
@@ -616,7 +617,9 @@ class HighwayFixer(FixerBase):
                         ways_to_search,
                         index_of_the_connecting_way,
                         False) and number_of_members_of_this_forward_series > 0 and not items_to_be_added:
-                    number_entry_exits_to_roundabout = 0
+                    number_entry_exits_to_roundabout = 0  #
+                    # test_route_closed_roundabout_entry_and_exit_divided_multiple_members would
+                    # fail if the number_entry_exits_to_roundabout was not 1 but higher
                 elif number_entry_exits_to_roundabout == 1 and not items_to_be_added:
                     self.add_split_member(already_added_members, corrected_ways_to_search,
                                           index_of_the_connecting_way, split_highway_members,
@@ -644,7 +647,7 @@ class HighwayFixer(FixerBase):
                             reversing_method_not_run_if_forward_series_detected
                         )
                     if index_of_the_connecting_way == -1 and is_from_api == False:
-                        # if we got here, it means the node wasn't found in the relation.
+                        # if we got here, it means the way wasn't found in the relation.
                         index_of_the_connecting_way, ways_to_search = self.get_item_from_local_way_db(
                             relation_info,
                             corrected_ways_to_search,
@@ -711,8 +714,8 @@ class HighwayFixer(FixerBase):
         index = 1
         roundabouts_nodes = []
         reversing_method_not_run_if_forward_series_detected = True
-        return already_added_members, banned_roundabout_ways, corrected_ways_to_search, index,\
-            number_entry_exits_to_roundabout, number_of_members_of_this_forward_series,\
+        return already_added_members, banned_roundabout_ways, corrected_ways_to_search, index, \
+            number_entry_exits_to_roundabout, number_of_members_of_this_forward_series, \
             reversing_method_not_run_if_forward_series_detected, roundabouts_nodes, \
             split_highway_members, ways_to_search
 
@@ -970,7 +973,9 @@ class HighwayFixer(FixerBase):
             elif way_not_found or way_queries.get_highway(
                     ways_to_search[index_of_the_connecting_way]) == "motorway":
                 # if the series is continuous so not the "wrong side" then don't remove anything... (or if the way is not found)
-                return split_highway_members, corrected_ways_to_search, index_of_the_connecting_way, number_of_members_of_this_forward_series, number_entry_exits_to_roundabout
+                return split_highway_members, corrected_ways_to_search, \
+                    index_of_the_connecting_way, number_of_members_of_this_forward_series, \
+                    number_entry_exits_to_roundabout
             else:
                 # remove the wrong way
                 corrected_ways_to_search.remove(corrected_ways_to_search[-1])
@@ -978,7 +983,9 @@ class HighwayFixer(FixerBase):
                 already_added_members.remove(already_added_members[-1])
                 number_of_members_of_this_forward_series -= 1
                 # insert the correct way into place
-                already_added_members, corrected_ways_to_search, split_highway_members, number_of_members_of_this_forward_series, reversing_method_not_run_if_forward_series_detected = self.check_for_forward_ways(
+                already_added_members, corrected_ways_to_search, split_highway_members, \
+                    number_of_members_of_this_forward_series, \
+                    reversing_method_not_run_if_forward_series_detected = self.check_for_forward_ways(
                     already_added_members,
                     corrected_ways_to_search,
                     first_node_two_way_before,
@@ -1003,7 +1010,8 @@ class HighwayFixer(FixerBase):
                                                                             number_of_members_of_this_forward_series,
                                                                             previous_roundabouts_nodes,
                                                                             banned_roundabout_ways)
-                return split_highway_members, corrected_ways_to_search, index_of_the_connecting_way, number_of_members_of_this_forward_series, number_entry_exits_to_roundabout
+                return split_highway_members, corrected_ways_to_search, index_of_the_connecting_way, \
+                    number_of_members_of_this_forward_series, number_entry_exits_to_roundabout
 
     def get_way_roles_and_change_direction_if_necessary(self, ways_to_search, relation_info):
         for way in ways_to_search:
@@ -1033,12 +1041,13 @@ class HighwayFixer(FixerBase):
             way_ref = way_queries.get_way_ref(ways_to_search[index])
             # we want to check if the way we're investigating exists in the roundabout, if yes, add it for sure
             if len(items_to_add) == 1 and way_queries.roundabout_checker(previous_roundabouts_nodes,
-                                                                         current_ways_nodes) and way_ref not in already_added_members:
+                                                                         current_ways_nodes) and \
+                    way_ref not in already_added_members:
                 items_to_add = [ways_to_search[index]] + items_to_add
             # because we added the item that's connecting to the first roundabout, see if there are more connections
             elif len(items_to_add) >= 2 and way_queries.check_connectivity(
-                    way_queries.get_start_node(items_to_add[len(items_to_add) - 2]),
-                    way_queries.get_end_node(items_to_add[len(items_to_add) - 2]),
+                    way_queries.get_start_node(items_to_add[-2]),
+                    way_queries.get_end_node(items_to_add[-2]),
                     way_queries.get_start_node(ways_to_search[index]),
                     way_queries.get_end_node(
                         ways_to_search[
@@ -1066,14 +1075,14 @@ class HighwayFixer(FixerBase):
             way_ref = way["@id"]
             way_tags = way["tag"]
             way_nodes = way_queries.get_nodes(way)
-            last_connected_is_roundabout = way_queries.get_role(corrected_ways_to_search[-1])
-            current_roundabout = way_queries.get_role(way)
+            previous_role = way_queries.get_role(corrected_ways_to_search[-1])
+            current_role = way_queries.get_role(way)
             previous_nodes = way_queries.get_nodes(corrected_ways_to_search[-1])
             # If the corrected ways' last member connects with the member which is not in the relation, then add it
             if (way_queries.check_connectivity(previous_nodes[0], previous_nodes[-1], way_nodes[0],
                                                way_nodes[-1])
                 or (
-                        last_connected_is_roundabout or current_roundabout) and way_queries.roundabout_checker(
+                        previous_role or current_role) and way_queries.roundabout_checker(
                         way_queries.get_nodes(corrected_ways_to_search[-1]),
                         way)) and way_ref not in map(
                 lambda x: x["@ref"], ways_to_search):
@@ -1082,7 +1091,8 @@ class HighwayFixer(FixerBase):
                                    "attributes": attributes_of_the_way,
                                    "nd": way["nd"], "tag": way_tags}
                 ways_to_search.append(way_to_be_added)
-                # Now predict the role, so there won't be huge issues regarding the fixing
+                # Now predict the next way (and its role), so there won't be huge issues regarding
+                # the fixing
                 next_ways_connecting_index, _ = self.search_for_connection(0,
                                                                            way_queries.get_start_node(
                                                                                ways_to_search[-1]),
@@ -1103,8 +1113,9 @@ class HighwayFixer(FixerBase):
                                                                  way_to_search_original_roles[
                                                                      next_ways_connecting_index])
 
-                ways_to_search = self.get_way_roles_and_change_direction_if_necessary(ways_to_search,
-                                                                                      relation_info)
+                ways_to_search = self.get_way_roles_and_change_direction_if_necessary(
+                    ways_to_search,
+                    relation_info)
                 return len(ways_to_search) - 1, ways_to_search
         return -1, ways_to_search
 
