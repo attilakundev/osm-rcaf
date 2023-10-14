@@ -160,8 +160,8 @@ class HighwayAnalyzer(AnalyzerBase):
                         previous_current.previous_role == "forward" or (
                         previous_current.is_mutcd_country and way_queries.check_if_directional(
                     previous_current.previous_role))
-                        and previous_current.current_role == "" and len(
-                    previous_current.last_forward_way_ref_nodes_before_backward) > 0)):
+                        and previous_current.current_role == "") and len(
+                    previous_current.last_forward_way_ref_nodes_before_backward) > 0):
             self.__check_last_forward_way_to_connection_with_current_way__(previous_current,
                                                                            error_information)
 
