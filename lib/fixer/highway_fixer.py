@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 import copy
 
-from src.lib.fixer.fixer_base import FixerBase
-from src.lib.fixer import fixer_utils
-from src.lib.osm_data_parser import __copy_attributes__
 from src.lib import way_queries
+from src.lib.fixer import fixer_utils
+from src.lib.fixer.fixer_base import FixerBase
+from src.lib.osm_data_parser import __copy_attributes__
 
 
 class HighwayFixer(FixerBase):
@@ -277,11 +277,13 @@ class HighwayFixer(FixerBase):
                         ways_to_search) and not found:
                     j = 0
                     while j < len(split_highway_members) and not found:
+                        way_ref_where_would_continue= way_queries.get_way_ref(
+                            ways_to_search[index_of_the_way_where_relation_would_continue])
                         if way_queries.get_start_node(ways_to_search[
                                                           index_of_the_way_where_relation_would_continue]) == way_queries.get_end_node(
-                            split_highway_members[j]) and way_queries.get_way_ref(
-                            ways_to_search[index_of_the_way_where_relation_would_continue]) \
-                                not in map(lambda x: x["@ref"], split_highway_members):
+                            split_highway_members[j]) and way_ref_where_would_continue \
+                                not in map(lambda x: x["@ref"], split_highway_members) and \
+                                way_ref_where_would_continue not in already_added_members:
                             already_added_members, corrected_ways_to_search = \
                                 self.__reverse_the_second_side_of_looped_forward_section__(
                                     corrected_ways_to_search, j,
@@ -302,10 +304,10 @@ class HighwayFixer(FixerBase):
         """
         Visually:
             originally:                  after:
-            <--------\                  <------------\
+            <--------\                  ------------>\
                      ^ ------->                        ------->
-            ---------/                  -------------/
-
+            ---------/                  ------------>/
+            Direction changes of order of ways but the original oneway stays.
         """
         # get the index of the member already contained in the corrected relation
         try:
