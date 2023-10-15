@@ -320,3 +320,10 @@ def test_route_closed_roundabout_entry_and_exit_divided_multiple_members():
     corrected_ways_to_search = highway_fixer.fixing(relation_info, "-7", False)
     refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
     assert refs_of_members == ["-7", "-5", "-10", "-6", "-9", "-1", "-3", "-8", "-2", "-4"]
+
+def not_working_test_szajol_roundabout_problem():
+    file_path = f"{project_path}/test/files/files_for_fixer/szajol_roundabout_problem.xml"
+    relation_info = fixer_utils.get_relation_info(file_path)
+    corrected_ways_to_search = highway_fixer.fixing(relation_info, "-1", False)
+    refs_of_members = list(map(lambda x: way_queries.get_way_ref(x), corrected_ways_to_search))
+    assert refs_of_members == ["-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"]
