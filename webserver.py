@@ -1,9 +1,10 @@
+import sys
 from io import StringIO
-
 import xmltodict
 import datetime
 import uvicorn
 import logging
+from uvicorn.config import LOGGING_CONFIG
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -21,9 +22,31 @@ from src.lib.fixer.fixer import RelationFixer
 
 project_path = Path(__file__).resolve().parent
 
-logging.basicConfig(level=logging.INFO)
-templates = Jinja2Templates(directory=str(Path(project_path, "templates")))
 
+def logging_setup():
+    LOGGING_CONFIG["formatters"]["default"][
+        "fmt"] = "%(asctime)s %(levelprefix)s: %(message)s"
+    LOGGING_CONFIG["formatters"]["access"][
+        "fmt"] = '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        handlers=[
+            logging.FileHandler("/home/logs/logging.log"),
+        ]
+    )
+    console_logger = logging.StreamHandler()
+    console_logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+    console_logger.setFormatter(formatter)
+    logging.getLogger().addHandler(console_logger)
+
+
+
+logging_setup()
+
+templates = Jinja2Templates(directory=str(Path(project_path, "templates")))
 app = FastAPI()
 analyzer = Analyzer()
 fixer = RelationFixer()

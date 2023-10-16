@@ -1,3 +1,5 @@
+import logging
+
 import requests
 import xmltodict
 from string import Template
@@ -8,8 +10,11 @@ OSM_API_RELATION_URL_TEMPLATE = Template(f"https://www.openstreetmap.org/api/0.6
 
 def retrieve_xml_from_api(relation_number):
     url = OSM_API_RELATION_URL_TEMPLATE.substitute(relation=relation_number)
+    logging.info(f"Getting relation #{relation_number} from API")
     relation_file = requests.get(url)
+    logging.info(f"Retrieved #{relation_number} from API")
     dictionary = xmltodict.parse(relation_file.content)
+    logging.info(f"Parsed XML of {relation_number} to dictionary")
     return dictionary
 
 

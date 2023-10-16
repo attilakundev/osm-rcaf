@@ -31,6 +31,7 @@ class PreviousCurrentHighway:
     route_number: str = ""
     network: str = ""
     role_of_first_way: str = ""
+    relation_id: str = ""
 
     motorway_split_way: bool = False
     has_directional_roles: bool = False

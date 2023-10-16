@@ -5,7 +5,7 @@ from src.lib.analyzer.analyzer_base import AnalyzerBase
 
 
 class RailwayAnalyzer(AnalyzerBase):
-    def checking(self, relation_info):
+    def checking(self, relation_info, relation_id = ""):
         error_information = []
         prev_curr = PreviousCurrentHighway()
         for elem_val in relation_info["ways_to_search"]:

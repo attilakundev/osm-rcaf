@@ -8,7 +8,7 @@ from src.lib import way_queries
 
 
 class MultipolygonAnalyzer(AnalyzerBase):
-    def checking(self, relation_info: dict):
+    def checking(self, relation_info: dict,relation_id = ""):
         """
 
         :param relation_info: The relation's information regarding order of ways, attributes of ways, nodes and other important things
