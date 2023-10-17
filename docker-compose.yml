@@ -6,4 +6,4 @@ services:
     ports:
       - "80:5000"
     volumes:
-      - ../logs:/home/logs
+      - ../logs:/var/logs/osm-rcaf

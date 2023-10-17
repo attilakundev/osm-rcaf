@@ -2,22 +2,21 @@
 import dataclasses
 import logging
 
-from src.lib.model.previous_current import PreviousCurrentHighway
-from src.lib.model.error_hwy import ErrorHighway
-from src.lib.analyzer.analyzer_base import AnalyzerBase
 from src.lib import way_queries
-
+from src.lib.analyzer.analyzer_base import AnalyzerBase
+from src.lib.model.error_hwy import ErrorHighway
+from src.lib.model.previous_current import PreviousCurrentHighway
 
 
 class HighwayAnalyzer(AnalyzerBase):
     # good for highway=* tags (primary, secondary, etc. and even trails and cycle routes)
-    def checking(self, relation_info: dict, relation_id = ""):
+    def checking(self, relation_info: dict, relation_id=""):
         """Highway checking. This is where the gaps for a highway is checked. For unit tests, this
          should be only
         used if a complete relation is about to be tested."""
         prev_curr = PreviousCurrentHighway()
         error_information = []
-        self.__determine_basic_relation_information__(prev_curr, relation_info,relation_id)
+        self.__determine_basic_relation_information__(prev_curr, relation_info, relation_id)
         for elem_val in relation_info["ways_to_search"]:
             if "nd" in elem_val and "tag" in elem_val:
                 length_of_error_when_this_iter_begins = len(error_information)
@@ -55,7 +54,7 @@ class HighwayAnalyzer(AnalyzerBase):
                         len(error_information) -
                         amount_to_be_decreased_from_error_information_length) - 1
 
-    def __determine_basic_relation_information__(self, prev_curr, relation_info,relation_id = ""):
+    def __determine_basic_relation_information__(self, prev_curr, relation_info, relation_id=""):
         prev_curr.role_of_first_way = way_queries.get_role(relation_info["ways_to_search"][0])
         prev_curr.route_number = way_queries.get_ref_of_the_route(relation_info)
         prev_curr.network = way_queries.get_network(relation_info)
@@ -110,7 +109,8 @@ class HighwayAnalyzer(AnalyzerBase):
         """
         if prev_curr.current_roundabout:
             if prev_curr.current_ref in prev_curr.roundabout_ways:
-                logging.info(f"Duplicated roundabout ways detected for {prev_curr.relation_id}")
+                logging.info(f"Duplicated roundabout ways detected for {prev_curr.relation_id}, "
+                             f"found at {prev_curr.current_ref}")
                 error_information.append(
                     ErrorHighway(dataclasses.replace(prev_curr), "Duplicated roundabout ways"))
             prev_curr.roundabout_ways.append(prev_curr.current_ref)
@@ -207,7 +207,8 @@ class HighwayAnalyzer(AnalyzerBase):
                         == prev_curr.first_node_current) and (
                         prev_curr.first_node_previous == prev_curr.first_node_current or
                         prev_curr.last_node_previous == prev_curr.first_node_current)):
-            logging.info(f"Gap at the beginning detected for {prev_curr.relation_id}")
+            logging.info(f"Gap at the beginning detected for {prev_curr.relation_id} found at"
+                         f" {prev_curr.current_ref}")
             error_information.append(
                 ErrorHighway(prev_curr=dataclasses.replace(prev_curr),
                              error_type="Gap at the beginning"))
@@ -223,7 +224,8 @@ class HighwayAnalyzer(AnalyzerBase):
         if previous_current.current_roundabout and previous_current.current_role == "" \
                 and previous_current.first_node_current != previous_current.last_node_current:
             logging.info(f"Forward role missing at roundabout detect"
-                         f"ed for {previous_current.relation_id}")
+                         f"ed for {previous_current.relation_id} found at way"
+                         f" {previous_current.current_ref}")
             error_information.append(
                 ErrorHighway(dataclasses.replace(previous_current),
                              "Forward role missing at roundabout"))
@@ -231,7 +233,8 @@ class HighwayAnalyzer(AnalyzerBase):
                 previous_current.previous_roundabout and previous_current.current_roundabout:
             if previous_current.count_of_forward_role_way_series == 1:
                 logging.info(f"Only one forward way before closed roundabout detected for "
-                             f" {previous_current.relation_id}")
+                             f" {previous_current.relation_id} found at way "
+                             f"{previous_current.current_ref}")
                 error_information.append(
                     ErrorHighway(dataclasses.replace(previous_current),
                                  "Only one forward way before closed roundabout"))
@@ -239,7 +242,8 @@ class HighwayAnalyzer(AnalyzerBase):
                     and previous_current.first_node_current != previous_current.last_node_current:
                 # this means that the roundabout would go in a weird way (causing an endless loop in
                 # the analyzer), this is not good!! It's a gap
-                logging.info(f"Roundabout gap detected for{previous_current.relation_id}")
+                logging.info(f"Roundabout gap detected for {previous_current.relation_id} found "
+                             f"at way {previous_current.current_ref}")
                 error_information.append(
                     ErrorHighway(dataclasses.replace(previous_current), "Roundabout gap"))
         return previous_current, error_information
@@ -251,7 +255,9 @@ class HighwayAnalyzer(AnalyzerBase):
                 ways_to_search) - 2 and prev_curr.last_node_previous == \
                 prev_curr.last_node_current and way_queries. \
                 is_roundabout(ways_to_search[prev_curr.index_of_current_way + 2]):
-            logging.info(f"Wrong order of roundabout entries detected for{prev_curr.relation_id}")
+            logging.info(
+                f"Wrong order of roundabout entries detected for {prev_curr.relation_id} found at "
+                f"way {prev_curr.current_ref}")
             error_information.append(
                 ErrorHighway(dataclasses.replace(prev_curr), "Wrong order of roundabout entries"))
             return True
@@ -297,7 +303,8 @@ class HighwayAnalyzer(AnalyzerBase):
             if not good_roundabout and not (prev_curr.previous_role == "forward"
                                             and prev_curr.previous_oneway
                                             and not prev_curr.previous_roundabout):
-                logging.info(f"Roundabout gap detected for {prev_curr.relation_id}")
+                logging.info(f"Roundabout gap detected for {prev_curr.relation_id} found at way"
+                             f" {prev_curr.current_ref}")
                 error_information.append(
                     ErrorHighway(dataclasses.replace(prev_curr), "Roundabout gap"))
                 # the not (previous_role == "forward" and previous_oneway and
@@ -317,7 +324,8 @@ class HighwayAnalyzer(AnalyzerBase):
                                                          error_information)
         elif prev_curr.index_of_current_way > 0:
             # It's definitely a gap
-            logging.info(f"Gap detected for {prev_curr.relation_id}")
+            logging.info(
+                f"Gap detected for {prev_curr.relation_id} found at way {prev_curr.current_ref}")
             error_information.append(ErrorHighway(dataclasses.replace(prev_curr), "Gap"))
         return prev_curr, error_information
 
@@ -351,7 +359,9 @@ class HighwayAnalyzer(AnalyzerBase):
         else:
             # it runs whenever there's no role for oneway OR it's oneway but its role is not forward
             # / cardinal role.
-            logging.info(f"Wrong role setup detected for {previous_current.relation_id}")
+            logging.info(
+                f"Wrong role setup detected for {previous_current.relation_id} found at way "
+                f"{previous_current.current_ref}")
             error_information.append(
                 ErrorHighway(dataclasses.replace(previous_current), "Wrong role setup"))
         return previous_current, error_information
@@ -388,7 +398,7 @@ class HighwayAnalyzer(AnalyzerBase):
             # before that there are two ways without any role and oneway,
             # if this is true then it's a bad way.
             logging.info(f"Forward and non-oneway without ability to move backward detected for"
-                         f" {prev_curr.relation_id}")
+                         f" {prev_curr.relation_id} found at way {prev_curr.current_ref}")
             error_information.append(
                 ErrorHighway(prev_curr=dataclasses.replace(prev_curr),
                              error_type="Forward and non-oneway without ability"
@@ -442,7 +452,9 @@ class HighwayAnalyzer(AnalyzerBase):
             prev_curr.last_forward_way_ref_nodes_before_backward = [prev_curr.previous_ref,
                                                                     prev_curr.previous_nodes]
             if not good_roundabout:
-                logging.info(f"Gap in forward series detected for {prev_curr.relation_id}")
+                logging.info(
+                    f"Gap in forward series detected for {prev_curr.relation_id} found at way "
+                    f"{prev_curr.current_ref}")
                 error_information.append(
                     ErrorHighway(dataclasses.replace(prev_curr), "Gap in forward series"))
         return prev_curr, error_information
@@ -465,7 +477,9 @@ class HighwayAnalyzer(AnalyzerBase):
                         prev_curr.route_number.startswith("M") and
                         prev_curr.network.startswith("HU"))) and \
                 prev_curr.current_role == "forward":
-            logging.info(f"Motorway not split detected for {prev_curr.relation_id}")
+            logging.info(
+                f"Motorway not split detected for {prev_curr.relation_id} found at way "
+                f"{prev_curr.current_ref}")
             error_information.append(
                 ErrorHighway(dataclasses.replace(prev_curr), "Motorway not split"))
 
@@ -481,6 +495,9 @@ class HighwayAnalyzer(AnalyzerBase):
                     prev_curr.current_roundabout and
                     prev_curr.first_node_current != prev_curr.last_node_current))
             )):
-                logging.info(f"Wrong role setup detected for {prev_curr.relation_id}")
-                error_information.append(ErrorHighway(dataclasses.replace(prev_curr), "Wrong role setup"))
+                logging.info(
+                    f"Wrong role setup detected for {prev_curr.relation_id} found at way "
+                    f"{prev_curr.current_ref}")
+                error_information.append(
+                    ErrorHighway(dataclasses.replace(prev_curr), "Wrong role setup"))
         return prev_curr, error_information

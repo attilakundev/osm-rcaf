@@ -33,7 +33,7 @@ def logging_setup():
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[
-            logging.FileHandler("/home/logs/logging.log"),
+            logging.FileHandler("/var/logs/osm-rcaf/webserver.log"),
         ]
     )
     console_logger = logging.StreamHandler()
