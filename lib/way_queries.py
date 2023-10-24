@@ -184,3 +184,11 @@ def get_relation_ids(loaded_data):
     else:
         # We know it's a list
         return [relation["@id"] for relation in relations_list]
+
+def detect_closed_roundabout(corrected_ways_to_search, index, closed_roundabout_detected):
+    """Check if the roundabout is closed"""
+    return True if is_roundabout(
+        corrected_ways_to_search[index]) and get_start_node(
+        corrected_ways_to_search[index]) == get_end_node(
+        corrected_ways_to_search[
+            index]) and closed_roundabout_detected is False else closed_roundabout_detected

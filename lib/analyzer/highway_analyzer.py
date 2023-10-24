@@ -16,8 +16,9 @@ class HighwayAnalyzer(AnalyzerBase):
         used if a complete relation is about to be tested."""
         prev_curr = PreviousCurrentHighway()
         error_information = []
+        ways_to_search = relation_info["ways_to_search"]
         self.__determine_basic_relation_information__(prev_curr, relation_info, relation_id)
-        for elem_val in relation_info["ways_to_search"]:
+        for index, elem_val in enumerate(ways_to_search):
             if "nd" in elem_val and "tag" in elem_val:
                 length_of_error_when_this_iter_begins = len(error_information)
                 self.__determine_current_member__(elem_val, prev_curr)
@@ -27,7 +28,7 @@ class HighwayAnalyzer(AnalyzerBase):
                 prev_curr = self.is_the_way_in_forward_way_series(prev_curr)
                 self.check_if_there_is_gap_at_the_beginning(prev_curr, error_information)
                 prev_curr, error_information = self.check_roundabout_errors(
-                    prev_curr, error_information)
+                    prev_curr, error_information, ways_to_search, index)
 
                 prev_curr, error_information = self.check_if_way_connects_continuously(
                     relation_info["ways_to_search"], prev_curr, error_information)
@@ -214,13 +215,15 @@ class HighwayAnalyzer(AnalyzerBase):
                              error_type="Gap at the beginning"))
 
     def check_roundabout_errors(self, previous_current: PreviousCurrentHighway,
-                                error_information: list):
+                                error_information: list, ways_to_search, index: int):
         """
         This checks if the open roundabout has missing roles, or too few forward ways before closed
         roundabout.
         Other than that if everything went well, add the number of roundabout pieces (or reset it)
         :return:
         """
+        current_closed_roundabout = way_queries.detect_closed_roundabout(ways_to_search, index,
+                                                                         False)
         if previous_current.current_roundabout and previous_current.current_role == "" \
                 and previous_current.first_node_current != previous_current.last_node_current:
             logging.info(f"Forward role missing at roundabout detect"
@@ -231,7 +234,7 @@ class HighwayAnalyzer(AnalyzerBase):
                              "Forward role missing at roundabout"))
         if previous_current.index_of_current_way > 0 and not \
                 previous_current.previous_roundabout and previous_current.current_roundabout:
-            if previous_current.count_of_forward_role_way_series == 1:
+            if previous_current.count_of_forward_role_way_series == 1 and current_closed_roundabout:
                 logging.info(f"Only one forward way before closed roundabout detected for "
                              f" {previous_current.relation_id} found at way "
                              f"{previous_current.current_ref}")

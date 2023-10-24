@@ -211,3 +211,12 @@ def test_zamardi_7_m7_roundabout():
     error_information, correct_ways_count, _ = analyzer.relation_checking(data)
     assert len(error_information) == 0
     assert correct_ways_count == 18
+
+def test_tiszakurt_4515_relation_with_open_roundabout_but_the_road_is_connected_in_one_piece():
+    # Roundabout near Zamárdi, this is the closed one-piece version of Gödöllő's one
+    file_path = f"{project_path}/test/files/9775655.xml"
+    file = open(file_path, "r").read()
+    data = xmltodict.parse(file)
+    error_information, correct_ways_count, _ = analyzer.relation_checking(data,"9775655")
+    assert len(error_information) == 0
+    assert correct_ways_count == 14

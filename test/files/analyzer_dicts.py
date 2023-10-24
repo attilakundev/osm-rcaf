@@ -363,7 +363,8 @@ relation_info_roundabout_only_one_forward_role = {
             'nd': [
                 {'@ref': '-3'},
                 {'@ref': '-4'},
-                {'@ref': '-5'}
+                {'@ref': '-5'},
+                {'@ref': '-3'}
             ],
             'tag': [
                 {

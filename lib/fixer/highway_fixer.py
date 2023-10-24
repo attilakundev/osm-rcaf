@@ -567,7 +567,7 @@ class HighwayFixer(FixerBase):
             current_oneway = way_queries.is_oneway(way)
             current_forward = way_queries.get_role(way) == "forward"
             current_roundabout = way_queries.is_roundabout(way)
-            closed_roundabout_detected = self.detect_closed_roundabout(ways_to_search, index,
+            closed_roundabout_detected = way_queries.detect_closed_roundabout(ways_to_search, index,
                                                                        False)
             if current_roundabout and closed_roundabout_detected and (
                     current_forward or current_oneway):
@@ -628,7 +628,7 @@ class HighwayFixer(FixerBase):
                                            number_of_members_of_this_forward_series,
                                            roundabouts_nodes,
                                            banned_roundabout_ways)
-                if number_entry_exits_to_roundabout == 0 and self.detect_closed_roundabout(
+                if number_entry_exits_to_roundabout == 0 and way_queries.detect_closed_roundabout(
                         ways_to_search,
                         index_of_the_connecting_way,
                         False) and \
@@ -642,7 +642,7 @@ class HighwayFixer(FixerBase):
                         already_added_members, corrected_ways_to_search,
                         number_entry_exits_to_roundabout, number_of_members_of_this_forward_series,
                         split_highway_members, ways_to_search)
-                elif number_entry_exits_to_roundabout == 1 and self.detect_closed_roundabout(
+                elif number_entry_exits_to_roundabout == 1 and way_queries.detect_closed_roundabout(
                         ways_to_search,
                         index_of_the_connecting_way,
                         False) and number_of_members_of_this_forward_series > 0 and not items_to_be_added:
@@ -847,7 +847,7 @@ class HighwayFixer(FixerBase):
                 corrected_first_node_current, corrected_last_node_current, corrected_ways_to_search,
                 index,
                 oneway_series_starting_node_detected, oneway_series_starting_way_index)
-            closed_roundabout_detected = self.detect_closed_roundabout(corrected_ways_to_search,
+            closed_roundabout_detected = way_queries.detect_closed_roundabout(corrected_ways_to_search,
                                                                        index,
                                                                        closed_roundabout_detected)
             index_before_change = copy.deepcopy(index)
@@ -926,13 +926,7 @@ class HighwayFixer(FixerBase):
             return True  # same as above, but this should occur when we're seeking for the other side of the divided road.
         return False
 
-    def detect_closed_roundabout(self, corrected_ways_to_search, index, closed_roundabout_detected):
-        """Check if the roundabout is closed"""
-        return True if way_queries.is_roundabout(
-            corrected_ways_to_search[index]) and way_queries.get_start_node(
-            corrected_ways_to_search[index]) == way_queries.get_end_node(
-            corrected_ways_to_search[
-                index]) and closed_roundabout_detected is False else closed_roundabout_detected
+
 
     def if_not_roundabout_then_get_rid_of_the_other_half_of_the_road(self, index,
                                                                      ways_to_search,
@@ -1197,7 +1191,7 @@ class HighwayFixer(FixerBase):
             if way_ref not in already_added_members and way_queries.roundabout_checker(
                     [start_node_of_way, end_node_of_way],
                     way_nodes) and is_roundabout \
-                    and self.detect_closed_roundabout(ways_to_search, index, False):
+                    and way_queries.detect_closed_roundabout(ways_to_search, index, False):
                 return True
         return False
 
@@ -1213,7 +1207,7 @@ class HighwayFixer(FixerBase):
         is_oneway_two_before = way_queries.is_oneway(corrected_ways_to_search[-3])
         is_way_two_before_connected_to_last_corrected = way_queries.roundabout_checker(
             way_queries.get_nodes(corrected_ways_to_search[-3]),corrected_ways_to_search[-1])
-        is_last_member_a_closed_roundabout = self.detect_closed_roundabout(
+        is_last_member_a_closed_roundabout = way_queries.detect_closed_roundabout(
             corrected_ways_to_search,len(corrected_ways_to_search)-1, False)
         if is_oneway_previous and is_oneway_two_before and not \
                 is_way_two_before_connected_to_last_corrected and \
@@ -1228,6 +1222,3 @@ class HighwayFixer(FixerBase):
             if len(copy_of_corr_ways_to_search) - 2 == len(corrected_ways_to_search):
                 return True
         return False
-
-
-
