@@ -1,11 +1,11 @@
 import logging
 import os
+import random
 import sys
 import time
 import xml
 
 import click
-import matplotlib.pyplot as plt
 import pandas as pd
 import xmltodict
 
@@ -32,15 +32,16 @@ def get_result_of_one_relation(relation_id, outdir, source, verbose):
     analyzer = Analyzer()
     data = {}
     multiplier = 1
-    timer =1
+    timer = 1
     tries = 1
-    start_time_api = time.time()
+    start_time_api = 0
     while not data:
         time_to_wait = 2 if timer * multiplier > 2 else timer * multiplier
         print(f"Trying to get relation {relation_id}, try #{tries}, waiting {time_to_wait}s"
               f" before retrieval")
         time.sleep(timer * multiplier)
         try:
+            start_time_api = time.time()
             data = retrieve_xml_from_api(relation_id)
         except xml.parsers.expat.ExpatError:
             tries += 1
@@ -51,14 +52,12 @@ def get_result_of_one_relation(relation_id, outdir, source, verbose):
         error_information, correct_ways_count, amount_to_decrease_from_errors = \
             analyzer.relation_checking(data, relation_id)
         end_time_checking = time.time()
-        start_time_error_display = time.time()
         error_messages = return_messages(error_information, correct_ways_count,
                                          amount_to_decrease_from_errors, relation_id,
                                          source,
                                          verbose)
         display_errors(error_messages, len(error_information), amount_to_decrease_from_errors,
                        outdir, relation_id)
-        end_time_error_display = time.time()
     else:
         start_time_checking, start_time_error_display = 0, 0
         end_time_checking, end_time_error_display = 0, 0
@@ -67,8 +66,7 @@ def get_result_of_one_relation(relation_id, outdir, source, verbose):
 
     time_passed_api = end_time_api - start_time_api
     time_passed_checking = end_time_checking - start_time_checking
-    time_passed_error = end_time_error_display - start_time_error_display
-    return error_messages, time_passed_api, time_passed_checking, time_passed_error
+    return error_messages, time_passed_api, time_passed_checking
 
 
 def display_errors(error_messages, error_length, amount_to_decrease_from_errors, outdir,
@@ -171,54 +169,48 @@ def analyzer(relation: str, source: str, relationcfg: str, outdir: str, verbose:
 
 
 def draw_chart(all_data, filename):
-    list_of_data = [[str(key), value["time_passed_init"], value["time_passed_api"],
-                     value["time_passed_checking"], value["time_passed_error_display"]] for
-                    key, value in all_data.items()]
-    df = pd.DataFrame(list_of_data, columns=["Amount of relations", "Time passed since init",
-                                             "Time passed loading from API", "Time passed checking",
-                                             "time passed error displaying"])
+    list_of_data = [[str(key), value["time_passed_api"], value["time_passed_checking"]] for key, value in all_data.items()]
+    df = pd.DataFrame(list_of_data, columns=["Amount of relations", "Time passed loading from API",
+                                             "Time passed checking"])
     print(df)
     ax = df.plot(x='Amount of relations', kind='bar', stacked=True,
-            title='Performance of Analyzer based on amount of relations')
+                 title='Performance of Analyzer based on amount of relations')
     ax.set(ylabel="Time (s)")
     ax.get_figure().savefig(filename)
 
 
 @click.command()
-@click.option("--sourcefolder", "-sf", required=True, default="", help="The source folder which " \
-                                                                       "contains the files.")
-@click.option("--files", "-f", default="", required=True,
-              help="The relation config files which you want to use for benchmarking. All must" \
-                   "be in txt. Format of input: '50,100,150,200'")
+@click.option("--source", "-s", required=True, default="", help="The source file which is used "
+                                                                "for taking relations from for "
+                                                                "benchmarking.")
+@click.option("--relationamounts", "-ra", default="", required=True,
+              help="The amounts to take from the relation list file. Separated with a comma. (10,"
+                   "20)")
 @click.option("--outdir", "-o", show_default=True, required=True, default="",
               help="The output folder where you want the logs and xml files.")
 @click.option("--logfile", "-l", required=True, help="The logfile location where you want the "
                                                      "output to be saved.")
-def benchmarking(sourcefolder: str, files: str, outdir: str, logfile: str):
+def benchmarking(source: str, relationamounts: str, outdir: str, logfile: str):
     logging_setup_cli(log_path=logfile)
     stats = {}
-    relationcfg_files = files.split(",")
-    for file in relationcfg_files:
-        start_time_init = time.time()
-        logging.info(f"Opening {file}.txt")
-        file = open(sourcefolder + "/" + file + ".txt", "r")
-        relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in
-                        file.readlines()]
-        logging.info(f"Contains {len(relation_ids)} relation IDs")
-
-        relations = []
-        end_time_init = time.time()
-        time_passed_init = end_time_init - start_time_init
-        stats[len(relation_ids)] = {"time_passed_init": time_passed_init, "time_passed_api": 0,
-                                    "time_passed_checking": 0, "time_passed_error_display": 0}
-        for relation_id in relation_ids:
-            error_messages, time_passed_api, time_passed_checking, time_passed_error = \
+    file = open(source, "r")
+    amounts = relationamounts.split(",")
+    relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in
+                    file.readlines()]
+    for amount in amounts:
+        logging.info("Waiting 20 seconds, so the API calms down.")
+        time.sleep(20)
+        random.shuffle(relation_ids)
+        logging.info(f"Contains {amount} relation IDs")
+        stats[amount] = {"time_passed_api": 0, "time_passed_checking": 0}
+        for relation_id in relation_ids[0:int(amount)]:
+            error_messages, time_passed_api, time_passed_checking = \
                 get_result_of_one_relation(relation_id, outdir, True, False)
-            relations.append(error_messages)
-            stats[len(relation_ids)]["time_passed_api"] += time_passed_api
-            stats[len(relation_ids)]["time_passed_checking"] += time_passed_checking
-            stats[len(relation_ids)]["time_passed_error_display"] += time_passed_error
-        logging.info(f"Script ran for {len(relation_ids)} relations.")
+            stats[amount]["time_passed_api"] += time_passed_api
+            stats[amount]["time_passed_checking"] += time_passed_checking
+        total_time = stats[amount]['time_passed_api'] + \
+                     stats[amount]['time_passed_checking']
+        logging.info(f"Script ran for {amount} relations. Took {total_time} seconds.")
     draw_chart(stats, outdir + "chart.png")
 
 
