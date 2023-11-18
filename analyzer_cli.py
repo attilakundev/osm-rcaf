@@ -113,7 +113,11 @@ def entry_point():
 @click.option("--logfile", "-l", required=True, help="The logfile location where you want the "
                                                      "output to be saved.")
 def analyzer(relation: str, source: str, relationcfg: str, outdir: str, verbose: str, logfile: str):
-    logging_setup_cli(log_path=logfile)
+    try:
+        logging_setup_cli(log_path=logfile)
+    except FileNotFoundError:
+        os.mkdir(f"{outdir}")
+        logging_setup_cli(log_path=logfile)
     if relation == "" and source == "" and relationcfg == "":
         raise Exception("No input was entered. Please input a relation "
                         "(optionally: output file for the log) or a relation config file.")
@@ -122,7 +126,7 @@ def analyzer(relation: str, source: str, relationcfg: str, outdir: str, verbose:
         relation_ids = relation.split(",")
         relations = []
         for relation_id in relation_ids:
-            error_messages, _, _, _ = \
+            error_messages, _, _ = \
                 get_result_of_one_relation(relation_id, outdir, source, verbose)
             relations.append(error_messages)
         end_time = time.time()
@@ -136,7 +140,7 @@ def analyzer(relation: str, source: str, relationcfg: str, outdir: str, verbose:
                         file.readlines()]
         relations = []
         for relation_id in relation_ids:
-            error_messages, _, _, _ = \
+            error_messages, _, _ = \
                 get_result_of_one_relation(relation_id, outdir, source, verbose)
             relations.append(error_messages)
         end_time = time.time()
