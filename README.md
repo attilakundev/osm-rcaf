@@ -12,9 +12,10 @@ If it corrected the relation well, hurray, you can upload it into OSM.
 CLI version:
 `python analyzer_cli.py --relation <relation id, can be separated with commas, not required> --source <source xml file, not required> --relationcfg <path to a text file containing multiple relation IDs, not required> --outdir <the path where the results will be stored> --verbose --logfile <name of the logfile, if you want>`
 
-
 Webserver:
 `python webserver.py` -> it will open it on port 5000 by default, but can be modified, if needed. Then you just enter localhost:5000 (or 127.0.0.1:5000) and then you can use it.
+
+For now, it can both analyze and fix route=* relations mostly, but for railroads, multipolygons it's limited to analyzing. There are a lot of deficiencies.
 
 ## Dependencies:
 For normal running:
