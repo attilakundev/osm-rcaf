@@ -9,6 +9,11 @@ to check if it corrected well.
 
 If it corrected the relation well, hurray, you can upload it into OSM.
 
+CLI version:
+`python analyzer_cli.py --relation <relation id, can be separated with commas, not required> --source <source xml file, not required> --relationcfg <path to a text file containing multiple relation IDs, not required> --outdir <the path where the results will be stored> --verbose --logfile <name of the logfile, if you want>`
+Webserver:
+`python webserver.py` -> it will open it on port 5000 by default, but can be modified, if needed.
+
 ## Dependencies:
 For normal running:
 * Python 3.11
