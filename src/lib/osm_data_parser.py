@@ -41,19 +41,20 @@ def __copy_attributes__(way):
 
 
 def append_ways_to_search_with_useful_info(relation_info):
-    for i in range(0, len(relation_info["ways_to_search"])):
-        for j in range(0, len(relation_info["ways"])):
-            if relation_info["ways"][j]["@id"] == relation_info["ways_to_search"][i]["@ref"]:
-                relation_info["ways_to_search"][i]["attributes"] = __copy_attributes__(
-                    relation_info["ways"][j])
-                relation_info["ways_to_search"][i]["nd"] = relation_info["ways"][j]["nd"]
-                if "tag" in relation_info["ways"][j]:
-                    if type(relation_info["ways"][j]["tag"]) is dict:
-                        relation_info["ways_to_search"][i]["tag"] = [relation_info["ways"][j]["tag"]]
+    result = dict(relation_info)
+    for i in range(0, len(result["ways_to_search"])):
+        for j in range(0, len(result["ways"])):
+            if result["ways"][j]["@id"] == result["ways_to_search"][i]["@ref"]:
+                result["ways_to_search"][i]["attributes"] = __copy_attributes__(
+                    result["ways"][j])
+                result["ways_to_search"][i]["nd"] = result["ways"][j]["nd"]
+                if "tag" in result["ways"][j]:
+                    if type(result["ways"][j]["tag"]) is dict:
+                        result["ways_to_search"][i]["tag"] = [result["ways"][j]["tag"]]
                     else:
-                        relation_info["ways_to_search"][i]["tag"] = relation_info["ways"][j][
+                        result["ways_to_search"][i]["tag"] = result["ways"][j][
                             "tag"]
-    return relation_info
+    return result
 
 
 def __gather_relation_info__(relation, relation_info):

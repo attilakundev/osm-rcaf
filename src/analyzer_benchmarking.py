@@ -1,17 +1,16 @@
 import logging
 import os
+import random
 import sys
 import time
 import xml
-from pathlib import Path
 
 import click
-import xmltodict
+import pandas as pd
 
 from src.lib.analyzer.analyzer import Analyzer
 from src.lib.osm_data_parser import retrieve_xml_from_api
 from src.lib.osm_error_messages import return_messages
-from src.lib.way_queries import get_relation_ids
 
 RELATION_NO_ERROR_AT_ALL = "This relation has no errors and gaps at all."
 
@@ -99,49 +98,52 @@ def entry_point():
     pass
 
 
+def draw_chart(all_data, filename):
+    list_of_data = [[str(key), value["time_passed_api"], value["time_passed_checking"]] for key, value in all_data.items()]
+    df = pd.DataFrame(list_of_data, columns=["Amount of relations", "Time passed loading from API",
+                                             "Time passed checking"])
+    print(df)
+    ax = df.plot(x='Amount of relations', kind='bar', stacked=True,
+                 title='Performance of Analyzer based on amount of relations')
+    ax.set(ylabel="Time (s)")
+    ax.get_figure().savefig(filename)
+
+
 @click.command()
-@click.option("--path", "-p", show_default=True, default="",
-              help="Path of the folder containing the XML files.",
-              required=True)
-@click.option("--outdir", "-o", show_default=True, default="",
-              help="The output folder where you want the logs, it shows how accurate the routes "
-                   "are.")
-@click.option("--verbose", "-v", is_flag=True, show_default=False, default=False,
-              help="Get detailed log results.")
-@click.option("--logfile", "-l", required=False, help="The logfile location where you want the "
-                                                     "output to be saved. This file is basically "
-                                                     "the console output's log file.")
-def analyzer(path: str, outdir: str, verbose: str, logfile: str):
-    try:
-        os.mkdir(f"{outdir}")
-        logging_setup_cli(log_path=logfile)
-    except FileExistsError:
-        logging_setup_cli(log_path=logfile)
-    files = Path(path).glob('*.xml')
-    analyzer = Analyzer()
-    for file in files:
-        start_time = time.time()
-        text = open(file, "r").read()
-        data = xmltodict.parse(text)
-        relation_id = get_relation_ids(data)
-        if data:
-            error_information, correct_ways_count, amount_to_decrease_from_errors = \
-                analyzer.relation_checking(
-                    data,relation_id)
-            error_messages = return_messages(error_information, correct_ways_count,
-                                             amount_to_decrease_from_errors, relation_id,
-                                             False,
-                                             verbose)
-            display_errors(error_messages, len(error_information),
-                           amount_to_decrease_from_errors, outdir,
-                           relation_id)
-            end_time = time.time()
-            logging.info(f"The script took {end_time - start_time} seconds")
-        else:
-            print(f"Data unavailable for {relation_id}")
+@click.option("--source", "-s", required=True, default="", help="The source file which is used "
+                                                                "for taking relations from for "
+                                                                "benchmarking.")
+@click.option("--relationamounts", "-ra", default="", required=True,
+              help="The amounts to take from the relation list file. Separated with a comma. (10,"
+                   "20)")
+@click.option("--outdir", "-o", show_default=True, required=True, default="",
+              help="The output folder where you want the logs and xml files.")
+@click.option("--logfile", "-l", required=True, help="The logfile location where you want the "
+                                                     "output to be saved.")
+def benchmarking(source: str, relationamounts: str, outdir: str, logfile: str):
+    logging_setup_cli(log_path=logfile)
+    stats = {}
+    file = open(source, "r")
+    amounts = relationamounts.split(",")
+    relation_ids = [relation_id[:-1] if "\n" in relation_id else relation_id for relation_id in
+                    file.readlines()]
+    for amount in amounts:
+        logging.info("Waiting 20 seconds, so the API calms down.")
+        time.sleep(20)
+        random.shuffle(relation_ids)
+        logging.info(f"Contains {amount} relation IDs")
+        stats[amount] = {"time_passed_api": 0, "time_passed_checking": 0}
+        for relation_id in relation_ids[0:int(amount)]:
+            error_messages, time_passed_api, time_passed_checking = \
+                get_result_of_one_relation(relation_id, outdir, True, False)
+            stats[amount]["time_passed_api"] += time_passed_api
+            stats[amount]["time_passed_checking"] += time_passed_checking
+        total_time = stats[amount]['time_passed_api'] + \
+                     stats[amount]['time_passed_checking']
+        logging.info(f"Script ran for {amount} relations. Took {total_time} seconds.")
+    draw_chart(stats, outdir + "chart.png")
 
-
-entry_point.add_command(analyzer)
+entry_point.add_command(benchmarking)
 
 if __name__ == '__main__':
     entry_point()

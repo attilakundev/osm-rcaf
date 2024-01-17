@@ -38,4 +38,4 @@ jobs:
     - name: Test with pytest
       run: |
         FILES=$(find src/test/ -type f -name "*.py" | grep -v "init")
-        pytest $FILES
+        python -m pytest $FILES
