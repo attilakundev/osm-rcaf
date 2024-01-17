@@ -22,7 +22,7 @@ def logging_setup_cli(log_path: str):
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[
-            logging.FileHandler(f"{log_path}.log"),
+            logging.FileHandler(f"{log_path}"),
             logging.StreamHandler(sys.stdout)
         ]
     )
@@ -118,6 +118,7 @@ def analyzer(relation: str, source: str, relationcfg: str, outdir: str, verbose:
     except FileNotFoundError:
         os.mkdir(f"{outdir}")
         logging_setup_cli(log_path=logfile)
+    # ide switch case jobb sokkal
     if relation == "" and source == "" and relationcfg == "":
         raise Exception("No input was entered. Please input a relation "
                         "(optionally: output file for the log) or a relation config file.")
