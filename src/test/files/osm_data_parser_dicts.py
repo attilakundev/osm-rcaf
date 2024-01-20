@@ -243,9 +243,8 @@ relation_info_result_appended = {
                 {'@ref': '-1'},
                 {'@ref': '-2'}
             ],
-            'tag':
-                {'@k': 'oneway',
-                 '@v': 'yes'},
+            'tag': {'@k': 'oneway',
+                    '@v': 'yes'}
         }
     ],
     'ways_to_search': [

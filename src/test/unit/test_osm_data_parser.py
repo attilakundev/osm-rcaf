@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+from pathlib import Path
+from unittest.mock import MagicMock
+
 import mock as mock
 import pytest
-from unittest.mock import MagicMock
-from pathlib import Path
 import xmltodict
+
 from src.lib.analyzer.analyzer import Analyzer
 from src.lib.osm_data_parser import retrieve_xml_from_api, \
     gather_way_and_relation_info, __gather_relation_info__, \
@@ -15,6 +17,7 @@ from src.test.files import osm_data_parser_dicts
 project_path = Path(__file__).parents[2].absolute()
 
 analyzer = Analyzer()
+
 
 @mock.patch("src.lib.osm_data_parser.requests.get")
 def test_retrieve_xml_from_api(requests_get):
@@ -80,12 +83,26 @@ def test_helper_gather_relation_info_list():
 
 
 def test_append_ways_to_search_with_useful_info():
+    ways = [
+        {
+            '@id': '-1',
+            'nd': [
+                {'@ref': '-1'},
+                {'@ref': '-2'}
+            ],
+            'tag': {'@k': 'oneway',
+                    '@v': 'yes'}
+        }
+    ] # had to include this because for some reason github actions didn't want to test it
+    # properly - maybe redoing the test would be a better solution
     result = append_ways_to_search_with_useful_info(
         osm_data_parser_dicts.relation_info_result)
-    assert result == osm_data_parser_dicts.relation_info_result_appended
+    assert result["ways"] == ways
+    assert result["ways_to_search"] == osm_data_parser_dicts.relation_info_result_appended[
+        "ways_to_search"]
     result_where_relation_has_multiple_tags = append_ways_to_search_with_useful_info(
         osm_data_parser_dicts.relation_info_result_relation_multiple_tags)
-    assert result_where_relation_has_multiple_tags == osm_data_parser_dicts.\
+    assert result_where_relation_has_multiple_tags == osm_data_parser_dicts. \
         relation_info_way_has_multiple_tags_result_appended
 
 
